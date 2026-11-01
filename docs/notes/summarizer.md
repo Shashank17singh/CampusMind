@@ -16,7 +16,19 @@ The 40-page test uses a scripted LLM to prove batching, the five-call concurrenc
 
 ## Measured results
 
-MEASUREMENT_PLACEHOLDER
+One real run, with a 40-page synthetic PDF (40 chunks, 16,620 tokens), `brief` mode, on a laptop CPU with 8 GB of memory, using Ollama and `llama3.2:1b`, one call at a time:
+
+| Measure | Result |
+|---|---|
+| Time | 47.5 minutes |
+| Successful LLM calls | 10 |
+| Tokens in, out | 19,599 and 8,524 |
+| Items produced | 1 |
+| Verified | No |
+
+An earlier run with five parallel calls took 61 minutes while other work was using the machine, and it lost more batches. That is why `LLM_MAX_CONCURRENCY` exists.
+
+**This setup does not produce a usable summary of a long document.** The pipeline completed and correctly marked the result unverified, but the output was one bullet. The small model is the limit here. A hosted model, or a larger local one on better hardware, has not been measured. Do that before quoting a figure for this feature.
 
 ## Key decisions
 
