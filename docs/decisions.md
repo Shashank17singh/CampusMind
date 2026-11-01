@@ -17,6 +17,7 @@ Where a requirement was ambiguous, or two requirements pulled apart, the choice 
 
 | 9 | A persistent Chroma client suits one process, but the API and Celery worker are separate processes, which Chroma's local mode does not support. | Persistent client for single-process use. `CHROMA_HOST` switches to a Chroma server, and prod compose must use that or Qdrant. |
 | 10 | "Filter by department" would hide college-wide documents, which have no department, from every student. | A filter matches the value or empty, in both stores and in BM25. |
+| 11 | Cached answers could be cleared when a related document is re-ingested, but a new circular cannot be related to an answer written before it existed. | Any document change invalidates every cached answer, through a generation number in the key. |
 
 ## Local development without Docker
 

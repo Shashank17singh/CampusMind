@@ -49,6 +49,13 @@ class Settings(BaseSettings):
     rrf_vector_weight: float = 1.0
     rrf_bm25_weight: float = 1.0
 
+    rag_top_k: int = 6
+    rag_similarity_threshold: float = 0.45
+    rag_min_results: int = 3
+    rag_context_tokens: int = 6000
+    rag_cache_ttl_seconds: int = 3600
+    rag_followups_enabled: bool = True
+
     access_token_minutes: int = 15
 
     @property

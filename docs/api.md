@@ -60,6 +60,8 @@ Base path: `/api/v1`. Requests and responses are JSON unless noted. Authenticate
 | POST | `/conversations/{id}/messages` | owner | `{content}` | SSE stream, below |
 | POST | `/messages/{id}/feedback` | owner | `{rating, reason?, comment?}` | `Feedback` |
 
+`POST /ask` (role `any`, body `{question, history?}`) is the same pipeline with no stored conversation. It answers directly from documents and sends the events below, without `meta`.
+
 SSE events from `POST /conversations/{id}/messages`, sent as `event: <name>` with a JSON `data` line:
 
 | Event | Data |

@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from app.api import documents
+from app.api import ask, documents
 from app.api.errors import register_error_handling
 from app.config import get_settings
 from app.db import session_scope
@@ -22,6 +22,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="CampusMind API", version="0.1.0")
     register_error_handling(app)
     app.include_router(documents.router, prefix=API_PREFIX)
+    app.include_router(ask.router, prefix=API_PREFIX)
 
     @app.get("/healthz", tags=["operations"])
     def healthz() -> dict[str, str]:
