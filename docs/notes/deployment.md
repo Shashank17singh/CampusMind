@@ -2,7 +2,7 @@
 
 Code: `infra/`, `.github/workflows/ci.yml`, `backend/app/metrics.py`, `backend/scripts/seed.py`.
 
-**Nothing under `infra/` has been run, and neither has the CI workflow.** Docker was not available when these were written. Test them first. Application metrics and the seed script were run locally.
+**The CI workflow runs on GitHub and builds both images, but no container has been started.** Nothing else under `infra/` has been run, because Docker was not available locally. Test those first. Application metrics and the seed script were run locally.
 
 ## Key decisions
 

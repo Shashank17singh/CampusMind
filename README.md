@@ -101,7 +101,9 @@ Every variable is listed in [.env.example](.env.example). The ones that matter m
 | Real Redis, real Celery workers, SMTP | **Not run.** Tests use fakes and eager tasks |
 | Tesseract OCR | **Not run.** It is not installed on the build machine. OCR tests use a stub |
 | Re-ranker model | **Not run** |
-| Docker images, compose files, Nginx, certificates, backups, Grafana, GitHub Actions | **Not run.** Docker was not available |
+| GitHub Actions | Runs on every push: lint, types, tests on Linux, and a build and push of both images |
+| Docker images | Built by CI only. **No container has been started** |
+| Compose services, Nginx, certificates, backups, Grafana | **Not run.** Docker was not available on the build machine |
 | Evaluation tools | The experiment grid has run end to end on the synthetic corpus, without the re-ranker |
 | Evaluation numbers | **None yet.** Real documents are needed. See [eval/README.md](eval/README.md) |
 
