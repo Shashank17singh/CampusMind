@@ -72,7 +72,9 @@ def load_questions(path: Path) -> list[dict]:
     return [item for item in questions if item.get("relevant_document_ids")]
 
 
-def benchmark(retriever, questions: list[dict], k: int, modes: tuple[str, ...]) -> dict[str, Scores]:
+def benchmark(
+    retriever, questions: list[dict], k: int, modes: tuple[str, ...]
+) -> dict[str, Scores]:
     """Run every question through every mode."""
     from app.vectorstore import SearchMode
 

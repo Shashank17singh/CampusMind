@@ -54,8 +54,18 @@ def split_into_windows(tokens: list[int], size: int, overlap: int) -> list[list[
 class SentenceTransformerEmbedder:
     """Wraps a sentence-transformers model, using the GPU when there is one."""
 
-    def __init__(self, model_name: str, device: str = "", model: Any = None) -> None:
-        """Load the model. Pass `model` to inject a test double."""
+    def __init__(
+        self,
+        model_name: str,
+        device: str = "",
+        model: Any = None,
+        query_prefix: str = QUERY_PREFIX,
+    ) -> None:
+        """Load the model. Pass `model` to inject a test double.
+
+        `query_prefix` is specific to BGE models. Pass "" for any other family.
+        """
+        self._query_prefix = query_prefix
         if model is None:
             import torch
             from sentence_transformers import SentenceTransformer
@@ -110,7 +120,7 @@ class SentenceTransformerEmbedder:
 
     def embed_query(self, text: str) -> np.ndarray:
         """Embed a query with the prefix BGE models were trained with."""
-        return self._encode([f"{QUERY_PREFIX}{text}"])[0]
+        return self._encode([f"{self._query_prefix}{text}"])[0]
 
 
 _lock = threading.Lock()
