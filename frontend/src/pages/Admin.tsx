@@ -110,7 +110,13 @@ function Analytics() {
             <XAxis dataKey="day" tick={AXIS} />
             <YAxis allowDecimals={false} tick={AXIS} width={32} />
             <Tooltip />
-            <Line type="monotone" dataKey="questions" stroke="var(--color-accent)" dot={false} />
+            <Line
+              type="monotone"
+              dataKey="questions"
+              stroke="var(--color-accent)"
+              dot={false}
+              isAnimationActive={false}
+            />
           </LineChart>
         </ChartBox>
         <ChartBox title="Daily active users">
@@ -119,7 +125,13 @@ function Analytics() {
             <XAxis dataKey="day" tick={AXIS} />
             <YAxis allowDecimals={false} tick={AXIS} width={32} />
             <Tooltip />
-            <Line type="monotone" dataKey="active_users" stroke="var(--color-ink)" dot={false} />
+            <Line
+              type="monotone"
+              dataKey="active_users"
+              stroke="var(--color-ink)"
+              dot={false}
+              isAnimationActive={false}
+            />
           </LineChart>
         </ChartBox>
         {intents.data && (
@@ -129,7 +141,7 @@ function Analytics() {
               <XAxis dataKey="intent" tick={AXIS} />
               <YAxis allowDecimals={false} tick={AXIS} width={32} />
               <Tooltip />
-              <Bar dataKey="count" fill="var(--color-accent)" />
+              <Bar dataKey="count" fill="var(--color-accent)" isAnimationActive={false} />
             </BarChart>
           </ChartBox>
         )}

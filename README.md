@@ -94,12 +94,15 @@ Every variable is listed in [.env.example](.env.example). The ones that matter m
 |---|---|
 | Backend logic, migrations, permissions | Tested on real PostgreSQL 16 |
 | Chroma, Qdrant, BM25, bge-small | Tested for real |
-| RAG with a local LLM | Run end to end once with Ollama |
+| Whole app in a real browser | Run with Playwright against real PostgreSQL, Chroma, bge-small and Ollama, as all three roles: 22 of 22 checks passed, including no sideways scroll at 360px |
+| Clickable citation chips | Component tests only. `llama3.2:1b` never wrote a `[n]` marker in the browser runs |
+| Long document summaries on `llama3.2:1b` | Run, and **not usable**: 47.5 minutes for 40 pages, and one bullet. See [the notes](docs/notes/summarizer.md) |
 | Hosted LLM client | Tested against a stub only. It needs an API key to run for real |
 | Real Redis, real Celery workers, SMTP | **Not run.** Tests use fakes and eager tasks |
 | Tesseract OCR | **Not run.** It is not installed on the build machine. OCR tests use a stub |
 | Re-ranker model | **Not run** |
 | Docker images, compose files, Nginx, certificates, backups, Grafana, GitHub Actions | **Not run.** Docker was not available |
+| Evaluation tools | The experiment grid has run end to end on the synthetic corpus, without the re-ranker |
 | Evaluation numbers | **None yet.** Real documents are needed. See [eval/README.md](eval/README.md) |
 
 ## Deployment

@@ -28,3 +28,5 @@ Code: `infra/`, `.github/workflows/ci.yml`, `backend/app/metrics.py`, `backend/s
 - The Qdrant snapshot stays in Qdrant's volume, and only the response is saved in `/backups`.
 - Prometheus has no alert rules yet.
 - Uploaded files are not included in the backup.
+- Chat has no per-user rate limit, only Nginx's limit per IP address, so one account could run up a hosted LLM bill.
+- When Redis is down, each failed cache call waits about 4 seconds before carrying on, so the app stays up but gets slower.

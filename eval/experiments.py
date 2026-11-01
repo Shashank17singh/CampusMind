@@ -130,16 +130,22 @@ def score_config(retriever: Any, questions: list[Any], mode: str, k: int = 5) ->
 
 
 def run_grid(grid: list[Config], questions: list[Any], work_dir: Path) -> list[dict[str, Any]]:
-    """Run every configuration, building each distinct corpus once."""
+    """Run every configuration, rebuilding the corpus whenever its settings change.
+
+    Only the corpus built last is usable. Each build rewrites `chunks_meta` with new chunk
+    ids, which BM25 reads, so an earlier retriever would pair old vectors with new keywords.
+    """
     answerable = [item for item in questions if item.relevant_document_ids]
-    retrievers: dict[tuple[int, str], Any] = {}
+    current: tuple[int, str] | None = None
+    retriever: Any = None
     rows = []
     for config in grid:
         key = corpus_key(config)
-        if key not in retrievers:
+        if key != current:
             print(f"Building corpus {key}", flush=True)
-            retrievers[key] = build_corpus(config, work_dir)
-        scores = score_config(retrievers[key], answerable, config.mode)
+            retriever = build_corpus(config, work_dir)
+            current = key
+        scores = score_config(retriever, answerable, config.mode)
         rows.append({"experiment": config.experiment, "name": config.name, **scores})
         print(f"{config.experiment}/{config.name}: {scores['recall']:.3f} recall", flush=True)
     return rows

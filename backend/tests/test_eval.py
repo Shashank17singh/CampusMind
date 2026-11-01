@@ -259,6 +259,35 @@ class TestExperiments:
     def test_retrieval_modes_share_a_corpus(self) -> None:
         assert corpus_key(Config("a", "a", mode="vector")) == corpus_key(Config("b", "b"))
 
+    def test_the_corpus_is_rebuilt_when_returning_to_earlier_settings(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        import experiments
+
+        builds: list[tuple[int, str]] = []
+
+        def build(config: Config, _: Path) -> tuple[int, str]:
+            builds.append(corpus_key(config))
+            return corpus_key(config)
+
+        used: list[object] = []
+
+        def score(retriever: object, _: list, __: str) -> dict[str, float]:
+            used.append(retriever)
+            return {"precision": 0.0, "recall": 0.0, "mrr": 0.0}
+
+        monkeypatch.setattr(experiments, "build_corpus", build)
+        monkeypatch.setattr(experiments, "score_config", score)
+        grid = [
+            Config("a", "first", chunk_size=400),
+            Config("a", "second", chunk_size=800),
+            Config("b", "third", chunk_size=800, mode="vector"),
+            Config("c", "fourth", chunk_size=400),
+        ]
+        experiments.run_grid(grid, [], tmp_path)
+        assert [size for size, _ in builds] == [400, 800, 400]
+        assert [size for size, _ in used] == [400, 800, 800, 400]
+
     def test_significance_compares_with_the_baseline(self) -> None:
         rows = [dict(row) for row in ROWS]
         add_significance(rows, {"retrieval": "hybrid"})

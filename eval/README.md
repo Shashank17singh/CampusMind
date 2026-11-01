@@ -2,7 +2,7 @@
 
 Tools for measuring CampusMind, and for producing the tables and charts in the report and paper.
 
-**No result in this repository is a finding yet.** There are no real college documents here, so anything under `eval/results/synthetic-smoke/` only shows that the tools run. Rerun everything on real documents before reporting a number.
+**No result in this repository is a finding yet.** There are no real college documents here, so `eval/results/synthetic-smoke/` only shows that the tools run. Those documents are so short that each one fits in a single chunk, so chunk size cannot change anything there, and the questions are unverified. Rerun everything on real documents before reporting a number.
 
 ## Steps
 
