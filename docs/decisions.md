@@ -15,6 +15,9 @@ Where a requirement was ambiguous, or two requirements pulled apart, the choice 
 | 7 | A hosted LLM provider had to be chosen. | `LLM_PROVIDER=anthropic` is the hosted option, with the model set by environment variable. |
 | 8 | The evaluation needs 150 questions and the demo needs 20 documents, but no real college documents exist yet. | The tooling is built and tested on clearly labelled synthetic documents. Numbers from that corpus are not results for the paper. Everything must be rerun on real documents. |
 
+| 9 | A persistent Chroma client suits one process, but the API and Celery worker are separate processes, which Chroma's local mode does not support. | Persistent client for single-process use. `CHROMA_HOST` switches to a Chroma server, and prod compose must use that or Qdrant. |
+| 10 | "Filter by department" would hide college-wide documents, which have no department, from every student. | A filter matches the value or empty, in both stores and in BM25. |
+
 ## Local development without Docker
 
 Tests run against real PostgreSQL 16 through the `pgserver` package, so migrations, `tsvector` search and `FOR UPDATE SKIP LOCKED` are tested for real on any machine. Redis is replaced by `fakeredis` in tests and Celery runs tasks eagerly.

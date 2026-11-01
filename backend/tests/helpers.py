@@ -1,9 +1,12 @@
 """Test doubles shared across the suite."""
 
+import hashlib
+import re
 import uuid
 from collections.abc import Callable, Iterator, Sequence
 from typing import Any
 
+import numpy as np
 from PIL import Image
 
 from app.ingestion.types import ChunkRecord
@@ -62,6 +65,30 @@ class FakeOcr:
     def image_to_text(self, image: Image.Image) -> str:
         self.calls += 1
         return self.text
+
+
+class HashingEmbedder:
+    """A deterministic bag-of-words embedder, so tests need no model download."""
+
+    def __init__(self, dimension: int = 64) -> None:
+        self.dimension = dimension
+
+    def _embed(self, text: str) -> np.ndarray:
+        vector = np.zeros(self.dimension, dtype=np.float32)
+        for word in re.findall(r"\w+", text.lower()):
+            bucket = int(hashlib.md5(word.encode(), usedforsecurity=False).hexdigest(), 16)
+            vector[bucket % self.dimension] += 1.0
+        norm = np.linalg.norm(vector)
+        if norm == 0:
+            vector[0] = 1.0
+            return vector
+        return vector / norm
+
+    def embed_documents(self, texts: list[str]) -> np.ndarray:
+        return np.stack([self._embed(text) for text in texts])
+
+    def embed_query(self, text: str) -> np.ndarray:
+        return self._embed(text)
 
 
 class FakeIndexer:

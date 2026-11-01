@@ -37,6 +37,18 @@ class Settings(BaseSettings):
     header_footer_threshold: float = 0.6
     near_duplicate_threshold: float = 0.7
 
+    vector_backend: Literal["chroma", "qdrant"] = "chroma"
+    chroma_path: str = "./data/chroma"
+    chroma_host: str = ""
+    chroma_port: int = 8000
+    qdrant_url: str = "http://localhost:6333"
+    embedding_model: str = "BAAI/bge-small-en-v1.5"
+    embedding_device: str = ""
+    reranker_model: str = "BAAI/bge-reranker-base"
+    rerank_enabled: bool = False
+    rrf_vector_weight: float = 1.0
+    rrf_bm25_weight: float = 1.0
+
     access_token_minutes: int = 15
 
     @property

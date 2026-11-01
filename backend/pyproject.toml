@@ -8,6 +8,7 @@ dependencies = [
     "anthropic>=1.0",
     "argon2-cffi>=23.1",
     "celery>=5.4",
+    "chromadb>=0.5",
     "fastapi>=0.115",
     "httpx>=0.27",
     "pdfplumber>=0.11",
@@ -21,10 +22,14 @@ dependencies = [
     "python-docx>=1.1",
     "python-multipart>=0.0.9",
     "python-pptx>=1.0",
+    "qdrant-client>=1.11",
+    "rank-bm25>=0.2.2",
     "redis>=5.0",
+    "sentence-transformers>=3.0",
     "sqlalchemy>=2.0.30",
     "structlog>=24.4",
     "tiktoken>=0.7",
+    "torch>=2.3",
     "uvicorn[standard]>=0.30",
 ]
 
@@ -40,6 +45,16 @@ dev = [
 
 [tool.uv]
 package = false
+
+# CPU build by default, because the CUDA one is several GB. Machines with a GPU can
+# remove this source to get CUDA wheels.
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

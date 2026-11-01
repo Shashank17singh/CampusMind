@@ -7,11 +7,13 @@ from sqlalchemy.exc import OperationalError
 from app.celery_app import celery_app
 from app.config import get_settings
 from app.db import get_session_factory
-from app.ingestion.indexing import LoggingIndexer
 from app.ingestion.ocr import TesseractOcr
 from app.ingestion.pipeline import PipelineDeps, run_ingestion
 from app.ingestion.storage import LocalStorage
 from app.llm import get_llm
+from app.vectorstore import get_vector_store
+from app.vectorstore.embeddings import get_embedder
+from app.vectorstore.indexer import VectorIndexer
 
 
 def build_deps() -> PipelineDeps:
@@ -22,7 +24,7 @@ def build_deps() -> PipelineDeps:
         storage=LocalStorage(settings.upload_dir),
         ocr=TesseractOcr(settings.tesseract_cmd),
         llm=get_llm(),
-        indexer=LoggingIndexer(),
+        indexer=VectorIndexer(get_vector_store(), get_embedder()),
         settings=settings,
     )
 
