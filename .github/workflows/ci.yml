@@ -57,11 +57,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      # Registry names must be lowercase; the GitHub name need not be.
+      - id: repo
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
       - uses: docker/build-push-action@v6
         with:
           context: .
           file: infra/docker/${{ matrix.image }}.Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/${{ matrix.image }}:latest
-            ghcr.io/${{ github.repository }}/${{ matrix.image }}:${{ github.sha }}
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.image }}:latest
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.image }}:${{ github.sha }}
