@@ -28,9 +28,11 @@ _PHONE = re.compile(
 )
 _EMAIL = re.compile(r"\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b")
 
-# Longer than any phone number or email worth catching, so one split across stream
-# fragments is always still in the buffer when its last digit arrives.
-_HOLD_BACK_CHARS = 64
+_SOURCE_TAG = re.compile(r"</?source\b[^>]*>\s*", re.IGNORECASE)
+
+# Longer than any phone number, email or source tag worth catching, so one split across
+# stream fragments is always still in the buffer when its last character arrives.
+_HOLD_BACK_CHARS = 200
 
 
 def neutralize_injection(text: str) -> str:
@@ -61,7 +63,10 @@ def allowed_contacts(chunks: Iterable[ScoredChunk]) -> set[str]:
 
 
 def redact(text: str, allowed: set[str]) -> str:
-    """Remove phone numbers and emails, except those from an official contact list."""
+    """Remove phone numbers and emails, except those from an official contact list.
+
+    Prompt markup goes too, because small models sometimes echo their sources.
+    """
 
     def replace_phone(match: re.Match[str]) -> str:
         return match.group() if _digits(match.group()) in allowed else PHONE_REMOVED
@@ -69,7 +74,7 @@ def redact(text: str, allowed: set[str]) -> str:
     def replace_email(match: re.Match[str]) -> str:
         return match.group() if match.group().lower() in allowed else EMAIL_REMOVED
 
-    return _EMAIL.sub(replace_email, _PHONE.sub(replace_phone, text))
+    return _EMAIL.sub(replace_email, _PHONE.sub(replace_phone, _SOURCE_TAG.sub("", text)))
 
 
 def redact_stream(fragments: Iterable[str], allowed: set[str]) -> Iterator[str]:

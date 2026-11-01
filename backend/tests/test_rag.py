@@ -142,13 +142,29 @@ class TestPersonalData:
     def test_a_number_at_the_very_end_is_caught(self) -> None:
         assert "".join(redact_stream(["Call 987", "6543210"], set())) == f"Call {PHONE_REMOVED}"
 
+    def test_echoed_source_tags_are_removed(self) -> None:
+        text = (
+            '<source id="1" title="Rules, page 2" date="2026-11-01">\nNeed 75 percent.\n</source>'
+        )
+        assert redact(text, set()).strip() == "Need 75 percent."
+
+    def test_a_source_tag_split_across_fragments_is_removed(self) -> None:
+        fragments = [
+            "<sou",
+            'rce id="1" ti',
+            'tle="Rules" date="2026-11-01">',
+            "Need 75.</so",
+            "urce>",
+        ]
+        assert "".join(redact_stream(fragments, set())) == "Need 75."
+
     def test_streaming_keeps_all_ordinary_text(self) -> None:
         fragments = [f"word{n} " for n in range(100)]
         assert "".join(redact_stream(fragments, set())) == "".join(fragments)
 
     def test_streaming_releases_text_as_it_goes(self) -> None:
         outputs = list(redact_stream([f"word{n} " for n in range(100)], set()))
-        assert len(outputs) > 10
+        assert len(outputs) > 5
 
 
 class TestContextLimit:

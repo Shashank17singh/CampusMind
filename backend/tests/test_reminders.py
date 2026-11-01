@@ -184,7 +184,7 @@ class TestParseReminder:
     )
 
     def test_uses_the_llm_for_fields_and_dateparser_for_the_date(self) -> None:
-        parsed = parse_reminder("anything", FakeLLM([self.llm_reply]), NOW)
+        parsed = parse_reminder("submit DBMS Friday 5pm", FakeLLM([self.llm_reply]), NOW)
         assert isinstance(parsed, ParsedReminder)
         assert parsed.title == "Submit DBMS assignment"
         assert parsed.due_at.astimezone(IST) == at(6, 17, 0)
@@ -195,19 +195,20 @@ class TestParseReminder:
         reply = json.dumps(
             {"title": "Submit DBMS Assignment Tomorrow at 5pm", "due_text": "tomorrow at 5pm"}
         )
-        parsed = parse_reminder("anything", FakeLLM([reply]), NOW)
+        message = "submit the assignment tomorrow at 5pm"
+        parsed = parse_reminder(message, FakeLLM([reply]), NOW)
         assert isinstance(parsed, ParsedReminder)
         assert parsed.title == "Submit DBMS Assignment"
 
     def test_a_title_that_is_only_the_date_is_kept(self) -> None:
         reply = json.dumps({"title": "Friday 5pm", "due_text": "Friday 5pm"})
-        parsed = parse_reminder("anything", FakeLLM([reply]), NOW)
+        parsed = parse_reminder("Friday 5pm", FakeLLM([reply]), NOW)
         assert isinstance(parsed, ParsedReminder)
         assert parsed.title == "Friday 5pm"
 
     def test_the_llm_never_supplies_the_date_itself(self) -> None:
         llm = FakeLLM([self.llm_reply])
-        parse_reminder("x", llm, NOW)
+        parse_reminder("submit it Friday 5pm", llm, NOW)
         assert "Do not work out the date yourself" in llm.calls[0]["system"]
 
     def test_llm_outage_falls_back_to_rules(self) -> None:
@@ -225,6 +226,23 @@ class TestParseReminder:
         assert isinstance(parsed, ParsedReminder)
         assert parsed.due_at.astimezone(IST) == at(3)
 
+    def test_a_date_the_user_never_typed_is_ignored(self) -> None:
+        reply = json.dumps({"title": "Pay the fee", "due_text": "next Friday at noon"})
+        parsed = parse_reminder("pay the fee soon", FakeLLM([reply]), NOW)
+        assert isinstance(parsed, Clarification)
+        assert "soon" in parsed.question
+
+    def test_an_invented_date_never_creates_a_reminder(self) -> None:
+        reply = json.dumps({"title": "Pay the fee", "due_text": "never"})
+        parsed = parse_reminder("pay the fee", FakeLLM([reply]), NOW)
+        assert parsed == Clarification("When should I remind you?")
+
+    def test_date_words_are_matched_ignoring_case(self) -> None:
+        reply = json.dumps({"title": "Pay", "due_text": "friday 5pm"})
+        assert isinstance(
+            parse_reminder("Pay on Friday 5pm", FakeLLM([reply]), NOW), ParsedReminder
+        )
+
     def test_ambiguous_date_asks_a_question(self) -> None:
         reply = json.dumps({"title": "Pay fees", "due_text": "03/04"})
         parsed = parse_reminder("pay fees on 03/04", FakeLLM([reply]), NOW)
@@ -237,7 +255,7 @@ class TestParseReminder:
 
     def test_past_date_asks_a_question(self) -> None:
         reply = json.dumps({"title": "Pay fees", "due_text": "1 January 2020"})
-        result = parse_reminder("x", FakeLLM([reply]), NOW)
+        result = parse_reminder("pay by 1 January 2020", FakeLLM([reply]), NOW)
         assert isinstance(result, Clarification)
         assert "already passed" in result.question
 

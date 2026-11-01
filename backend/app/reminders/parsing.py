@@ -247,6 +247,11 @@ def parse_reminder(
     """Parse a message into a reminder, or a question for the user."""
     rules = extract_with_rules(message)
     fields = _extract_with_llm(message, llm) or rules
+    # The LLM must copy date words, not supply them. Anything the user never typed is
+    # invented, and could parse as a real deadline, so it is replaced by the rules' reading.
+    if fields.due_text and fields.due_text.lower() not in message.lower():
+        log.info("reminder_invented_date_rejected", due_text=fields.due_text)
+        fields = fields.model_copy(update={"due_text": rules.due_text})
 
     result = resolve_due(fields.due_text, now, timezone)
     if result.due_at is None and fields is not rules and rules.due_text:
