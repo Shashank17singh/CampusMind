@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from app.api import ask, documents
+from app.api import admin, ask, documents
 from app.api.errors import register_error_handling
 from app.config import get_settings
 from app.db import session_scope
@@ -23,6 +23,7 @@ def create_app() -> FastAPI:
     register_error_handling(app)
     app.include_router(documents.router, prefix=API_PREFIX)
     app.include_router(ask.router, prefix=API_PREFIX)
+    app.include_router(admin.router, prefix=API_PREFIX)
 
     @app.get("/healthz", tags=["operations"])
     def healthz() -> dict[str, str]:
