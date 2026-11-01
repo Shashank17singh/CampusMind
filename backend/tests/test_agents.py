@@ -19,7 +19,12 @@ from app.agents.graph import (
     AgentRunner,
 )
 from app.agents.qa import make_qa_handler
-from app.agents.router import MAX_INTENTS, classify, classify_with_keywords
+from app.agents.router import (
+    CONFIDENCE_THRESHOLD,
+    MAX_INTENTS,
+    classify,
+    classify_with_keywords,
+)
 from app.agents.state import Handler, HandlerInput, HandlerResult, UserContext
 from app.agents.tools import Tool, ToolError, ToolRegistry
 from app.agents.tracing import TraceRecorder, to_json
@@ -133,6 +138,18 @@ class TestLlmRouter:
     )
     def test_falls_back_on_an_invalid_reply(self, reply: str) -> None:
         assert classify("remind me", FakeLLM([reply])).source == "keywords"
+
+    def test_a_clear_keyword_match_overrides_an_unsure_model(self) -> None:
+        reply = llm_route("qa", confidence=0.2)
+        route = classify("What is the attendance rule for exams?", FakeLLM([reply]))
+        assert route.confidence >= CONFIDENCE_THRESHOLD
+        assert route.source == "keywords"
+        assert route.tokens_in == 10
+
+    def test_an_unclear_message_stays_low_confidence(self) -> None:
+        route = classify("the second one", FakeLLM([llm_route("qa", confidence=0.2)]))
+        assert route.confidence < CONFIDENCE_THRESHOLD
+        assert route.source == "llm"
 
     def test_repeated_intents_are_removed(self) -> None:
         route = classify("x", FakeLLM([llm_route("qa", "qa", "reminder")]))

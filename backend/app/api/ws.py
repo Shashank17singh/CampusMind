@@ -92,7 +92,11 @@ async def _answer_pings(websocket: WebSocket) -> None:
 
 async def _first_to_finish(*tasks: asyncio.Task[None]) -> None:
     """Wait for one task to end, then cancel the rest."""
-    _, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+    for task in done:
+        # A disconnect ends the task with an exception, which is the normal way out.
+        if not task.cancelled():
+            task.exception()
     for task in pending:
         task.cancel()
         with suppress(asyncio.CancelledError, WebSocketDisconnect):

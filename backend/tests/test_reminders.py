@@ -191,6 +191,20 @@ class TestParseReminder:
         assert parsed.subject == "DBMS"
         assert parsed.remind_before == (1440, 120)
 
+    def test_date_words_are_removed_from_the_llm_title(self) -> None:
+        reply = json.dumps(
+            {"title": "Submit DBMS Assignment Tomorrow at 5pm", "due_text": "tomorrow at 5pm"}
+        )
+        parsed = parse_reminder("anything", FakeLLM([reply]), NOW)
+        assert isinstance(parsed, ParsedReminder)
+        assert parsed.title == "Submit DBMS Assignment"
+
+    def test_a_title_that_is_only_the_date_is_kept(self) -> None:
+        reply = json.dumps({"title": "Friday 5pm", "due_text": "Friday 5pm"})
+        parsed = parse_reminder("anything", FakeLLM([reply]), NOW)
+        assert isinstance(parsed, ParsedReminder)
+        assert parsed.title == "Friday 5pm"
+
     def test_the_llm_never_supplies_the_date_itself(self) -> None:
         llm = FakeLLM([self.llm_reply])
         parse_reminder("x", llm, NOW)

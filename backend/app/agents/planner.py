@@ -180,6 +180,20 @@ def _normalize(name: str) -> str:
     return " ".join(name.lower().split())
 
 
+def _match_subject(key: str, subjects: dict[str, SubjectOutline]) -> SubjectOutline | None:
+    """Find a subject in the outline. Students and syllabi rarely name it the same way.
+
+    An exact match wins, then one name containing the other. If the syllabus covers a
+    single subject, that must be the one meant.
+    """
+    if key in subjects:
+        return subjects[key]
+    partial = [outline for name, outline in subjects.items() if key in name or name in key]
+    if len(partial) == 1:
+        return partial[0]
+    return next(iter(subjects.values())) if len(subjects) == 1 else None
+
+
 def collect_topics(
     outline: SyllabusOutline | None, inputs: PlanInputs
 ) -> tuple[list[Topic], list[str]]:
@@ -196,7 +210,7 @@ def collect_topics(
     for exam in inputs.exams:
         key = _normalize(exam.subject)
         rating = difficulty.get(key, DEFAULT_DIFFICULTY)
-        subject = by_subject.get(key)
+        subject = _match_subject(key, by_subject)
         names = [t for unit in subject.units for t in unit.topics] if subject else []
         names.extend(extras.get(key, []))
         if not names:

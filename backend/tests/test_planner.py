@@ -353,6 +353,42 @@ class TestTopics:
         assert len(topics) == 4
         assert warnings == []
 
+    def test_a_short_name_matches_a_longer_syllabus_name(self) -> None:
+        outline = SyllabusOutline.model_validate(
+            {
+                "subjects": [
+                    {"name": "DBMS Theory", "units": [{"name": "U", "topics": ["Joins"]}]},
+                    {"name": "OS", "units": [{"name": "U", "topics": ["Paging"]}]},
+                ]
+            }
+        )
+        exams = [{"subject": "dbms", "date": START + timedelta(days=14)}]
+        topics, warnings = collect_topics(outline, inputs(exams=exams))
+        assert [topic.name for topic in topics] == ["Joins"]
+        assert warnings == []
+
+    def test_a_single_subject_syllabus_is_used_whatever_it_is_called(self) -> None:
+        outline = SyllabusOutline.model_validate(
+            {"subjects": [{"name": "Semester 3", "units": [{"name": "U", "topics": ["Joins"]}]}]}
+        )
+        exams = [{"subject": "DBMS", "date": START + timedelta(days=14)}]
+        topics, _ = collect_topics(outline, inputs(exams=exams))
+        assert [topic.subject for topic in topics] == ["DBMS"]
+
+    def test_an_ambiguous_name_is_not_guessed(self) -> None:
+        outline = SyllabusOutline.model_validate(
+            {
+                "subjects": [
+                    {"name": "Maths I", "units": [{"name": "U", "topics": ["A"]}]},
+                    {"name": "Maths II", "units": [{"name": "U", "topics": ["B"]}]},
+                ]
+            }
+        )
+        exams = [{"subject": "Maths", "date": START + timedelta(days=14)}]
+        topics, warnings = collect_topics(outline, inputs(exams=exams))
+        assert topics == []
+        assert warnings
+
     def test_a_subject_missing_from_the_syllabus_is_warned_about(self) -> None:
         exams = [{"subject": "Maths", "date": START + timedelta(days=14)}]
         topics, warnings = collect_topics(self.outline, inputs(exams=exams))

@@ -41,7 +41,13 @@ function useSessionRestore(): void {
 export function App() {
   useSessionRestore();
   return (
-    <Suspense fallback={<SkeletonRows label="Loading page" />}>
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-content p-8">
+          <SkeletonRows label="Loading page" />
+        </div>
+      }
+    >
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

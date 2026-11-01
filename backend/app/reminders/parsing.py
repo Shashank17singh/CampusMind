@@ -232,6 +232,15 @@ def _extract_with_llm(message: str, llm: LLMClient) -> LlmReminderFields | None:
     return fields
 
 
+def _clean_title(title: str, due_text: str | None) -> str:
+    """Remove the date words, which models often leave in the title."""
+    if not due_text:
+        return title
+    cleaned = re.sub(re.escape(due_text.strip()), " ", title, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\s+(?:by|on|before|due|at|for)\s*$", "", cleaned.strip(" ,.-"), flags=re.I)
+    return re.sub(r"\s+", " ", cleaned).strip() or title
+
+
 def parse_reminder(
     message: str, llm: LLMClient, now: datetime, timezone: str = "Asia/Kolkata"
 ) -> ParsedReminder | Clarification:
@@ -248,7 +257,7 @@ def parse_reminder(
     if result.due_at is None:
         return Clarification(result.clarification or "When should I remind you?")
     return ParsedReminder(
-        title=fields.title,
+        title=_clean_title(fields.title, fields.due_text),
         due_at=result.due_at,
         subject=fields.subject or rules.subject,
         recurrence=fields.recurrence or rules.recurrence,

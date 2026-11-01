@@ -163,7 +163,8 @@ function ItemCard({ item, planId }: { item: PlanItem; planId: string }) {
 
 function WeekView({ plan }: { plan: StudyPlan }) {
   const [params, setParams] = useSearchParams();
-  const anchor = params.get("week") ?? plan.start_date;
+  // Open on the first week with something in it, which may not be the week the plan starts.
+  const anchor = params.get("week") ?? plan.items[0]?.date ?? plan.start_date;
   const days = useMemo(() => weekOf(new Date(`${anchor}T12:00:00`)), [anchor]);
 
   const move = (weeks: number) => {

@@ -1,7 +1,7 @@
 """Intent classification: the LLM first, a keyword classifier if the LLM fails."""
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from pydantic import BaseModel, Field
 
@@ -129,6 +129,12 @@ def classify(message: str, llm: LLMClient) -> Route:
             response.tokens_in,
             response.tokens_out,
         )
+        # Small models are often unsure of obvious messages. A clear keyword match is
+        # better than asking the user to repeat a question that was perfectly clear.
+        if route.confidence < CONFIDENCE_THRESHOLD:
+            rules = classify_with_keywords(message)
+            if rules.confidence >= CONFIDENCE_THRESHOLD:
+                route = replace(rules, tokens_in=response.tokens_in, tokens_out=response.tokens_out)
     log.info(
         "message_routed", intents=route.intents, confidence=route.confidence, source=route.source
     )
