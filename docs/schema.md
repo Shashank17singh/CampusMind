@@ -122,7 +122,7 @@ Indexes: `(user_id, last_message_at desc)`; `(last_message_at)` for retention.
 | `search_vector` | `tsvector` | generated from `content` |
 | `created_at` | `timestamptz` | |
 
-Indexes: `(conversation_id, created_at)`; GIN `(search_vector)`; `(created_at)`; `(user_id, created_at desc)`; partial `(created_at)` where `answered = false`.
+Indexes: `(conversation_id, created_at)`; `(conversation_id, role, created_at)`; `(role, created_at)`; GIN `(search_vector)`; `(user_id, created_at desc)`; partial `(created_at)` where `answered = false`.
 
 ### feedback
 
@@ -278,11 +278,15 @@ Indexes: unique `(token_hash)`; `(family_id)`; `(user_id)`.
 |---|---|---|
 | `id` | `uuid` | PK |
 | `user_id` | `uuid` | FK `users`, `ON DELETE CASCADE` |
-| `document_id` | `uuid` | FK `documents`, `ON DELETE CASCADE` |
+| `document_id` | `uuid` | FK `documents`, `ON DELETE CASCADE`, null for an uploaded file |
+| `source_name` | `text` | the document title or uploaded filename |
 | `mode` | `text` | `brief`, `detailed`, `exam_notes`, `flashcards` |
-| `content` | `jsonb` | not null |
+| `status` | `text` | `pending`, `ready`, `failed` |
+| `error_message` | `text` | nullable |
+| `content` | `jsonb` | null until ready |
 | `dropped_count` | `integer` | bullets removed by the verifier |
 | `tokens_in`, `tokens_out` | `integer` | default 0 |
+| `duration_ms` | `integer` | nullable |
 | `created_at` | `timestamptz` | |
 
 Indexes: `(user_id, created_at desc)`; `(document_id, mode)`.

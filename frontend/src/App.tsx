@@ -43,26 +43,26 @@ export function App() {
   return (
     <Suspense fallback={<SkeletonRows label="Loading page" />}>
       <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/verify-email" element={<VerifyEmailPage />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password" element={<ResetPasswordPage />} />
-      <Route element={<RequireAuth />}>
-        <Route element={<Shell />}>
-          <Route path="/chat/:conversationId?" element={<ChatPage />} />
-          <Route path="/planner" element={<PlannerPage />} />
-          <Route path="/reminders" element={<RemindersPage />} />
-          <Route path="/summarizer" element={<SummarizerPage />} />
-          <Route element={<RequireAuth roles={["faculty", "admin"]} />}>
-            <Route path="/faculty" element={<FacultyPage />} />
-          </Route>
-          <Route element={<RequireAuth roles={["admin"]} />}>
-            <Route path="/admin" element={<AdminPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route element={<RequireAuth />}>
+          <Route element={<Shell />}>
+            <Route path="/chat/:conversationId?" element={<ChatPage />} />
+            <Route path="/planner" element={<PlannerPage />} />
+            <Route path="/reminders" element={<RemindersPage />} />
+            <Route path="/summarizer" element={<SummarizerPage />} />
+            <Route element={<RequireAuth roles={["faculty", "admin"]} />}>
+              <Route path="/faculty" element={<FacultyPage />} />
+            </Route>
+            <Route element={<RequireAuth roles={["admin"]} />}>
+              <Route path="/admin" element={<AdminPage />} />
+            </Route>
           </Route>
         </Route>
-      </Route>
-      <Route path="*" element={<Navigate to="/chat" replace />} />
+        <Route path="*" element={<Navigate to="/chat" replace />} />
       </Routes>
     </Suspense>
   );
