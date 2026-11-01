@@ -24,8 +24,6 @@ CampusMind gives a college one place to ask about its own rules. Faculty upload 
 
 A LangGraph router also sends each message to the right agent. One builds a study plan around exam dates, one sets reminders from plain English, and one summarizes long documents in four formats. Students, faculty and admins each get their own view, and every permission is enforced on the server.
 
-Built as a final-year B.Tech CSE project.
-
 > All tests pass in CI, and the whole app has run in a real browser against real PostgreSQL, Chroma and Ollama. No container has been started, nothing has been deployed, and there are no evaluation results yet. See [Known Limitations](#known-limitations).
 
 ---
