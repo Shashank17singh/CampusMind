@@ -1,0 +1,161 @@
+# Production on one host. Needs a .env file at the repository root. From the root:
+#   docker compose -f infra/compose/docker-compose.prod.yml up -d --build
+# Qdrant is used because the API and workers are separate processes, which Chroma's
+# local mode does not support.
+name: campusmind
+
+x-backend: &backend
+  build:
+    context: ../..
+    dockerfile: infra/docker/backend.Dockerfile
+  restart: unless-stopped
+  env_file: ../../.env
+  environment: &backend-env
+    ENVIRONMENT: production
+    COOKIE_SECURE: "true"
+    DATABASE_URL: postgresql+psycopg://campusmind:${POSTGRES_PASSWORD}@postgres:5432/campusmind
+    REDIS_URL: redis://redis:6379/0
+    VECTOR_BACKEND: qdrant
+    QDRANT_URL: http://qdrant:6333
+    FRONTEND_URL: https://${DOMAIN}
+    CORS_ORIGINS: https://${DOMAIN}
+  volumes:
+    - uploads:/data/uploads
+    - huggingface:/data/huggingface
+  depends_on:
+    migrate:
+      condition: service_completed_successfully
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: campusmind
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: campusmind
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U campusmind]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --save 60 1
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    restart: unless-stopped
+    volumes:
+      - qdrant:/qdrant/storage
+
+  migrate:
+    <<: *backend
+    command: alembic upgrade head
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  backend:
+    <<: *backend
+
+  worker:
+    <<: *backend
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=2
+    healthcheck:
+      disable: true
+
+  beat:
+    <<: *backend
+    command: celery -A app.celery_app beat --loglevel=info --schedule=/tmp/celerybeat-schedule
+    healthcheck:
+      disable: true
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: infra/docker/frontend.Dockerfile
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+      NGINX_ENVSUBST_FILTER: DOMAIN
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ../nginx/proxy.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - letsencrypt:/etc/letsencrypt
+      - certbot-webroot:/var/www/certbot
+    depends_on:
+      - backend
+      - frontend
+
+  certbot:
+    image: certbot/certbot:v2.11.0
+    restart: unless-stopped
+    entrypoint: /bin/sh -c "trap exit TERM; while true; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done"
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot-webroot:/var/www/certbot
+
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    entrypoint: /bin/sh /backup.sh
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+    volumes:
+      - ../scripts/backup.sh:/backup.sh:ro
+      - backups:/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    restart: unless-stopped
+    volumes:
+      - ../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus:/prometheus
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?Set GRAFANA_PASSWORD in .env}
+    # Reach it through an SSH tunnel: ssh -L 3000:localhost:3000 user@server
+    ports:
+      - 127.0.0.1:3000:3000
+    volumes:
+      - ../grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana:/var/lib/grafana
+
+volumes:
+  postgres:
+  redis:
+  qdrant:
+  uploads:
+  huggingface:
+  letsencrypt:
+  certbot-webroot:
+  backups:
+  prometheus:
+  grafana:

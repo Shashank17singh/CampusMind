@@ -1,0 +1,99 @@
+# Development: datastores plus the API and workers with hot reload.
+# Run the frontend with `npm run dev`. From the repository root:
+#   docker compose -f infra/compose/docker-compose.dev.yml up --build
+name: campusmind-dev
+
+x-backend: &backend
+  build:
+    context: ../..
+    dockerfile: infra/docker/backend.Dockerfile
+  env_file: ../../.env
+  environment:
+    DATABASE_URL: postgresql+psycopg://campusmind:campusmind@postgres:5432/campusmind
+    REDIS_URL: redis://redis:6379/0
+    VECTOR_BACKEND: qdrant
+    QDRANT_URL: http://qdrant:6333
+    OLLAMA_BASE_URL: http://host.docker.internal:11434
+  extra_hosts:
+    - host.docker.internal:host-gateway
+  volumes:
+    - ../../backend:/app
+    - uploads:/data/uploads
+    - huggingface:/data/huggingface
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: campusmind
+      POSTGRES_PASSWORD: campusmind
+      POSTGRES_DB: campusmind
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U campusmind]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 127.0.0.1:6379:6379
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    ports:
+      - 127.0.0.1:6333:6333
+    volumes:
+      - qdrant:/qdrant/storage
+
+  migrate:
+    <<: *backend
+    command: alembic upgrade head
+    restart: "no"
+
+  backend:
+    <<: *backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - 127.0.0.1:8000:8000
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    <<: *backend
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=2
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  beat:
+    <<: *backend
+    command: celery -A app.celery_app beat --loglevel=info --schedule=/tmp/celerybeat-schedule
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  postgres:
+  qdrant:
+  uploads:
+  huggingface:

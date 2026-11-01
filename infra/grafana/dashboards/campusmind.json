@@ -1,0 +1,70 @@
+{
+  "title": "CampusMind",
+  "uid": "campusmind",
+  "schemaVersion": 39,
+  "timezone": "browser",
+  "time": { "from": "now-6h", "to": "now" },
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Request latency",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [
+        {
+          "refId": "A",
+          "legendFormat": "p50",
+          "expr": "histogram_quantile(0.5, sum(rate(campusmind_request_seconds_bucket[5m])) by (le))"
+        },
+        {
+          "refId": "B",
+          "legendFormat": "p95",
+          "expr": "histogram_quantile(0.95, sum(rate(campusmind_request_seconds_bucket[5m])) by (le))"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Errors per second",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "reqps" } },
+      "targets": [
+        {
+          "refId": "A",
+          "legendFormat": "5xx",
+          "expr": "sum(rate(campusmind_requests_total{status=~\"5..\"}[5m]))"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Celery queue length",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        { "refId": "A", "legendFormat": "waiting", "expr": "campusmind_queue_length" }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Requests per second by route",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "reqps" } },
+      "targets": [
+        {
+          "refId": "A",
+          "legendFormat": "{{route}}",
+          "expr": "topk(8, sum(rate(campusmind_requests_total[5m])) by (route))"
+        }
+      ]
+    }
+  ]
+}
