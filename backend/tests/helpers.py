@@ -1,0 +1,88 @@
+"""Test doubles shared across the suite."""
+
+import uuid
+from collections.abc import Callable, Iterator, Sequence
+from typing import Any
+
+from PIL import Image
+
+from app.ingestion.types import ChunkRecord
+from app.llm import ChatMessage, LLMClient, LLMError, LLMResponse, StreamResult
+
+
+class FakeLLM(LLMClient):
+    """Returns scripted replies in order, and records every call."""
+
+    def __init__(self, replies: Sequence[str | Exception] = ()) -> None:
+        self.replies = list(replies)
+        self.calls: list[dict[str, Any]] = []
+
+    def _next(self) -> str:
+        if not self.replies:
+            raise LLMError("FakeLLM has no reply left")
+        reply = self.replies.pop(0)
+        if isinstance(reply, Exception):
+            raise reply
+        return reply
+
+    def complete(
+        self,
+        messages: list[ChatMessage],
+        *,
+        system: str = "",
+        max_tokens: int = 1024,
+        json_schema: dict[str, Any] | None = None,
+    ) -> LLMResponse:
+        self.calls.append({"messages": messages, "system": system, "schema": json_schema})
+        return LLMResponse(text=self._next(), model="fake", tokens_in=10, tokens_out=5)
+
+    def stream(
+        self,
+        messages: list[ChatMessage],
+        *,
+        system: str = "",
+        max_tokens: int = 2048,
+        result: StreamResult | None = None,
+    ) -> Iterator[str]:
+        self.calls.append({"messages": messages, "system": system, "schema": None})
+        sink = result if result is not None else StreamResult()
+        for word in self._next().split(" "):
+            sink.text_parts.append(f"{word} ")
+            yield f"{word} "
+        sink.model, sink.tokens_in, sink.tokens_out = "fake", 10, 5
+
+
+class FakeOcr:
+    """Returns fixed text, and counts how often it was called."""
+
+    def __init__(self, text: str = "") -> None:
+        self.text = text
+        self.calls = 0
+
+    def image_to_text(self, image: Image.Image) -> str:
+        self.calls += 1
+        return self.text
+
+
+class FakeIndexer:
+    """Stores records in memory."""
+
+    def __init__(self, fail_with: Exception | None = None) -> None:
+        self.records: dict[uuid.UUID, list[ChunkRecord]] = {}
+        self.superseded: set[uuid.UUID] = set()
+        self.fail_with = fail_with
+
+    def index(
+        self, records: Sequence[ChunkRecord], on_progress: Callable[[int, int], None]
+    ) -> None:
+        if self.fail_with is not None:
+            raise self.fail_with
+        for record in records:
+            self.records.setdefault(record.document_id, []).append(record)
+        on_progress(len(records), len(records))
+
+    def delete(self, document_id: uuid.UUID) -> None:
+        self.records.pop(document_id, None)
+
+    def mark_superseded(self, document_id: uuid.UUID) -> None:
+        self.superseded.add(document_id)
