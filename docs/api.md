@@ -147,5 +147,6 @@ Browsers cannot set an `Authorization` header on a WebSocket, and a token in the
 | Client to server | `{"type": "auth", "token": "<access token>"}` |
 | Server to client | `{"type": "ready"}` |
 | Server to client | `{"type": "notification", "id", "title", "body", "due_at", "reminder_id"}` |
-| Server to client | `{"type": "document_status", "document_id", "status", "progress"}` |
 | Either | `{"type": "ping"}` and `{"type": "pong"}` |
+
+Ingestion progress is read by polling `GET /documents/{id}/status`, not over this socket.

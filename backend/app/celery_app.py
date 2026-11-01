@@ -10,7 +10,7 @@ celery_app = Celery(
     "campusmind",
     broker=settings.redis_url,
     backend=settings.redis_url,
-    include=["app.ingestion.tasks"],
+    include=["app.ingestion.tasks", "app.reminders.tasks"],
 )
 celery_app.conf.update(
     task_always_eager=settings.celery_eager,
@@ -21,4 +21,7 @@ celery_app.conf.update(
     task_ignore_result=True,
     timezone="UTC",
     worker_prefetch_multiplier=1,
+    beat_schedule={
+        "dispatch-reminders": {"task": "reminders.dispatch", "schedule": 60.0},
+    },
 )

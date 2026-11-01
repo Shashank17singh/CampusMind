@@ -56,6 +56,12 @@ class Settings(BaseSettings):
     rag_cache_ttl_seconds: int = 3600
     rag_followups_enabled: bool = True
 
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_from: str = "CampusMind <no-reply@campusmind.local>"
+
     access_token_minutes: int = 15
 
     @property
