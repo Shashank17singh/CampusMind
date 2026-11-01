@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.agents.runner import get_agent_runner
 from app.api.auth import COOKIE_NAME, get_login_limiter
 from app.auth import service
 from app.auth.passwords import hash_password, needs_rehash, verify_password
@@ -36,8 +37,9 @@ from app.models.base import utcnow
 from app.rag.cache import AnswerCache
 from app.rag.service import get_rag_pipeline
 from app.vectorstore import get_vector_store
+from app.vectorstore.embeddings import get_embedder
 from tests.conftest import auth_header
-from tests.helpers import FakeLLM
+from tests.helpers import FakeLLM, HashingEmbedder
 from tests.test_vectorstore import add_ready_document
 
 PASSWORD = "correct horse battery"
@@ -879,6 +881,24 @@ PERMISSIONS: dict[tuple[str, str], set[str]] = {
     ("POST", f"{V1}/documents/{{document_id}}/reingest"): STAFF,
     ("POST", f"{V1}/documents/{{document_id}}/supersede"): STAFF,
     ("POST", f"{V1}/ask"): ANY,
+    ("POST", f"{V1}/conversations"): ANY,
+    ("GET", f"{V1}/conversations"): ANY,
+    ("GET", f"{V1}/conversations/search"): ANY,
+    ("GET", f"{V1}/conversations/export"): ANY,
+    ("GET", f"{V1}/conversations/{{conversation_id}}/messages"): ANY,
+    ("POST", f"{V1}/conversations/{{conversation_id}}/messages"): ANY,
+    ("PATCH", f"{V1}/conversations/{{conversation_id}}"): ANY,
+    ("DELETE", f"{V1}/conversations/{{conversation_id}}"): ANY,
+    ("POST", f"{V1}/messages/{{message_id}}/feedback"): ANY,
+    ("GET", f"{V1}/admin/feedback"): ADMIN,
+    ("GET", f"{V1}/admin/analytics/overview"): ADMIN,
+    ("GET", f"{V1}/admin/analytics/top-questions"): ADMIN,
+    ("GET", f"{V1}/admin/analytics/unanswered"): ADMIN,
+    ("GET", f"{V1}/admin/analytics/intents"): ADMIN,
+    ("GET", f"{V1}/admin/analytics/top-documents"): ADMIN,
+    ("GET", f"{V1}/admin/analytics/cost"): ADMIN,
+    ("GET", f"{V1}/admin/analytics/knowledge-gaps"): ADMIN,
+    ("GET", f"{V1}/admin/analytics/document-status"): ADMIN,
     ("POST", f"{V1}/study-plans"): ANY,
     ("GET", f"{V1}/study-plans"): ANY,
     ("GET", f"{V1}/study-plans/{{plan_id}}"): ANY,
@@ -939,6 +959,8 @@ class TestPermissionMatrix:
         app.dependency_overrides[get_llm] = lambda: FakeLLM()
         app.dependency_overrides[get_vector_store] = lambda: store
         app.dependency_overrides[get_rag_pipeline] = lambda: None
+        app.dependency_overrides[get_agent_runner] = lambda: None
+        app.dependency_overrides[get_embedder] = lambda: HashingEmbedder()
         return TestClient(app, raise_server_exceptions=False)
 
     def test_every_protected_route_is_in_the_matrix(self) -> None:

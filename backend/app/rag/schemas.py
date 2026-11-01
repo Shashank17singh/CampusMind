@@ -14,8 +14,9 @@ Confidence = Literal["high", "medium", "low"]
 
 
 class Citation(BaseModel):
-    """A source used in an answer."""
+    """A source used in an answer. `number` matches the [n] marker in the answer text."""
 
+    number: int
     document_id: uuid.UUID
     title: str
     page: int | None

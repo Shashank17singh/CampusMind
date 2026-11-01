@@ -411,6 +411,12 @@ class TestPipeline:
         assert "ECE lab rule" in llm.calls[0]["messages"][0].content
         assert answer.answered is True
 
+    def test_a_citation_keeps_the_number_used_in_the_text(self, harness: Harness) -> None:
+        harness.add("Exam fee rule one")
+        harness.add("Exam fee rule two")
+        answer = harness.pipeline(FakeLLM(["See [2] and [1]."])).answer(RagRequest("Exam fee rule"))
+        assert [citation.number for citation in answer.citations] == [2, 1]
+
     def test_an_invalid_citation_number_is_ignored(self, harness: Harness) -> None:
         harness.add(ATTENDANCE)
         answer = harness.pipeline(FakeLLM(["Claim [1] and [9] and [1]."])).answer(

@@ -68,7 +68,7 @@ def run_summary(
         else:
             with session_factory() as session:
                 chunks = load_chunks(session, document_id)  # type: ignore[arg-type]
-        result = Summarizer(llm).run(chunks, mode)
+        result = Summarizer(llm, settings.llm_max_concurrency).run(chunks, mode)
     except (SummaryError, IngestionError) as exc:
         _finish(session_factory, summary_id, error=str(exc))
         return False

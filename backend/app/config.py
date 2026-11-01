@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     ollama_base_url: str = "http://localhost:11434"
     llm_timeout_seconds: float = 120.0
+    llm_max_concurrency: int = Field(default=5, ge=1, le=5)
 
     upload_dir: Path = Path("./data/uploads")
     max_upload_mb: int = 25
@@ -48,6 +49,8 @@ class Settings(BaseSettings):
     rerank_enabled: bool = False
     rrf_vector_weight: float = 1.0
     rrf_bm25_weight: float = 1.0
+
+    conversation_retention_days: int = 365
 
     rag_top_k: int = 6
     rag_similarity_threshold: float = 0.45

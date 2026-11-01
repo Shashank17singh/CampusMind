@@ -430,6 +430,7 @@ class SummarizerAgent:
     retriever: HybridRetriever
     session_factory: sessionmaker[Session]
     enqueue: Callable[[uuid.UUID, str, uuid.UUID], None]
+    max_concurrent: int = MAX_CONCURRENT_CALLS
 
     def _find_document(self, request: HandlerInput) -> Document | None:
         """Search for the document the message refers to."""
@@ -459,7 +460,7 @@ class SummarizerAgent:
             request.emit(text)
             return HandlerResult(text, {"topics": topics})
 
-        result = Summarizer(self.llm).run(chunks, mode)
+        result = Summarizer(self.llm, self.max_concurrent).run(chunks, mode)
         text = render_text(result.content)
         if result.dropped_count:
             text += f"\n\n{result.dropped_count} items were removed as unsupported by the source."
@@ -477,6 +478,7 @@ def make_summarizer_handler(
     retriever: HybridRetriever,
     session_factory: sessionmaker[Session],
     enqueue: Callable[[uuid.UUID, str, uuid.UUID], None],
+    max_concurrent: int = MAX_CONCURRENT_CALLS,
 ) -> Handler:
     """Build the graph handler for the summarize intent."""
-    return SummarizerAgent(llm, retriever, session_factory, enqueue).handle
+    return SummarizerAgent(llm, retriever, session_factory, enqueue, max_concurrent).handle

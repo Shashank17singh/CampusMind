@@ -131,6 +131,7 @@ class RagPipeline:
             chunk = chunks[number - 1]
             citations.append(
                 Citation(
+                    number=number,
                     document_id=chunk.document_id,
                     title=chunk.title,
                     page=chunk.page_number,

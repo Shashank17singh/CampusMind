@@ -1,6 +1,7 @@
 """Celery application."""
 
 from celery import Celery
+from celery.schedules import crontab
 
 from app.config import get_settings
 
@@ -10,7 +11,12 @@ celery_app = Celery(
     "campusmind",
     broker=settings.redis_url,
     backend=settings.redis_url,
-    include=["app.ingestion.tasks", "app.reminders.tasks", "app.agents.summary_jobs"],
+    include=[
+        "app.ingestion.tasks",
+        "app.reminders.tasks",
+        "app.agents.summary_jobs",
+        "app.conversations.tasks",
+    ],
 )
 celery_app.conf.update(
     task_always_eager=settings.celery_eager,
@@ -23,5 +29,9 @@ celery_app.conf.update(
     worker_prefetch_multiplier=1,
     beat_schedule={
         "dispatch-reminders": {"task": "reminders.dispatch", "schedule": 60.0},
+        "delete-expired-conversations": {
+            "task": "conversations.delete_expired",
+            "schedule": crontab(hour=2, minute=0),
+        },
     },
 )

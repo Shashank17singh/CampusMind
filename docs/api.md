@@ -64,10 +64,10 @@ SSE events from `POST /conversations/{id}/messages`, sent as `event: <name>` wit
 
 | Event | Data |
 |---|---|
-| `meta` | `{trace_id, intent, message_id}` |
+| `meta` | `{trace_id, message_id}` |
 | `token` | `{text}` |
 | `citations` | `{citations: [{document_id, title, page, snippet}], confidence, suggested_followups}` |
-| `done` | `{latency_ms, tokens_in, tokens_out}` |
+| `done` | `{intent, latency_ms, tokens_in, tokens_out}` |
 | `error` | `{code, message, trace_id}` |
 
 ## Study plans
@@ -121,6 +121,7 @@ All take `?from=&to=` dates. Each report also takes `?format=csv`.
 | GET | `/admin/analytics/top-documents` | admin | range | `[{document_id, title, citations}]` |
 | GET | `/admin/analytics/cost` | admin | range | `[{day, tokens_in, tokens_out, cost_usd}]` |
 | GET | `/admin/analytics/knowledge-gaps` | admin | range | `[{topic, count, examples[]}]` |
+| GET | `/admin/analytics/document-status` | admin | none | `[{status, count}]` |
 | GET | `/admin/feedback` | admin | `?rating&reason` | page of `Feedback` |
 | GET | `/admin/traces/{trace_id}` | admin | none | `{trace_id, steps: [{node, input, output, latency_ms, tokens_in, tokens_out, error}]}` |
 

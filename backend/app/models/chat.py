@@ -85,12 +85,18 @@ class Message(Base):
         in_values("role", MESSAGE_ROLES, "role_valid"),
         Index("ix_messages_conversation_created", "conversation_id", "created_at"),
         Index("ix_messages_search_vector", "search_vector", postgresql_using="gin"),
-        Index("ix_messages_created_at", "created_at"),
+        Index("ix_messages_role_created", "role", "created_at"),
         Index("ix_messages_user_created", "user_id", text("created_at DESC")),
         Index(
             "ix_messages_unanswered",
             "created_at",
             postgresql_where=text("answered IS FALSE"),
+        ),
+        Index(
+            "ix_messages_conversation_role_created",
+            "conversation_id",
+            "role",
+            "created_at",
         ),
     )
 
