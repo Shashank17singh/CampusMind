@@ -17,7 +17,7 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import (
     PLAN_ITEM_STATUSES,
@@ -138,6 +138,13 @@ class StudyPlan(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     created_at: Mapped[CreatedAt]
     updated_at: Mapped[UpdatedAt]
+
+    items: Mapped[list["PlanItem"]] = relationship(
+        order_by="(PlanItem.date, PlanItem.start_time)",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        viewonly=False,
+    )
 
     __table_args__ = (Index("ix_study_plans_user_active", "user_id", "is_active"),)
 

@@ -62,7 +62,8 @@ _KEYWORDS: dict[Intent, re.Pattern[str]] = {
 }
 _SMALLTALK = re.compile(
     r"^\s*(hi|hii+|hello|hey|thanks|thank you|thx|ok|okay|bye|goodbye|good (morning|evening|night)"
-    r"|how are you|who are you|what can you do)\b[\s!.?,]*(there|a lot|so much|that helped)?[\s!.?]*$",
+    r"|how are you|who are you|what can you do)\b"
+    r"[\s!.?,]*(there|a lot|so much|that helped)?[\s!.?]*$",
     re.I,
 )
 _COLLEGE_WORDS = re.compile(
