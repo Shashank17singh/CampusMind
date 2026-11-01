@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+node_modules/
+dist/
+coverage/
+backend/data/
+backend/.pgdata/
+chroma_data/
+qdrant_data/
+*.log
