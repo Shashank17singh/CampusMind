@@ -10,7 +10,7 @@ celery_app = Celery(
     "campusmind",
     broker=settings.redis_url,
     backend=settings.redis_url,
-    include=["app.ingestion.tasks", "app.reminders.tasks"],
+    include=["app.ingestion.tasks", "app.reminders.tasks", "app.agents.summary_jobs"],
 )
 celery_app.conf.update(
     task_always_eager=settings.celery_eager,

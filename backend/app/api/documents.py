@@ -15,19 +15,24 @@ from fastapi import (
     UploadFile,
     status,
 )
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, select
 
 from app.audit import record_audit
 from app.auth.deps import CurrentUser, DbSession, require_role
+from app.auth.permissions import can_manage_document
 from app.config import get_settings
 from app.ingestion.errors import FileTooLargeError
 from app.ingestion.service import create_document
 from app.ingestion.storage import LocalStorage
 from app.ingestion.tasks import ingest_document
 from app.models import Document, User
+from app.rag.service import get_answer_cache
+from app.vectorstore import VectorStore, get_vector_store
 
 router = APIRouter(prefix="/documents", tags=["documents"])
+
+FacultyUser = Annotated[User, Depends(require_role("faculty", "admin"))]
 
 DocType = Literal["syllabus", "circular", "notice", "regulation", "notes", "contact_list"]
 
@@ -181,3 +186,111 @@ def get_document(document_id: uuid.UUID, db: DbSession, _: CurrentUser) -> Docum
 def get_status(document_id: uuid.UUID, db: DbSession, _: CurrentUser) -> Document:
     """Return ingestion status and progress percentage."""
     return _get_document(db, document_id)
+
+
+class DocumentUpdate(BaseModel):
+    """Editable document fields."""
+
+    title: str | None = Field(default=None, min_length=1, max_length=300)
+    doc_type: DocType | None = None
+    department: str | None = Field(default=None, max_length=50)
+    semester: int | None = Field(default=None, ge=1, le=8)
+
+
+class SupersedeRequest(BaseModel):
+    """The document that replaces this one."""
+
+    superseded_by_id: uuid.UUID
+
+
+def _manageable(db: DbSession, document_id: uuid.UUID, user: User) -> Document:
+    """Load a document the user may change, or raise 404 or 403."""
+    document = _get_document(db, document_id)
+    if not can_manage_document(user, document):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="You cannot manage this document")
+    return document
+
+
+def _queue_ingestion(db: DbSession, document: Document) -> None:
+    """Send a document through the pipeline again."""
+    document.status = "uploaded"
+    document.progress = 0
+    document.error_message = None
+    db.commit()
+    ingest_document.delay(str(document.id))
+    db.refresh(document)
+
+
+@router.patch("/{document_id}", response_model=DocumentOut)
+def update_document(
+    document_id: uuid.UUID, body: DocumentUpdate, db: DbSession, user: FacultyUser
+) -> Document:
+    """Edit a document. Filter fields live in the vector store too, so those re-ingest it."""
+    document = _manageable(db, document_id, user)
+    changes = body.model_dump(exclude_unset=True)
+    needs_reingest = any(
+        key in changes and getattr(document, key) != changes[key]
+        for key in ("doc_type", "department", "semester", "title")
+    )
+    for key, value in changes.items():
+        setattr(document, key, value)
+    db.commit()
+    if needs_reingest:
+        _queue_ingestion(db, document)
+    return document
+
+
+@router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_document(
+    document_id: uuid.UUID,
+    request: Request,
+    db: DbSession,
+    user: FacultyUser,
+    store: Annotated[VectorStore, Depends(get_vector_store)],
+) -> None:
+    """Delete a document, its chunks, its vectors and its file."""
+    document = _manageable(db, document_id, user)
+    store.delete_document(document.id)
+    LocalStorage(get_settings().upload_dir).delete(document.storage_path)
+    record_audit(
+        db,
+        "document.delete",
+        actor_id=user.id,
+        entity_type="document",
+        entity_id=str(document.id),
+        request=request,
+        details={"title": document.title},
+    )
+    db.delete(document)
+    db.commit()
+    get_answer_cache().invalidate()
+
+
+@router.post("/{document_id}/reingest", response_model=DocumentOut, status_code=202)
+def reingest_document(document_id: uuid.UUID, db: DbSession, user: FacultyUser) -> Document:
+    """Run a document through ingestion again."""
+    document = _manageable(db, document_id, user)
+    _queue_ingestion(db, document)
+    return document
+
+
+@router.post("/{document_id}/supersede", response_model=DocumentOut)
+def supersede_document(
+    document_id: uuid.UUID,
+    body: SupersedeRequest,
+    db: DbSession,
+    user: FacultyUser,
+    store: Annotated[VectorStore, Depends(get_vector_store)],
+) -> Document:
+    """Mark a document as replaced, which hides it from default searches."""
+    document = _manageable(db, document_id, user)
+    if body.superseded_by_id == document.id:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_CONTENT, detail="A document cannot replace itself"
+        )
+    _get_document(db, body.superseded_by_id)
+    document.superseded_by_id = body.superseded_by_id
+    db.commit()
+    store.mark_superseded(document.id)
+    get_answer_cache().invalidate()
+    return document

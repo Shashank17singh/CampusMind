@@ -2,6 +2,8 @@
 
 import hashlib
 import re
+import threading
+import time
 import uuid
 from collections.abc import Callable, Iterator, Sequence
 from typing import Any
@@ -53,6 +55,47 @@ class FakeLLM(LLMClient):
             sink.text_parts.append(f"{word} ")
             yield f"{word} "
         sink.model, sink.tokens_in, sink.tokens_out = "fake", 10, 5
+
+
+class RoutedLLM(LLMClient):
+    """Answers from a function of the prompt, for calls that run in parallel."""
+
+    def __init__(self, respond: Callable[[str, str], str]) -> None:
+        self.respond = respond
+        self.active = 0
+        self.peak = 0
+        self.calls = 0
+        self._lock = threading.Lock()
+
+    def complete(
+        self,
+        messages: list[ChatMessage],
+        *,
+        system: str = "",
+        max_tokens: int = 1024,
+        json_schema: dict[str, Any] | None = None,
+    ) -> LLMResponse:
+        with self._lock:
+            self.calls += 1
+            self.active += 1
+            self.peak = max(self.peak, self.active)
+        try:
+            time.sleep(0.01)
+            text = self.respond(system, messages[-1].content)
+        finally:
+            with self._lock:
+                self.active -= 1
+        return LLMResponse(text=text, model="fake", tokens_in=100, tokens_out=20)
+
+    def stream(
+        self,
+        messages: list[ChatMessage],
+        *,
+        system: str = "",
+        max_tokens: int = 2048,
+        result: StreamResult | None = None,
+    ) -> Iterator[str]:
+        raise NotImplementedError
 
 
 class FakeOcr:

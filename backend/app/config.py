@@ -63,11 +63,26 @@ class Settings(BaseSettings):
     smtp_from: str = "CampusMind <no-reply@campusmind.local>"
 
     access_token_minutes: int = 15
+    refresh_token_days: int = 7
+    cookie_secure: bool = False
+    allowed_email_domain: str = "college.edu"
+    frontend_url: str = "http://localhost:5173"
+    cors_origins: str = "http://localhost:5173"
 
     @property
     def max_upload_bytes(self) -> int:
         """Upload limit in bytes."""
         return self.max_upload_mb * 1024 * 1024
+
+    @property
+    def allowed_email_domains(self) -> set[str]:
+        """The college domains, from a comma-separated setting."""
+        return {part.strip().lower() for part in self.allowed_email_domain.split(",") if part}
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        """The allowed browser origins, from a comma-separated setting."""
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
     @property
     def resolved_llm_model(self) -> str:
@@ -86,6 +101,8 @@ class Settings(BaseSettings):
                 raise ValueError("SECRET_KEY must be a real secret of 32+ characters in production")
             if self.llm_provider == "anthropic" and not self.anthropic_api_key:
                 raise ValueError("ANTHROPIC_API_KEY is required when LLM_PROVIDER=anthropic")
+            if not self.cookie_secure:
+                raise ValueError("COOKIE_SECURE must be true in production")
         return self
 
 

@@ -116,18 +116,23 @@ class Summary(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
-    document_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False
+    document_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("documents.id", ondelete="CASCADE")
     )
+    source_name: Mapped[str] = mapped_column(Text, nullable=False)
     mode: Mapped[str] = mapped_column(Text, nullable=False)
-    content: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    status: Mapped[str] = mapped_column(Text, nullable=False, default="pending")
+    error_message: Mapped[str | None] = mapped_column(Text)
+    content: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     dropped_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     tokens_in: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     tokens_out: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    duration_ms: Mapped[int | None] = mapped_column(Integer)
     created_at: Mapped[CreatedAt]
 
     __table_args__ = (
         in_values("mode", SUMMARY_MODES, "mode_valid"),
+        in_values("status", ("pending", "ready", "failed"), "status_valid"),
         Index("ix_summaries_user_created", "user_id", text("created_at DESC")),
         Index("ix_summaries_document_mode", "document_id", "mode"),
     )

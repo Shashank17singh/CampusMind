@@ -12,16 +12,14 @@ Base path: `/api/v1`. Requests and responses are JSON unless noted. Authenticate
 
 | Method | Path | Role | Request | Response |
 |---|---|---|---|---|
-| POST | `/auth/register` | public | `{email, password, full_name, roll_number?, department?, semester?, section?}` | `201 {id, email}` |
-| POST | `/auth/verify-email` | public | `{token}` | `{verified: true}` |
-| POST | `/auth/resend-verification` | public | `{email}` | `202` |
+| POST | `/auth/register` | public | `{email, password, full_name, roll_number?, department?, semester?, section?}` | `202 {message}`, the same whether or not the address is taken |
+| POST | `/auth/verify-email` | public | `{token}` | `{message}` |
+| POST | `/auth/resend-verification` | public | `{email}` | `202 {message}` |
 | POST | `/auth/login` | public | `{email, password}` | `{access_token, expires_in, user}`, sets refresh cookie |
 | POST | `/auth/refresh` | public, cookie | none | `{access_token, expires_in}`, rotates cookie |
-| POST | `/auth/logout` | any | none | `204`, revokes token family |
-| POST | `/auth/forgot-password` | public | `{email}` | `202` |
+| POST | `/auth/logout` | public, cookie | none | `204`, revokes token family |
+| POST | `/auth/forgot-password` | public | `{email}` | `202 {message}` |
 | POST | `/auth/reset-password` | public | `{token, new_password}` | `204` |
-| GET | `/auth/google/login` | public | none | `302` to Google |
-| GET | `/auth/google/callback` | public | `?code&state` | `302` to app |
 | GET | `/users/me` | any | none | `User` |
 | PATCH | `/users/me` | any | `{full_name?, department?, semester?, section?, timezone?}` | `User` |
 
