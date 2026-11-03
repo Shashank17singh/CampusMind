@@ -30,7 +30,7 @@ function Flashcard({ item }: { item: SummaryItem }) {
       type="button"
       aria-pressed={flipped}
       onClick={() => setFlipped((value) => !value)}
-      className="flip-card min-h-32 w-full border border-rule bg-sheet p-4 text-left hover:bg-paper-2"
+      className="flip-card min-h-32 w-full panel p-4 text-left hover:bg-paper-2"
     >
       <span className="block text-sm text-muted">{flipped ? "Answer" : "Question"}</span>
       <span className="mt-1 block">
@@ -57,7 +57,7 @@ function SummaryView({ summary }: { summary: Summary }) {
   return (
     <section aria-label="Summary" className="mt-6">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold">{summary.source_name}</h2>
+        <h2 className="text-lg font-medium">{summary.source_name}</h2>
         <div className="flex gap-2">
           <Button onClick={() => void download("md")}>Markdown</Button>
           <Button onClick={() => void download("pdf")}>PDF</Button>
@@ -75,7 +75,7 @@ function SummaryView({ summary }: { summary: Summary }) {
       )}
       {groups.map((group) => (
         <div key={group.heading} className="mb-5">
-          {group.heading && <h3 className="mb-2 font-semibold">{group.heading}</h3>}
+          {group.heading && <h3 className="mb-2 font-medium">{group.heading}</h3>}
           {summary.mode === "flashcards" ? (
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
               {group.items.map((item) => (
@@ -144,7 +144,7 @@ export function SummarizerPage() {
     <>
       <PageHeader title="Summarizer" />
       <form
-        className="grid gap-4 border border-rule bg-sheet p-4 sm:grid-cols-2"
+        className="grid gap-4 panel p-4 sm:grid-cols-2"
         onSubmit={(event) => {
           event.preventDefault();
           start.mutate();
@@ -156,7 +156,7 @@ export function SummarizerPage() {
           </label>
           <select
             id="document"
-            className="min-h-10 w-full rounded border border-rule-2 bg-sheet px-2"
+            className="min-h-10 w-full field px-2"
             value={documentId}
             disabled={Boolean(file)}
             onChange={(event) => setDocumentId(event.target.value)}

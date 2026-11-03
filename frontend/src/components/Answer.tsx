@@ -38,7 +38,7 @@ export function AnswerText({ text, citations, onOpenCitation }: AnswerTextProps)
                   type="button"
                   onClick={() => onOpenCitation(citation)}
                   aria-label={`Source ${number}: ${citation.title}`}
-                  className="mx-0.5 inline-flex min-h-6 min-w-6 items-center justify-center rounded border border-accent px-1 align-baseline font-mono text-xs text-accent hover:bg-accent hover:text-accent-ink"
+                  className="mx-0.5 inline-flex min-h-6 min-w-6 items-center justify-center rounded-full bg-accent-soft px-1.5 align-baseline text-xs font-medium tabular-nums text-accent-soft-ink transition-colors hover:bg-accent hover:text-accent-ink"
                 >
                   {number}
                 </button>
@@ -68,19 +68,19 @@ export function CitationPanel({
   return (
     <aside
       aria-label="Source"
-      className="fixed inset-y-0 right-0 z-modal w-full max-w-md overflow-y-auto border-l border-rule-2 bg-sheet p-5 md:sticky md:top-20 md:z-auto md:h-fit md:max-h-[calc(100dvh-6rem)] md:w-80 md:shrink-0 md:border"
+      className="panel fixed inset-y-0 right-0 z-modal w-full max-w-md overflow-y-auto rounded-none p-6 md:sticky md:top-24 md:z-auto md:h-fit md:max-h-[calc(100dvh-7rem)] md:w-80 md:shrink-0 md:rounded-card"
     >
       <div className="flex items-start justify-between gap-2">
-        <h2 className="font-semibold">
-          <span className="mr-2 font-mono text-sm text-accent">{citation.number}</span>
-          {citation.title}
-        </h2>
+        <div className="min-w-0">
+          <p className="font-display text-3xl tabular-nums text-accent">{citation.number}</p>
+          <h2 className="mt-1 text-lg">{citation.title}</h2>
+        </div>
         <Button variant="ghost" aria-label="Close source" onClick={onClose} autoFocus>
           Close
         </Button>
       </div>
       {citation.page !== null && <p className="mt-1 text-sm text-muted">Page {citation.page}</p>}
-      <blockquote className="mt-4 border-l-2 border-accent pl-3 font-serif">
+      <blockquote className="mt-5 border-l-2 border-accent pl-4 leading-relaxed text-ink-2">
         {citation.snippet}
       </blockquote>
     </aside>
@@ -113,7 +113,7 @@ export function FeedbackBar({ messageId }: { messageId: string }) {
   };
 
   return (
-    <div className="relative mt-3 flex flex-wrap items-center gap-1">
+    <div className="relative mt-4 flex flex-wrap items-center gap-1 border-t border-rule pt-3">
       <Button
         variant="ghost"
         aria-label="Helpful"

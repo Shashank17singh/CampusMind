@@ -27,13 +27,13 @@ function Toasts() {
       className="fixed bottom-4 right-4 z-toast flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-2"
     >
       {toasts.map((toast) => (
-        <div key={toast.id} className="border border-rule-2 bg-sheet p-3">
+        <div key={toast.id} className="panel p-4">
           <div className="flex items-start justify-between gap-2">
             <p className="font-medium">{toast.title}</p>
             <button
               type="button"
               aria-label={`Dismiss ${toast.title}`}
-              className="min-h-6 min-w-6 text-muted"
+              className="min-h-11 min-w-11 rounded-full text-muted hover:bg-paper-3"
               onClick={() => dismiss(toast.id)}
             >
               ×
@@ -74,18 +74,18 @@ export function Shell() {
         Skip to content
       </a>
       <header className="sticky top-0 z-sticky border-b border-rule bg-paper">
-        <div className="mx-auto flex h-14 max-w-content items-center gap-4 px-4">
-          <NavLink to="/chat" className="font-semibold tracking-tight">
+        <div className="mx-auto flex h-16 max-w-content items-center gap-6 px-4">
+          <NavLink to="/chat" className="font-display text-lg font-medium tracking-tight">
             CampusMind
           </NavLink>
-          <nav aria-label="Main" className="hidden flex-1 gap-1 md:flex">
+          <nav aria-label="Main" className="hidden gap-1 rounded-full bg-paper-2 p-1 md:flex">
             {links.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
                 className={({ isActive }) =>
-                  `rounded px-3 py-2 text-sm ${
-                    isActive ? "bg-paper-3 font-medium" : "text-muted hover:text-ink"
+                  `inline-flex min-h-9 items-center rounded-full px-4 text-sm transition-colors ${
+                    isActive ? "control font-medium text-ink" : "text-muted hover:text-ink"
                   }`
                 }
               >
@@ -114,7 +114,11 @@ export function Shell() {
         {menuOpen && (
           <nav id="mobile-menu" aria-label="Mobile" className="border-t border-rule p-2 md:hidden">
             {links.map((link) => (
-              <NavLink key={link.to} to={link.to} className="block rounded px-3 py-3">
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) => `block rounded px-3 py-3 ${isActive ? "bg-paper-3 font-medium" : ""}`}
+              >
                 {link.label}
               </NavLink>
             ))}
@@ -124,7 +128,7 @@ export function Shell() {
           </nav>
         )}
       </header>
-      <main id="main" className="mx-auto w-full max-w-content flex-1 px-4 py-6">
+      <main id="main" className="mx-auto w-full max-w-content flex-1 px-4 py-8">
         <Outlet />
       </main>
       <Toasts />

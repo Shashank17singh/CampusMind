@@ -6,7 +6,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, errorMessage } from "../api/client";
 import type { Citation, Conversation, Message, Page, SearchHit } from "../api/types";
 import { AnswerText, CitationPanel, FeedbackBar } from "../components/Answer";
-import { Button, EmptyState, ErrorState, SkeletonRows } from "../components/ui";
+import { Button, ErrorState, SkeletonRows } from "../components/ui";
 import { streamMessage } from "../lib/sse";
 
 const CONVERSATIONS = ["conversations"];
@@ -84,7 +84,7 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
         <input
           aria-label="Conversation title"
           autoFocus
-          className="min-h-10 w-full rounded border border-rule-2 bg-sheet px-2 text-sm"
+          className="min-h-10 w-full field px-2 text-sm"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
         />
@@ -97,8 +97,8 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
       <Link
         to={`/chat/${conversation.id}`}
         aria-current={conversationId === conversation.id ? "page" : undefined}
-        className={`min-w-0 flex-1 truncate rounded px-2 py-2 text-sm ${
-          conversationId === conversation.id ? "bg-paper-3 font-medium" : "hover:bg-paper-2"
+        className={`min-w-0 flex-1 truncate rounded px-3 py-2.5 text-sm transition-colors ${
+          conversationId === conversation.id ? "bg-accent-soft font-medium text-accent-soft-ink" : "hover:bg-paper-3"
         }`}
       >
         {label}
@@ -137,7 +137,7 @@ function Sidebar() {
   });
 
   return (
-    <aside aria-label="Conversations" className="w-full md:w-72 md:shrink-0">
+    <aside aria-label="Conversations" className="w-full md:w-72 md:shrink-0 md:border-r md:border-rule md:pr-6">
       <Button variant="primary" className="mb-3 w-full" onClick={() => navigate("/chat")}>
         New conversation
       </Button>
@@ -145,7 +145,7 @@ function Sidebar() {
         type="search"
         aria-label="Search my messages"
         placeholder="Search my messages"
-        className="mb-3 min-h-10 w-full rounded border border-rule-2 bg-sheet px-3 text-sm"
+        className="mb-3 min-h-10 w-full field px-3 text-sm"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
@@ -159,7 +159,7 @@ function Sidebar() {
             <li key={hit.message_id}>
               <Link
                 to={`/chat/${hit.conversation_id}`}
-                className="block rounded p-2 text-sm hover:bg-paper-2"
+                className="block rounded p-2 text-sm hover:bg-paper-3"
               >
                 {hit.snippet.replace(/<\/?mark>/g, "")}
               </Link>
@@ -287,26 +287,29 @@ export function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 md:flex-row">
+    <div className="flex flex-col gap-8 md:flex-row">
       <Sidebar />
       <section aria-label="Conversation" className="flex min-w-0 flex-1 flex-col">
         {history.isLoading && <SkeletonRows label="Loading messages" />}
         {history.isError && <ErrorState error={history.error} />}
         {!conversationId && turns.length === 0 && (
-          <EmptyState title="Ask about your college">
-            Answers come from official documents, with their sources. You can also ask me to set
-            a reminder, plan your studies or summarize notes.
-          </EmptyState>
+          <div className="py-10">
+            <h1 className="page-title max-w-[18ch]">Ask about your college</h1>
+            <p className="mt-4 max-w-prose text-lg text-muted">
+              Answers come from official documents, with their sources. You can also ask me to set
+              a reminder, plan your studies or summarize notes.
+            </p>
+          </div>
         )}
 
-        <div role="log" aria-live="polite" aria-busy={streaming} className="flex-1 space-y-4">
+        <div role="log" aria-live="polite" aria-busy={streaming} className="flex-1 space-y-5">
           {turns.map((turn, index) =>
             turn.role === "user" ? (
-              <p key={turn.id} className="ml-auto w-fit max-w-[85%] bg-paper-3 px-3 py-2">
+              <p key={turn.id} className="ml-auto w-fit max-w-[85%] rounded-card rounded-br bg-paper-3 px-4 py-2.5">
                 {turn.content}
               </p>
             ) : (
-              <article key={turn.id} className="border border-rule bg-sheet p-4">
+              <article key={turn.id} className="panel p-6">
                 {turn.content ? (
                   <AnswerText
                     text={turn.content}
@@ -343,12 +346,12 @@ export function ChatPage() {
           </p>
         )}
 
-        <form onSubmit={submit} className="sticky bottom-0 mt-4 flex items-end gap-2 bg-paper py-2">
+        <form onSubmit={submit} className="panel sticky bottom-4 mt-6 flex items-end gap-2 p-2">
           <textarea
             aria-label="Your message"
             rows={2}
             placeholder="Ask a question"
-            className="min-h-10 flex-1 resize-y rounded border border-rule-2 bg-sheet p-2"
+            className="min-h-10 flex-1 resize-y rounded border-0 bg-transparent p-2 text-ink"
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={onKeyDown}

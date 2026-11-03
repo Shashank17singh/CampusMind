@@ -6,22 +6,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Night: blue-black, warm ink, and a lit amber in place of the teal. */
 [data-theme="dark"] {
   color-scheme: dark;
-  --color-paper: oklch(20% 0.012 245);
-  --color-paper-2: oklch(24% 0.014 245);
-  --color-paper-3: oklch(29% 0.014 245);
-  --color-sheet: oklch(25% 0.012 245);
-  --color-ink: oklch(93% 0.008 245);
-  --color-ink-2: oklch(86% 0.010 245);
-  --color-muted: oklch(72% 0.012 245);
-  --color-rule: oklch(34% 0.014 240);
-  --color-rule-2: oklch(72% 0.014 240);
-  --color-accent: oklch(74% 0.150 350);
-  --color-accent-2: oklch(80% 0.130 350);
-  --color-accent-ink: oklch(18% 0.020 350);
-  --color-error: oklch(72% 0.16 27);
-  --color-success: oklch(76% 0.13 150);
+  --color-paper: oklch(13.2% 0.022 258);
+  --color-paper-2: oklch(16.4% 0.022 258);
+  --color-paper-3: oklch(20% 0.022 258);
+  --color-sheet: oklch(17.5% 0.022 258);
+  --color-ink: oklch(93.5% 0.012 85);
+  --color-ink-2: oklch(86% 0.014 85);
+  --color-muted: oklch(72% 0.02 255);
+  --color-rule: oklch(27% 0.02 258);
+  --color-rule-2: oklch(52% 0.02 255);
+  --color-accent: oklch(82% 0.095 68);
+  --color-accent-2: oklch(86% 0.085 68);
+  --color-accent-ink: oklch(20% 0.03 62);
+  --color-accent-soft: oklch(30% 0.05 68);
+  --color-accent-soft-ink: oklch(90% 0.06 70);
+  --color-focus: oklch(82% 0.095 68);
+  --color-error: oklch(72% 0.15 27);
+  --color-success: oklch(76% 0.12 150);
+  --edge-light: inset 0 1px 0 oklch(100% 0 0 / 0.06);
+  --shadow-part: 0 1px 0 oklch(0% 0 0 / 0.5), 0 6px 12px -6px oklch(0% 0 0 / 0.6);
+  --shadow-panel: 0 1px 0 oklch(0% 0 0 / 0.45), 0 18px 36px -18px oklch(0% 0 0 / 0.7);
 }
 
 html,
@@ -32,19 +39,94 @@ body {
 body {
   background: var(--color-paper);
   color: var(--color-ink);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-md);
 }
 
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: var(--tracking-display);
+}
+
 :focus-visible {
-  outline: var(--rule-bar) solid var(--color-accent);
+  outline: var(--rule-bar) solid var(--color-focus);
   outline-offset: 2px;
+}
+
+@layer components {
+  /* A part lit from above: forms, answers and the source rest on these. */
+  .panel {
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: var(--radius-card);
+    background: linear-gradient(var(--color-sheet), var(--color-paper-2));
+    box-shadow: var(--edge-light), var(--shadow-panel);
+  }
+
+  /* A quieter, flat well for items inside a list or a calendar. */
+  .well {
+    border-radius: var(--radius-part);
+    background: var(--color-paper-2);
+  }
+
+  .field {
+    border: var(--rule-hair) solid var(--color-rule-2);
+    border-radius: var(--radius-part);
+    background: var(--color-sheet);
+    color: var(--color-ink);
+  }
+
+  .field:focus-visible {
+    outline-offset: 0;
+  }
+
+  .control {
+    border: var(--rule-hair) solid var(--color-rule);
+    background: linear-gradient(var(--color-sheet), var(--color-paper-2));
+    box-shadow: var(--edge-light), var(--shadow-part);
+  }
+
+  .control:hover:not(:disabled) {
+    background: linear-gradient(var(--color-paper-2), var(--color-paper-3));
+  }
+
+  .control-primary {
+    border: var(--rule-hair) solid var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+    box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.18), var(--shadow-part);
+  }
+
+  .control-primary:hover:not(:disabled) {
+    background: var(--color-accent-2);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 400;
+    letter-spacing: var(--tracking-display);
+    line-height: 1.05;
+  }
+
+  table thead th {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+
+  table tbody tr + tr {
+    border-top: var(--rule-hair) solid var(--color-rule);
+  }
 }
 
 .prose-answer {
   font-family: var(--font-body);
   font-size: 1.0625rem;
-  line-height: 1.6;
+  line-height: 1.65;
+  color: var(--color-ink-2);
   overflow-wrap: anywhere;
 }
 
@@ -67,13 +149,12 @@ body {
   max-width: 100%;
   overflow-x: auto;
   border-collapse: collapse;
-  font-family: var(--font-display);
   font-size: var(--text-sm);
 }
 
 .prose-answer th,
 .prose-answer td {
-  border: var(--rule-hair) solid var(--color-rule);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
   padding: var(--space-2xs) var(--space-xs);
   text-align: left;
 }
@@ -88,6 +169,7 @@ button:not(:disabled):active {
 }
 
 .skeleton {
+  border-radius: var(--radius-part);
   background: var(--color-paper-3);
   animation: pulse 1.4s var(--ease-in-out) infinite;
 }

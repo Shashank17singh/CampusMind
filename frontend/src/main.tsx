@@ -1,6 +1,6 @@
-import "@fontsource-variable/hanken-grotesk";
-import "@fontsource-variable/newsreader";
-import "@fontsource/ibm-plex-mono";
+import "@fontsource-variable/instrument-sans";
+import "@fontsource-variable/figtree";
+import "@fontsource/jetbrains-mono";
 import "./styles/app.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

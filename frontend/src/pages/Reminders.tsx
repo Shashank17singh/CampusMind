@@ -50,7 +50,7 @@ function QuickAdd() {
       <div className="flex gap-2">
         <input
           aria-label="New reminder"
-          className="min-h-10 min-w-0 flex-1 rounded border border-rule-2 bg-sheet px-3"
+          className="min-h-10 min-w-0 flex-1 field px-3"
           placeholder="Submit the DBMS assignment on Friday 5pm"
           value={text}
           onChange={(event) => setText(event.target.value)}
@@ -174,7 +174,7 @@ export function RemindersPage() {
         <table className="w-full">
           <caption className="sr-only">{view} reminders</caption>
           <thead>
-            <tr className="border-b border-rule-2 text-left text-sm">
+            <tr className="border-b border-rule text-left text-sm">
               <th scope="col" className="py-2 font-medium">
                 Reminder
               </th>

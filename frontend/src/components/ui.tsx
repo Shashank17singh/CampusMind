@@ -6,9 +6,9 @@ import { errorMessage } from "../api/client";
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 
 const VARIANTS: Record<Variant, string> = {
-  primary: "bg-accent text-accent-ink hover:bg-accent-2",
-  secondary: "border border-rule-2 text-ink hover:bg-paper-2",
-  ghost: "text-ink hover:bg-paper-2",
+  primary: "control-primary",
+  secondary: "control text-ink",
+  ghost: "text-ink-2 hover:bg-paper-3 hover:text-ink",
   danger: "border border-error text-error hover:bg-paper-2",
 };
 
@@ -20,7 +20,7 @@ export function Button({ variant = "secondary", className = "", type, ...rest }:
   return (
     <button
       type={type ?? "button"}
-      className={`inline-flex min-h-10 items-center justify-center gap-2 rounded px-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex min-h-10 items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${VARIANTS[variant]} ${className}`}
       {...rest}
     />
   );
@@ -44,7 +44,7 @@ export function Field({ label, hint, error, className = "", ...rest }: FieldProp
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className="min-h-10 w-full rounded border border-rule-2 bg-sheet px-3 text-ink"
+        className="field min-h-10 w-full px-3"
         {...rest}
       />
       {hint && !error && (
@@ -73,8 +73,8 @@ export function SkeletonRows({ rows = 4, label = "Loading" }: { rows?: number; l
 
 export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <div className="border border-dashed border-rule-2 p-8 text-center">
-      <p className="font-medium">{title}</p>
+    <div className="well p-8">
+      <p className="font-display text-xl">{title}</p>
       {children && <div className="mt-2 text-sm text-muted">{children}</div>}
     </div>
   );
@@ -82,7 +82,7 @@ export function EmptyState({ title, children }: { title: string; children?: Reac
 
 export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
   return (
-    <div role="alert" className="border border-error p-4">
+    <div role="alert" className="well border border-error p-4">
       <p className="text-error">{errorMessage(error)}</p>
       {onRetry && (
         <Button className="mt-3" onClick={onRetry}>
@@ -95,8 +95,8 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
 
 export function PageHeader({ title, actions }: { title: string; actions?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-      <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-3 border-b border-rule pb-4">
+      <h1 className="page-title">{title}</h1>
       {actions}
     </div>
   );
@@ -111,7 +111,7 @@ interface TabsProps<T extends string> {
 
 export function Tabs<T extends string>({ label, value, options, onChange }: TabsProps<T>) {
   return (
-    <div role="tablist" aria-label={label} className="mb-4 flex gap-1 border-b border-rule">
+    <div role="tablist" aria-label={label} className="mb-6 inline-flex flex-wrap gap-1 rounded-full bg-paper-3 p-1">
       {options.map((option) => (
         <button
           key={option.value}
@@ -119,10 +119,10 @@ export function Tabs<T extends string>({ label, value, options, onChange }: Tabs
           role="tab"
           aria-selected={option.value === value}
           onClick={() => onChange(option.value)}
-          className={`min-h-10 border-b-2 px-3 text-sm ${
+          className={`min-h-9 rounded-full px-4 text-sm transition-colors ${
             option.value === value
-              ? "border-accent font-medium text-ink"
-              : "border-transparent text-muted hover:text-ink"
+              ? "control font-medium text-ink"
+              : "text-muted hover:text-ink"
           }`}
         >
           {option.label}
@@ -147,7 +147,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, BoundarySt
     if (this.state.failed) {
       return (
         <main className="mx-auto max-w-prose p-8">
-          <h1 className="text-2xl font-semibold">This page hit a problem</h1>
+          <h1 className="page-title">This page hit a problem</h1>
           <p className="mt-2 text-muted">Reloading usually fixes it.</p>
           <Button className="mt-4" variant="primary" onClick={() => window.location.reload()}>
             Reload

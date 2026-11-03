@@ -37,9 +37,9 @@ const AXIS = { fontSize: 12, fill: "var(--color-muted)" };
 
 function Figure({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-t-2 border-rule-2 pt-2">
+    <div className="border-t border-rule pt-3">
       <p className="text-sm text-muted">{label}</p>
-      <p className="text-xl font-semibold tabular-nums">{value}</p>
+      <p className="mt-1 font-display text-3xl tabular-nums">{value}</p>
     </div>
   );
 }
@@ -47,7 +47,7 @@ function Figure({ label, value }: { label: string; value: string }) {
 function ChartBox({ title, children }: { title: string; children: React.ReactElement }) {
   return (
     <figure className="min-w-0">
-      <figcaption className="mb-2 font-medium">{title}</figcaption>
+      <figcaption className="mb-3 text-sm font-medium text-muted">{title}</figcaption>
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           {children}
@@ -181,7 +181,7 @@ function KnowledgeGaps() {
       <table className="w-full text-sm">
         <caption className="sr-only">Topics students asked about without a good answer</caption>
         <thead>
-          <tr className="border-b border-rule-2 text-left">
+          <tr className="border-b border-rule text-left">
             <th scope="col" className="py-2 font-medium">Topic</th>
             <th scope="col" className="py-2 font-medium">Times asked</th>
             <th scope="col" className="py-2 font-medium">Examples</th>
@@ -235,7 +235,7 @@ function Users() {
           type="search"
           aria-label="Search users"
           placeholder="Search by name or email"
-          className="min-h-10 min-w-0 flex-1 rounded border border-rule-2 bg-sheet px-3"
+          className="min-h-10 min-w-0 flex-1 field px-3"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -281,7 +281,7 @@ function Users() {
           <table className="w-full text-sm">
             <caption className="sr-only">Users</caption>
             <thead>
-              <tr className="border-b border-rule-2 text-left">
+              <tr className="border-b border-rule text-left">
                 <th scope="col" className="py-2 font-medium">Name</th>
                 <th scope="col" className="py-2 font-medium">Email</th>
                 <th scope="col" className="py-2 font-medium">Department</th>
@@ -297,7 +297,7 @@ function Users() {
                   <td className="py-2">
                     <select
                       aria-label={`Role for ${user.full_name}`}
-                      className="min-h-10 rounded border border-rule-2 bg-sheet px-2"
+                      className="min-h-10 field px-2"
                       value={user.role}
                       onChange={(event) => setRole.mutate({ id: user.id, role: event.target.value })}
                     >
@@ -345,7 +345,7 @@ function Documents() {
       <table className="w-full text-sm">
         <caption className="sr-only">All documents</caption>
         <thead>
-          <tr className="border-b border-rule-2 text-left">
+          <tr className="border-b border-rule text-left">
             <th scope="col" className="py-2 font-medium">Title</th>
             <th scope="col" className="py-2 font-medium">Department</th>
             <th scope="col" className="py-2 font-medium">Status</th>

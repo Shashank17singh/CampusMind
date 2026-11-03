@@ -43,7 +43,7 @@ function ProgressRow({ row }: { row: UploadRow }) {
   const value = row.status === "sending" ? row.sent : row.progress;
   const label = row.status === "sending" ? "Uploading" : STATUS_LABELS[row.status];
   return (
-    <li className="border border-rule bg-sheet p-3">
+    <li className="panel p-3">
       <div className="flex flex-wrap justify-between gap-2 text-sm">
         <span className="min-w-0 truncate font-medium">{row.name}</span>
         <span className="text-muted">
@@ -219,7 +219,7 @@ function MyDocuments() {
       <table className="w-full text-sm">
         <caption className="sr-only">My documents</caption>
         <thead>
-          <tr className="border-b border-rule-2 text-left">
+          <tr className="border-b border-rule text-left">
             <th scope="col" className="py-2 font-medium">Title</th>
             <th scope="col" className="py-2 font-medium">Type</th>
             <th scope="col" className="py-2 font-medium">Status</th>
@@ -293,7 +293,7 @@ function Assignments() {
 
   return (
     <>
-      <form onSubmit={submit} className="mb-6 grid gap-3 border border-rule bg-sheet p-4 sm:grid-cols-2">
+      <form onSubmit={submit} className="mb-6 grid gap-3 panel p-4 sm:grid-cols-2">
         <Field
           label="Title"
           required

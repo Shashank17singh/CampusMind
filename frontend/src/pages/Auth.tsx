@@ -11,9 +11,9 @@ import { useAuth } from "../stores/auth";
 function AuthCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <main className="flex min-h-dvh items-center justify-center p-4">
-      <div className="w-full max-w-sm border border-rule bg-sheet p-6">
-        <p className="mb-4 font-semibold tracking-tight">CampusMind</p>
-        <h1 className="mb-4 text-xl font-semibold">{title}</h1>
+      <div className="panel w-full max-w-sm p-8">
+        <p className="mb-8 font-display text-lg font-medium tracking-tight">CampusMind</p>
+        <h1 className="page-title mb-6">{title}</h1>
         {children}
       </div>
     </main>

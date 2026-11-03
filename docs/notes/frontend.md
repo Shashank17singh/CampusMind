@@ -44,7 +44,7 @@ Component tests stub the API. Only chat and upload have component tests, so the 
 
 ## Design
 
-Tokens are in `styles/tokens.css`, and Tailwind maps to them in `tailwind.config.js`, so no colour or font is written anywhere else. The one object the app is known by is the cited answer: a printed sheet in Newsreader, with numbered sources that open beside it.
+Tokens are in `styles/tokens.css`, and Tailwind maps to them in `tailwind.config.js`, so no colour or font is written anywhere else. The one object the app is known by is the cited answer: a top-lit panel set in Figtree, with numbered sources as pills that open beside it. Headings use Instrument Sans. Light mode is a warm paper with one teal, and dark mode a blue-black with one amber, both defined in `styles/app.css`.
 
 ## Known limits
 

@@ -9,10 +9,11 @@ import { Button, EmptyState, ErrorState, Field, PageHeader, SkeletonRows } from 
 import { formatDay, isoDay, shortTime, weekOf } from "../lib/format";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+// The kind is named in words on every block; the tag only makes new material easier to spot.
 const KIND_STYLES: Record<PlanItem["type"], string> = {
-  learn: "border-l-accent",
-  revise: "border-l-rule-2",
-  practice: "border-l-success",
+  learn: "bg-accent-soft text-accent-soft-ink",
+  revise: "bg-paper-3 text-ink-2",
+  practice: "bg-paper-3 text-ink-2",
 };
 
 function PlanForm({ onCreated }: { onCreated: (plan: StudyPlan) => void }) {
@@ -42,7 +43,7 @@ function PlanForm({ onCreated }: { onCreated: (plan: StudyPlan) => void }) {
   };
 
   return (
-    <form onSubmit={submit} className="space-y-4 border border-rule bg-sheet p-4">
+    <form onSubmit={submit} className="space-y-4 panel p-4">
       <fieldset>
         <legend className="mb-2 font-medium">Exams</legend>
         <div className="space-y-3">
@@ -138,21 +139,24 @@ function ItemCard({ item, planId }: { item: PlanItem; planId: string }) {
   });
 
   return (
-    <li className={`border border-l-4 border-rule bg-sheet p-2 text-sm ${KIND_STYLES[item.type]}`}>
-      <p className="font-mono text-xs text-muted">
-        {shortTime(item.start_time)} to {shortTime(item.end_time)}
-      </p>
+    <li className="well p-3 text-sm">
+      <div className="mb-1 flex items-center justify-between gap-2">
+        <p className="text-xs tabular-nums text-muted">
+          {shortTime(item.start_time)} to {shortTime(item.end_time)}
+        </p>
+        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${KIND_STYLES[item.type]}`}>{item.type}</span>
+      </div>
       <p className={item.status === "done" ? "line-through" : "font-medium"}>{item.topic}</p>
       <p className="text-muted">
         {item.subject}, {item.type}
         {item.status === "missed" && ", missed"}
       </p>
       {item.status === "pending" && (
-        <div className="mt-1 flex gap-1">
-          <Button variant="ghost" aria-label={`Done: ${item.topic}`} onClick={() => update.mutate("done")}>
+        <div className="mt-2 flex flex-wrap gap-1">
+          <Button variant="ghost" className="px-3" aria-label={`Done: ${item.topic}`} onClick={() => update.mutate("done")}>
             Done
           </Button>
-          <Button variant="ghost" aria-label={`Missed: ${item.topic}`} onClick={() => update.mutate("missed")}>
+          <Button variant="ghost" className="px-3" aria-label={`Missed: ${item.topic}`} onClick={() => update.mutate("missed")}>
             Missed
           </Button>
         </div>
@@ -182,12 +186,12 @@ function WeekView({ plan }: { plan: StudyPlan }) {
         </p>
         <Button onClick={() => move(1)}>Next week</Button>
       </div>
-      <div className="grid gap-3 md:grid-cols-7">
+      <div className="panel grid gap-0 overflow-hidden md:grid-cols-7">
         {days.map((day) => {
           const items = plan.items.filter((item) => item.date === day);
           return (
-            <div key={day} className="min-w-0">
-              <h3 className="mb-1 text-sm font-medium">{formatDay(day)}</h3>
+            <div key={day} className="min-w-0 border-rule p-3 [&:not(:first-child)]:border-t md:[&:not(:first-child)]:border-l md:[&:not(:first-child)]:border-t-0">
+              <h3 className="mb-2 text-sm font-medium">{formatDay(day)}</h3>
               {items.length > 0 ? (
                 <ul className="space-y-2">
                   {items.map((item) => (
@@ -276,7 +280,7 @@ export function PlannerPage() {
         }
       />
       {warnings.length > 0 && (
-        <ul className="mb-4 border border-rule-2 p-3 text-sm">
+        <ul className="well mb-4 space-y-1 p-3 text-sm" aria-label="Planner notes">
           {warnings.map((warning) => (
             <li key={warning}>{warning}</li>
           ))}
