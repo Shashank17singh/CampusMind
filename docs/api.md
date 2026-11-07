@@ -20,6 +20,9 @@ Base path: `/api/v1`. Requests and responses are JSON unless noted. Authenticate
 | POST | `/auth/logout` | public, cookie | none | `204`, revokes token family |
 | POST | `/auth/forgot-password` | public | `{email}` | `202 {message}` |
 | POST | `/auth/reset-password` | public | `{token, new_password}` | `204` |
+| GET | `/auth/providers` | public | none | `{google}`, which sign-in buttons to show |
+| GET | `/auth/google/start` | public | none | `302` to Google, sets a signed state cookie. `404` when not configured |
+| GET | `/auth/google/callback` | public, cookie | `?code&state` from Google | `302` to the app with the refresh cookie set, or to `/login?error=` |
 | GET | `/users/me` | any | none | `User` |
 | PATCH | `/users/me` | any | `{full_name?, department?, semester?, section?, timezone?}` | `User` |
 

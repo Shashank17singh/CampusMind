@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
+from app.auth.google import GoogleIdentity
 from app.auth.passwords import hash_password, needs_rehash, verify_password
 from app.auth.tokens import (
     InvalidTokenError,
@@ -212,6 +213,27 @@ def login(session: Session, email: str, password: str) -> TokenPair:
     user.locked_until = None
     if user.password_hash and needs_rehash(user.password_hash):
         user.password_hash = hash_password(password)
+    return _issue(session, user)
+
+
+def google_login(session: Session, identity: GoogleIdentity) -> TokenPair:
+    """Start a session for someone Google has vouched for, creating a student if new.
+
+    An existing account with the same address is reused, whatever its role, and is marked
+    verified because Google has verified the address.
+    """
+    address = normalize_email(identity.email)
+    if not domain_allowed(address):
+        raise DomainNotAllowedError("Please use your college Google account.")
+    user = find_user(session, address)
+    if user is None:
+        user = User(email=address, full_name=identity.name, role="student")
+        session.add(user)
+        session.flush()
+        log.info("google_account_created", user_id=str(user.id))
+    if not user.is_active:
+        raise AuthError("This account has been deactivated.")
+    user.email_verified_at = user.email_verified_at or utcnow()
     return _issue(session, user)
 
 

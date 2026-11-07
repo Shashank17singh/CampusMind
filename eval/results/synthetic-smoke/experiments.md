@@ -25,3 +25,4 @@ Questions: 29.
 |---|---|---|---|---|
 | vector | 0.226 | 1.000 | 0.958 | +0.010 [+0.000, +0.031] (no clear difference) |
 | hybrid | 0.220 | 1.000 | 0.948 | baseline |
+| hybrid+rerank | 0.216 | 1.000 | 0.972 | +0.024 [+0.000, +0.069] (no clear difference) |

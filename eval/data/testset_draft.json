@@ -1,0 +1,729 @@
+[
+  {
+    "question": "How many credits is the Digital Circuits & Logic course worth in the second year semester I syllabus?",
+    "gold_answer": "The Digital Circuits & Logic course is worth 3 credits (3-0-0).",
+    "relevant_document_ids": [
+      "ed4fd831-dd38-4561-954d-0ca34e11968d"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) second year syllabus (NEP), from 2024-25, pages 1-4"
+  },
+  {
+    "question": "What academic year does the B.Tech. CSE (AI) second year syllabus apply to?",
+    "gold_answer": "2024-25",
+    "relevant_document_ids": [
+      "ed4fd831-dd38-4561-954d-0ca34e11968d"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) second year syllabus (NEP), from 2024-25, pages 26-26"
+  },
+  {
+    "question": "What is the minimum total number of credits required for graduation in the B.Tech CSE (AI) program?",
+    "gold_answer": "The minimum total number of credits required for graduation is 160.",
+    "relevant_document_ids": [
+      "0fc30709-4212-410b-bdb1-e9ddaf4fc4f1"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) first year syllabus and course structure (revised NEP), 2026-27, pages 1-6"
+  },
+  {
+    "question": "How many teaching hours are allocated to Unit-2: Partial Differential Equations and its Applications?",
+    "gold_answer": "15 Hrs",
+    "relevant_document_ids": [
+      "0fc30709-4212-410b-bdb1-e9ddaf4fc4f1"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) first year syllabus and course structure (revised NEP), 2026-27, pages 17-20"
+  },
+  {
+    "question": "What is the maximum percentage of B.Tech. seats that may be filled by NRI/sponsored students according to the ordinance?",
+    "gold_answer": "Up to 5% of the seats may be filled by NRI/sponsored students.",
+    "relevant_document_ids": [
+      "6e78eb54-f8f4-4d47-a188-eced05263740"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Ordinance, Rules and Regulations (NEP), revised, from session 2026-27, pages 1-4"
+  },
+  {
+    "question": "What is the minimum passing grade for a paper according to the B.Tech. Ordinance?",
+    "gold_answer": "The minimum passing grade shall be \"P\".",
+    "relevant_document_ids": [
+      "6e78eb54-f8f4-4d47-a188-eced05263740"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Ordinance, Rules and Regulations (NEP), revised, from session 2026-27, pages 8-9"
+  },
+  {
+    "question": "What is the minimum credit requirement for the B.Tech degree as per the ordinance?",
+    "gold_answer": "The minimum credit requirement for the B.Tech degree is 192 credits.",
+    "relevant_document_ids": [
+      "0b73af83-2fbb-4ab6-8ed6-e94be247fef6"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Ordinance, Rules and Regulations, Faculty of Engineering (2018), pages 1-2"
+  },
+  {
+    "question": "What is the weightage and maximum marks for the Discipline/Behavior assessment in the General Proficiency component?",
+    "gold_answer": "The Discipline/Behavior of Students Inside/Outside Institute campus assessed by DSW has a weightage of 40% and a maximum of 20 marks.",
+    "relevant_document_ids": [
+      "0b73af83-2fbb-4ab6-8ed6-e94be247fef6"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Ordinance, Rules and Regulations, Faculty of Engineering (2018), pages 5-5"
+  },
+  {
+    "question": "When is lateral entry to the B.Tech second year allowed according to the ordinance?",
+    "gold_answer": "Lateral entry to the B.Tech second year is allowed in the Third Semester.",
+    "relevant_document_ids": [
+      "9cbd7f23-7ff2-44e9-b191-b2f9f24f8e36"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Ordinance, Rules and Regulations (NEP), from session 2023-24, pages 2-2"
+  },
+  {
+    "question": "To how many decimal places are numeric values of grades rounded?",
+    "gold_answer": "Grades are rounded to two places of decimal.",
+    "relevant_document_ids": [
+      "9cbd7f23-7ff2-44e9-b191-b2f9f24f8e36"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Ordinance, Rules and Regulations (NEP), from session 2023-24, pages 5-6"
+  },
+  {
+    "question": "What is the credit value for the course NCS-502 Database Management?",
+    "gold_answer": "4",
+    "relevant_document_ids": [
+      "770cc8b4-8abd-4ab4-b2d9-1557dcf3d163"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) third year syllabus (NEP), from 2025-26, pages 1-5"
+  },
+  {
+    "question": "What are the listed Course Outcomes (COs) for the NCS-602 Digital Image Processing course?",
+    "gold_answer": "The Course Outcomes (COs) for NCS-602 Digital Image Processing are: 1) Understand the fundamentals of a digital image processing system. 2) Analyze images in spatial and frequency domain. 3) Understand and analyze the techniques for image enhancement and restoration. 4) Understanding and implementation of morphological image processing. 5) Interpret Image compression standards, image segmentation and representation techniques.",
+    "relevant_document_ids": [
+      "770cc8b4-8abd-4ab4-b2d9-1557dcf3d163"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) third year syllabus (NEP), from 2025-26, pages 19-22"
+  },
+  {
+    "question": "What must students obtain before appearing for interviews according to the Placement Policy?",
+    "gold_answer": "Students must sign an undertaking/NOC from the University before appearing for interviews.",
+    "relevant_document_ids": [
+      "0e39046a-876d-477c-a457-975e30002a3f"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Placement Policy 2026, pages 1-2"
+  },
+  {
+    "question": "Can students contact recruiters directly according to the Placement Policy 2026?",
+    "gold_answer": "No, students are not authorized to contact recruiters directly; all communication must go through the Central Placement Cell.",
+    "relevant_document_ids": [
+      "0e39046a-876d-477c-a457-975e30002a3f"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Placement Policy 2026, pages 2-2"
+  },
+  {
+    "question": "What is the credit structure for the Cloud Computing course (NAI-702) in the B.Tech CSE (AI) fourth year syllabus?",
+    "gold_answer": "The Cloud Computing course (NAI-702) has a credit structure of 3-0-0 (3 theory credits, 0 lab credits, 0 project credits).",
+    "relevant_document_ids": [
+      "5ed2fa4c-812a-43f1-b09d-6555f0183cac"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) fourth year syllabus (NEP), from 2026-27, pages 1-2"
+  },
+  {
+    "question": "What are the course outcomes for NAI-7021/ NCS-7021 Cryptography?",
+    "gold_answer": "After the successful completion of the course student will be able to: learn the basic concepts of security threats, mechanisms, symmetric cryptography; analytical understanding of modern block cipher and public key encryption techniques; understanding the concept of hash functions and digital signature algorithms; applying the knowledge to authentication applications such as Kerberos & mailing application.",
+    "relevant_document_ids": [
+      "5ed2fa4c-812a-43f1-b09d-6555f0183cac"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) fourth year syllabus (NEP), from 2026-27, pages 10-12"
+  },
+  {
+    "question": "What is the time period for the odd semester according to the ordinance?",
+    "gold_answer": "The odd semester runs from July/August to December.",
+    "relevant_document_ids": [
+      "42fab34d-7cf5-4e12-8a88-c1a11003f4a9"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Ordinance for Undergraduate Programmes (2023), NEP 2020 framework, pages 2-3"
+  },
+  {
+    "question": "What is the minimum passing percentage required for a credit course and the aggregate passing percentage for a programme according to the ordinance?",
+    "gold_answer": "The passing percentage for each credit course is set at 33 percent, and an aggregate passing percentage of 36 percent is required for a programme.",
+    "relevant_document_ids": [
+      "42fab34d-7cf5-4e12-8a88-c1a11003f4a9"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Ordinance for Undergraduate Programmes (2023), NEP 2020 framework, pages 10-12"
+  },
+  {
+    "question": "To whom should a student report a discrimination or harassment incident according to the policy?",
+    "gold_answer": "A student should report the incident to the Internal Complaint Committee and also to the Office of the Dean, Student Welfare.",
+    "relevant_document_ids": [
+      "0311a8db-77df-4208-959b-340ae794dc90"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Anti-Discrimination and Anti-Harassment Policy, pages 1-1"
+  },
+  {
+    "question": "What must students wear on campus every day according to the Code of Conduct?",
+    "gold_answer": "Students must wear a ribboned identity card every day while on campus.",
+    "relevant_document_ids": [
+      "84932e6a-e0d5-4ba6-968b-be6a3aa9156d"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Code of Conduct for Students, pages 1-1"
+  },
+  {
+    "question": "How many copies of the project report must be submitted and where should they be submitted?",
+    "gold_answer": "Three copies must be submitted: one to the Supervisor/Guide, one to the Institute library, and one to the Departmental Library, along with a soft copy on a compact disc (CD).",
+    "relevant_document_ids": [
+      "b3bb5c04-2062-434c-afd9-73d21e084260"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Guidelines for preparing the project report, Faculty of Engineering and Technology, pages 2-2"
+  },
+  {
+    "question": "What font size, font type, and line spacing should be used for the self‑declaration section?",
+    "gold_answer": "The self‑declaration shall be in double line spacing using Times New Roman font size 12, with the heading DECLARATION in Times New Roman font size 14 bold centered about 60 mm–70 mm from the top of the page.",
+    "relevant_document_ids": [
+      "b3bb5c04-2062-434c-afd9-73d21e084260"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Guidelines for preparing the project report, Faculty of Engineering and Technology, pages 5-6"
+  },
+  {
+    "question": "What are the Departmental Elective courses offered in Semester VII for the B.Tech. CSE (AI) fourth year syllabus effective from session 2024-2025?",
+    "gold_answer": "The Departmental Elective -2 courses for Semester VII are: 1. AI-7041/CS-7041 Cryptography, 2. AI-7042/CS-7042 Distributed Computing, 3. AI-7043 Cyber Forensic Analytics, 4. AI-7044 Business Intelligence & Analytics, 5. AI-7045 Advance DBMS, 6. AI-7046 Software Testing & Audit.",
+    "relevant_document_ids": [
+      "98ebf42e-b4d1-4278-ac49-30f743e263be"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) fourth year syllabus, from 2024-25, pages 1-5"
+  },
+  {
+    "question": "What are the listed practical experiments for the Natural Language Processing Lab (Al-751)?",
+    "gold_answer": "1. Word Analysis\n2. Word Generation\n3. Morphology\n4. N-Grams\n5. N-Grams Smoothing\n6. POS Tagging: Hidden Markov Model\n7. POS Tagging: Viterbi Decoding\n8. Building POS Tagger\n9. Chunking\n10. Building Chunker",
+    "relevant_document_ids": [
+      "98ebf42e-b4d1-4278-ac49-30f743e263be"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE (AI) fourth year syllabus, from 2024-25, pages 15-19"
+  },
+  {
+    "question": "How many total credits are required for graduation in the B.Tech CSE program for 2026-27?",
+    "gold_answer": "The total number of credits for graduation will be kept to a minimum of 160.",
+    "relevant_document_ids": [
+      "b7376a20-764e-47a6-99fa-0d3e8cd6a304"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE first year syllabus and course structure (revised NEP), 2026-27, pages 1-6"
+  },
+  {
+    "question": "What are the listed Course Outcomes (COs) for the Environmental Science and Green Chemistry course?",
+    "gold_answer": "CO-1: To understand the concepts of basic chemistry and nanomaterials. CO-2: To make the students aware of global environmental issues e.g. global warming & Greenhouse effect, Ozone depletion, pollution and its prevention and understand various aspects of atmospheric chemistry. CO-3: To understand the analytical and conceptual skills required for environmental chemistry research. CO-4: To understand the specifications of pure water and its purification techniques. CO-5: To develop the knowledge about Green Chemistry and Green Technology.",
+    "relevant_document_ids": [
+      "b7376a20-764e-47a6-99fa-0d3e8cd6a304"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE first year syllabus and course structure (revised NEP), 2026-27, pages 18-20"
+  },
+  {
+    "question": "What is the quorum for meetings of the University Student Grievance Redressal Committee (USGRC), excluding the special invitee?",
+    "gold_answer": "Four members (including the Chairperson, but excluding the special invitee).",
+    "relevant_document_ids": [
+      "82599dd8-a624-4433-a017-8c92d7f1d8c8"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Grievance Redressal Policy, pages 1-3"
+  },
+  {
+    "question": "Within how many days must the USGRC send its report with recommendations to the Vice-Chancellor and the aggrieved student?",
+    "gold_answer": "Within a period of 15 working days from the date of receipt of the grievance.",
+    "relevant_document_ids": [
+      "82599dd8-a624-4433-a017-8c92d7f1d8c8"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Grievance Redressal Policy, pages 3-3"
+  },
+  {
+    "question": "What are the four departmental elective (DE) options listed for DE-1 in the third year syllabus?",
+    "gold_answer": "1. NCS-6051 Multimedia System\n2. NCS-6052 Software Testing & Audit\n3. NCS-6053 Data Mining and Warehousing\n4. NCS-6054 Soft Computing Techniques",
+    "relevant_document_ids": [
+      "a66acf2e-5cf2-4db7-9d33-4e5e3cadb62a"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE third year syllabus (NEP), from 2025-26, pages 1-5"
+  },
+  {
+    "question": "What are the Course Outcomes (COs) listed for the NCS-601 Computer Network course?",
+    "gold_answer": "After the successful completion of the course, the student will be able to: Understand basic computer network technology; Identify the different types of network topologies and protocols; Enumerate the layers of the OSI model and TCP/IP; Understand the concept of IP addressing, subnetting and routing mechanisms.",
+    "relevant_document_ids": [
+      "a66acf2e-5cf2-4db7-9d33-4e5e3cadb62a"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE third year syllabus (NEP), from 2025-26, pages 19-22"
+  },
+  {
+    "question": "Who is responsible for protecting legally restricted information according to the IT policy?",
+    "gold_answer": "The Custodian is primarily responsible for protecting legally restricted information.",
+    "relevant_document_ids": [
+      "1c086339-d23d-4d8b-a87f-17785a366f5e"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Information Technology Policy, pages 1-5"
+  },
+  {
+    "question": "Who is responsible for implementing the IT policy as approved by the Vice Chancellor of the University of Lucknow?",
+    "gold_answer": "The Computer Centre, the University of Lucknow System Manager, and the Director of the Computer Centre are responsible for implementing the IT policy as approved by the Vice Chancellor.",
+    "relevant_document_ids": [
+      "1c086339-d23d-4d8b-a87f-17785a366f5e"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Information Technology Policy, pages 5-7"
+  },
+  {
+    "question": "When does the B.Tech Computer Science and Engineering fourth year syllabus become effective?",
+    "gold_answer": "Effective from the Session: 2026-27",
+    "relevant_document_ids": [
+      "0ef99bef-a5a9-4a9e-8439-65e6e05e9715"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE fourth year syllabus (NEP), from 2026-27, pages 1-2"
+  },
+  {
+    "question": "What are the Course Outcomes (COs) listed for the NCS-7021 Cryptography course?",
+    "gold_answer": "After the successful completion of the course the student will be able to: 1) Learn the basic concepts of security threats, mechanisms, symmetric cryptography. 2) Gain analytical understanding of modern block cipher and public key encryption techniques. 3) Understand the concept of hash functions and digital signature algorithms. 4) Apply the knowledge to authentication applications such as Kerberos and mailing applications.",
+    "relevant_document_ids": [
+      "0ef99bef-a5a9-4a9e-8439-65e6e05e9715"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. CSE fourth year syllabus (NEP), from 2026-27, pages 11-13"
+  },
+  {
+    "question": "What is the credit (L‑T‑P) for the subject ‘Simple Communication’ (NEC‑603) in the B.Tech. ECE syllabus effective from 2025‑26?",
+    "gold_answer": "3‑0‑0",
+    "relevant_document_ids": [
+      "f570121e-4f29-4347-bc73-380925e21d4f"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. ECE third year syllabus (NEP), from 2025-26, pages 1-2"
+  },
+  {
+    "question": "What are the Course Outcomes (COs) listed for NEC-602 Microwave Engineering?",
+    "gold_answer": "CO1: Analyze fundamentals of microwave communication and waveguides. CO2: Analyze various passive microwave circuits and S-parameters. CO3: Analyze the characteristics of microwave tubes and gyro devices. CO4: Study the solid state microwave devices and load. Measure the Frequency, Wavelength, VSWR and impedance of a microwave signal.",
+    "relevant_document_ids": [
+      "f570121e-4f29-4347-bc73-380925e21d4f"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. ECE third year syllabus (NEP), from 2025-26, pages 20-24"
+  },
+  {
+    "question": "When was the University of Lucknow established?",
+    "gold_answer": "The University of Lucknow was established in 1920.",
+    "relevant_document_ids": [
+      "ca313d76-5da8-48b9-b547-7c654868037e"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Internship and Dissertation Programme Policy (draft), pages 1-2"
+  },
+  {
+    "question": "What is the monthly fee for students from outside the Lucknow University campus in the Internship/Dissertation programme?",
+    "gold_answer": "₹ 5000 per month",
+    "relevant_document_ids": [
+      "ca313d76-5da8-48b9-b547-7c654868037e"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Internship and Dissertation Programme Policy (draft), pages 6-7"
+  },
+  {
+    "question": "What is the credit value for the course NEC-701 Mobile & Wireless?",
+    "gold_answer": "3",
+    "relevant_document_ids": [
+      "81d59f92-03c9-4729-aff4-bb3308d3ac15"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. ECE fourth year syllabus (NEP), from 2026-27, pages 1-3"
+  },
+  {
+    "question": "What three laws are included in the Orbital Mechanics unit of the B.Tech. ECE fourth year syllabus?",
+    "gold_answer": "Kepler's three laws of planetary motion",
+    "relevant_document_ids": [
+      "81d59f92-03c9-4729-aff4-bb3308d3ac15"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. ECE fourth year syllabus (NEP), from 2026-27, pages 15-17"
+  },
+  {
+    "question": "What are the course outcomes (COs) listed for the course NME-7021 Renewable Energy Sources?",
+    "gold_answer": "CO1: Understand the need, scope, and environmental impact of renewable energy sources and compare them with conventional energy sources.\nCO2: Explain the working principles, components, and applications of solar systems (solar thermal and photovoltaic).\nCO3: Analyze the design, performance, and limitations of wind energy conversion systems.\nCO4: Describe the working and applications of biomass, biogas, and biofuel systems.\nCO5: Understand the principles and operation of small hydro, geothermal, tidal, and ocean energy technologies.",
+    "relevant_document_ids": [
+      "05c3ab13-9919-48f3-9887-e4b0ebd6b566"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Mechanical Engineering fourth year syllabus (NEP), from 2026-27, pages 1-4"
+  },
+  {
+    "question": "What are the course outcomes (COs) listed for NME-703 Plant Layout and Material Handling?",
+    "gold_answer": "CO1: Able to get the basics; CO2: Able process layout & product layout to get the idea about the material; CO3: Able to know about the handling systems and functions, different types material handling methods, paths equipments; CO3 (likely CO4): Able to design an integrated plant layout with efficient material flow considering safety, space utilization, flexibility, and economic factors.",
+    "relevant_document_ids": [
+      "05c3ab13-9919-48f3-9887-e4b0ebd6b566"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Mechanical Engineering fourth year syllabus (NEP), from 2026-27, pages 14-19"
+  },
+  {
+    "question": "What is the subject name for the code NCE701 in Semester VII?",
+    "gold_answer": "Water Resource Engineering",
+    "relevant_document_ids": [
+      "34662e58-0b8a-4aaf-9246-7a447f0f6345"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Civil Engineering fourth year syllabus (NEP), from 2026-27, pages 1-4"
+  },
+  {
+    "question": "What is the objective of CO3 in the B.Tech. Civil Engineering AI syllabus?",
+    "gold_answer": "To familiarize students with AI applications in different civil engineering domains.",
+    "relevant_document_ids": [
+      "34662e58-0b8a-4aaf-9246-7a447f0f6345"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Civil Engineering fourth year syllabus (NEP), from 2026-27, pages 16-19"
+  },
+  {
+    "question": "What units are included in the B.Tech. Electrical Engineering fourth year syllabus as described in the document?",
+    "gold_answer": "The syllabus includes the following units: UNIT-1 Fundamentals of Artificial Intelligence, UNIT-II Problem Solving and Search Techniques, UNIT-III Knowledge Representation and Reasoning, UNIT-IV Introduction to Machine Learning, UNIT-V AI Applications in Electrical Engineering, and additional sections on power system fundamentals, load forecasting, generation and transmission planning, and distribution planning and reliability concepts.",
+    "relevant_document_ids": [
+      "eeda4417-a814-4ed0-b5cc-b9373e9951e5"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. Electrical Engineering fourth year syllabus (NEP), from 2026-27, pages 10-12"
+  },
+  {
+    "question": "What topics are covered in Unit I of the NOE-8023 Engineering Economics course?",
+    "gold_answer": "Unit I covers: Economics – meaning, nature and scope of economics; introduction to engineering science, engineering, and technology and their role in economic development; demand and demand function; determinants of demand; law of demand; analysis of demand including meaning, exceptions, and shifts; concepts and measurement of price elasticity, income elasticity, and elasticity of demand; determinants of price elasticity of demand; uses of demand, cross elasticity, and other elasticities in managerial decision making.",
+    "relevant_document_ids": [
+      "b464dba6-b3e6-404f-8828-811f69c0e167"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. fourth year open elective syllabus (NEP), 2026-27, pages 1-5"
+  },
+  {
+    "question": "What are the course outcomes (COs) listed for the course NOE 8025 Advanced Mathematical Modelling and Fuzzy Optimization?",
+    "gold_answer": "CO1: Formulate and validate advanced mathematical models. CO2: Analyse nonlinear dynamical systems and assess stability. CO3: Solve optimisation problems using classical and advanced methods. CO4: Apply fuzzy set theory to manage uncertainty in systems. COS: Develop fuzzy optimisation models for engineering applications.",
+    "relevant_document_ids": [
+      "b464dba6-b3e6-404f-8828-811f69c0e167"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. fourth year open elective syllabus (NEP), 2026-27, pages 5-5"
+  },
+  {
+    "question": "What are the credit and L‑T‑P details for Engineering Mathematics‑I (NAS‑101) in Semester I?",
+    "gold_answer": "Engineering Mathematics‑I (NAS‑101) has an L‑T‑P of 3‑1‑0 and carries 4 credits.",
+    "relevant_document_ids": [
+      "12172444-7587-419d-a537-e3e99e09988d"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. first year syllabus, common to all branches (NEP), 2023-24, pages 1-3"
+  },
+  {
+    "question": "What is the minimum number of experiments that must be performed according to the syllabus?",
+    "gold_answer": "A minimum of ten experiments must be performed.",
+    "relevant_document_ids": [
+      "12172444-7587-419d-a537-e3e99e09988d"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "B.Tech. first year syllabus, common to all branches (NEP), 2023-24, pages 27-28"
+  },
+  {
+    "question": "When does the \"Artificial Intelligence: Concepts and Techniques\" SWAYAM MOOC start?",
+    "gold_answer": "20 Jul 2026",
+    "relevant_document_ids": [
+      "ae21ed75-1ea1-4507-a9b2-8b1dd5c6b3f1"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "SWAYAM MOOCs aligned courses, B.Tech. CSE, odd semester 2026-27, pages 1-1"
+  },
+  {
+    "question": "What is the last date to submit the application for direct admission?",
+    "gold_answer": "The application must reach the Dean, Faculty of Engineering & Technology, University of Lucknow by 07.08.2026.",
+    "relevant_document_ids": [
+      "6880047f-4368-4c3b-830a-3e957af27d84"
+    ],
+    "category": "time-sensitive",
+    "verified": false,
+    "synthetic": false,
+    "source": "Direct admission to vacant B.Tech., lateral entry and MCA seats after UPTAC-2026 (18 July 2026), pages 1-6"
+  },
+  {
+    "question": "What is the latest date by which applications must reach the University of Lucknow for direct admission?",
+    "gold_answer": "07.08.2026",
+    "relevant_document_ids": [
+      "6880047f-4368-4c3b-830a-3e957af27d84"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Direct admission to vacant B.Tech., lateral entry and MCA seats after UPTAC-2026 (18 July 2026), pages 3-6"
+  },
+  {
+    "question": "What is the last date for submitting the direct admission form for vacant engineering seats?",
+    "gold_answer": "27/08/2026",
+    "relevant_document_ids": [
+      "187602f1-71dc-482f-8a0e-30db1c00f759"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Extended last date for direct admission, B.Tech. and lateral entry (13 August 2026), pages 1-1"
+  },
+  {
+    "question": "What is the last date for submitting the direct admission form for vacant engineering seats?",
+    "gold_answer": "27/08/2026",
+    "relevant_document_ids": [
+      "187602f1-71dc-482f-8a0e-30db1c00f759"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Extended last date for direct admission, B.Tech. and lateral entry (13 August 2026), pages 1-1"
+  },
+  {
+    "question": "What is the date mentioned in the Direct admission schedule for vacant seats after UPTAC-2026?",
+    "gold_answer": "3 September 2026",
+    "relevant_document_ids": [
+      "5919a948-678f-4156-a17e-b0a13cb37dfd"
+    ],
+    "category": "time-sensitive",
+    "verified": false,
+    "synthetic": false,
+    "source": "Direct admission schedule for vacant seats after UPTAC-2026 (3 September 2026), pages 1-1"
+  },
+  {
+    "question": "When and where is the Direct Admission schedule for vacant seats after UPTAC-2026?",
+    "gold_answer": "The Direct Admission schedule is on 09.09.2026. Reporting time is the Commencement of Allotment. The venue is the Faculty of Engineering and Technology, University of Lucknow, Second Campus, Jankipuram Extension, Lucknow-226031.",
+    "relevant_document_ids": [
+      "5919a948-678f-4156-a17e-b0a13cb37dfd"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Direct admission schedule for vacant seats after UPTAC-2026 (3 September 2026), pages 1-1"
+  },
+  {
+    "question": "By what date must Shodh Medha scholarship application forms be submitted?",
+    "gold_answer": "10 September 2026",
+    "relevant_document_ids": [
+      "9bd52cf3-d502-489c-b078-4c2e29c1f473"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Submission of Shodh Medha scholarship applications, 2026-27, pages 1-1"
+  },
+  {
+    "question": "By what date must newly admitted students deposit the Rs 50 registration fee for hostel registration?",
+    "gold_answer": "By 9th September, 2026",
+    "relevant_document_ids": [
+      "db1f5400-57b1-48c1-9812-766b1ed59775"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "HMS registration for newly admitted students (8 September 2026), pages 1-1"
+  },
+  {
+    "question": "How many options are displayed on the student portal homepage?",
+    "gold_answer": "Three (3) options are displayed on the student portal homepage.",
+    "relevant_document_ids": [
+      "57637226-eba4-445c-ae0b-9471552bff44"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Samarth student portal login guide, pages 1-2"
+  },
+  {
+    "question": "How can a student reset a forgotten password on the Samarth student portal?",
+    "gold_answer": "They can reset it using the \"Reset password\" option.",
+    "relevant_document_ids": [
+      "57637226-eba4-445c-ae0b-9471552bff44"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "Samarth student portal login guide, pages 3-3"
+  },
+  {
+    "question": "Which faculty offers the B.Tech program?",
+    "gold_answer": "Faculty of Engineering",
+    "relevant_document_ids": [
+      "dc4494a9-44a0-47b2-b968-3a1e090c3719"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "UG Admission Information Brochure 2026-27, pages 1-7"
+  },
+  {
+    "question": "How many total self‑finance seats are available for the BCA programme?",
+    "gold_answer": "150",
+    "relevant_document_ids": [
+      "dc4494a9-44a0-47b2-b968-3a1e090c3719"
+    ],
+    "category": "factual",
+    "verified": false,
+    "synthetic": false,
+    "source": "UG Admission Information Brochure 2026-27, pages 39-41"
+  },
+  {
+    "question": "What is the wifi password for the boys hostel?",
+    "gold_answer": "I couldn't find this in the official documents",
+    "relevant_document_ids": [],
+    "category": "unanswerable",
+    "verified": false,
+    "synthetic": false,
+    "source": ""
+  },
+  {
+    "question": "Who won the inter-college cricket final last year?",
+    "gold_answer": "I couldn't find this in the official documents",
+    "relevant_document_ids": [],
+    "category": "unanswerable",
+    "verified": false,
+    "synthetic": false,
+    "source": ""
+  },
+  {
+    "question": "What is the phone number of the canteen owner?",
+    "gold_answer": "I couldn't find this in the official documents",
+    "relevant_document_ids": [],
+    "category": "unanswerable",
+    "verified": false,
+    "synthetic": false,
+    "source": ""
+  },
+  {
+    "question": "How many parking spaces does the college have?",
+    "gold_answer": "I couldn't find this in the official documents",
+    "relevant_document_ids": [],
+    "category": "unanswerable",
+    "verified": false,
+    "synthetic": false,
+    "source": ""
+  },
+  {
+    "question": "What was the highest placement package at another college?",
+    "gold_answer": "I couldn't find this in the official documents",
+    "relevant_document_ids": [],
+    "category": "unanswerable",
+    "verified": false,
+    "synthetic": false,
+    "source": ""
+  }
+]

@@ -265,12 +265,22 @@ class SpyEmail:
 
     def __init__(self, fail_for: set[str] | None = None) -> None:
         self.sent: list[tuple[str, str, str]] = []
+        self.message_ids: list[str | None] = []
         self.fail_for = fail_for or set()
 
-    def send(self, to: str, subject: str, body: str) -> None:
+    def send(self, to: str, subject: str, body: str, message_id: str | None = None) -> None:
         if to in self.fail_for:
             raise smtplib.SMTPException("rejected")
         self.sent.append((to, subject, body))
+        self.message_ids.append(message_id)
+
+
+class AcceptedThenCrash(SpyEmail):
+    """The mail server accepts the message, then the worker fails before it commits."""
+
+    def send(self, to: str, subject: str, body: str, message_id: str | None = None) -> None:
+        super().send(to, subject, body, message_id)
+        raise RuntimeError("worker died after the server accepted the message")
 
 
 class SpyPublisher:
@@ -407,6 +417,27 @@ class TestDelivery:
         working = SpyEmail()
         assert tick(when, working)[0] == 1
         assert len(working.sent) == 1
+
+    def test_a_resent_email_keeps_its_message_id(self, db: Session, user: User) -> None:
+        make_reminder(db, user)
+        when = NOW + timedelta(days=2)
+        crashed = AcceptedThenCrash()
+        tick(when, crashed)
+        retry = SpyEmail()
+        tick(when, retry)
+        # SMTP cannot be rolled back, so the retry sends a second copy. It carries the same
+        # Message-ID, which lets mail clients that deduplicate show it once.
+        assert len(crashed.sent) == len(retry.sent) == 1
+        assert crashed.message_ids[0] is not None
+        assert crashed.message_ids == retry.message_ids
+
+    def test_each_fire_time_gets_its_own_message_id(self, db: Session, user: User) -> None:
+        make_reminder(db, user)
+        email = SpyEmail()
+        tick(NOW + timedelta(days=2), email)
+        tick(NOW + timedelta(days=4), email)
+        assert len(email.message_ids) >= 2
+        assert len(set(email.message_ids)) == len(email.message_ids)
 
     def test_one_bad_address_does_not_block_others(
         self, db: Session, user: User, make_user: Callable[..., User]
@@ -968,6 +999,36 @@ class TestEmail:
         monkeypatch.setattr(smtplib, "SMTP", FakeSmtp)
         SmtpEmailSender("mail.test", 587, "user", "pw", "from@test").send("a@b.c", "Hi", "Body")
         assert events == ["connect mail.test:587", "starttls", "login user", "send a@b.c"]
+
+    def test_smtp_sender_sets_a_stable_message_id(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        sent: list[Any] = []
+
+        class FakeSmtp:
+            def __init__(self, *args: object, **kwargs: object) -> None:
+                pass
+
+            def __enter__(self) -> "FakeSmtp":
+                return self
+
+            def __exit__(self, *args: object) -> None:
+                return None
+
+            def starttls(self) -> None:
+                pass
+
+            def send_message(self, message: Any) -> None:
+                sent.append(message)
+
+        monkeypatch.setattr(smtplib, "SMTP", FakeSmtp)
+        sender = SmtpEmailSender("mail.test", 587, "", "", "CampusMind <no-reply@campus.test>")
+        sender.send("a@b.c", "Hi", "Body", message_id="reminder-key-1")
+        sender.send("a@b.c", "Hi", "Body", message_id="reminder-key-1")
+        sender.send("a@b.c", "Hi", "Body")
+        first, second, plain = (message["Message-ID"] for message in sent)
+        assert first == second
+        assert first.startswith("<") and first.endswith("@campus.test>")
+        assert "reminder-key-1" not in first
+        assert plain and plain != first
 
     def test_logging_sender_sends_nothing_and_does_not_fail(self) -> None:
         LoggingEmailSender().send("a@b.c", "Hi", "Body")

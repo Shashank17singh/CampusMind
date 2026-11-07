@@ -1,11 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { FormEvent, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-import { api, errorMessage } from "../api/client";
+import { API_BASE, api, errorMessage } from "../api/client";
 import type { User } from "../api/types";
-import { Button, Field } from "../components/ui";
+import { Button, Field, buttonClasses } from "../components/ui";
 import { useAuth } from "../stores/auth";
 
 function AuthCard({ title, children }: { title: string; children: ReactNode }) {
@@ -28,12 +28,27 @@ function Notice({ tone, children }: { tone: "error" | "info"; children: ReactNod
   );
 }
 
+const GOOGLE_ERRORS: Record<string, string> = {
+  domain: "Use your college Google account.",
+  cancelled: "Google sign-in was cancelled.",
+  google: "Google sign-in did not work. Try again, or log in with your password.",
+};
+
 export function LoginPage() {
   const setSession = useAuth((state) => state.setSession);
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [params] = useSearchParams();
+  const googleError = params.get("error");
+
+  const providers = useQuery({
+    queryKey: ["auth-providers"],
+    queryFn: () => api.get<{ google: boolean }>("/auth/providers").then((response) => response.data),
+    staleTime: Infinity,
+    retry: false,
+  });
 
   const login = useMutation({
     mutationFn: () =>
@@ -54,6 +69,11 @@ export function LoginPage() {
 
   return (
     <AuthCard title="Log in">
+      {googleError && (
+        <div className="mb-4">
+          <Notice tone="error">{GOOGLE_ERRORS[googleError] ?? GOOGLE_ERRORS.google}</Notice>
+        </div>
+      )}
       <form onSubmit={submit} className="space-y-4">
         <Field
           label="College email"
@@ -76,6 +96,11 @@ export function LoginPage() {
           {login.isPending ? "Logging in" : "Log in"}
         </Button>
       </form>
+      {providers.data?.google && (
+        <a href={`${API_BASE}/auth/google/start`} className={buttonClasses("secondary", "mt-3 w-full")}>
+          Continue with Google
+        </a>
+      )}
       <div className="mt-4 flex justify-between text-sm">
         <Link to="/register" className="underline">
           Create an account

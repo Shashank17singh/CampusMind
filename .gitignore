@@ -15,3 +15,7 @@ backend/.pgdata/
 chroma_data/
 qdrant_data/
 *.log
+
+# Downloaded evaluation corpora and their database ids. Manifests are committed.
+eval/corpus/*/
+eval/corpus/*.ids.json

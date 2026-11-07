@@ -20,6 +20,14 @@ def get_llm() -> LLMClient:
             model=settings.resolved_llm_model,
             timeout=settings.llm_timeout_seconds,
         )
+    if settings.llm_provider == "groq":
+        from app.llm.groq_client import GroqClient
+
+        return GroqClient(
+            api_key=settings.groq_api_key,
+            model=settings.resolved_llm_model,
+            timeout=settings.llm_timeout_seconds,
+        )
 
     from app.llm.ollama_client import OllamaClient
 

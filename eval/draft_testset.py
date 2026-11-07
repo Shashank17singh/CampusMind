@@ -4,6 +4,10 @@ Usage (from backend/):
 
     python ../eval/draft_testset.py --output ../eval/data/testset_draft.json --per-document 3
 
+Each question is drafted from a different passage, spread evenly through the document, so a
+long syllabus is not tested only on its first pages. Every draft records the pages it came
+from, so a reviewer knows where to check it.
+
 The LLM proposes questions, and every one is saved with "verified": false. A person then
 checks each answer against the document, fixes or deletes it, and sets "verified": true.
 `run_eval.py` refuses a file with unverified questions.
@@ -50,8 +54,29 @@ class DraftReply(BaseModel):
     questions: list[DraftItem] = Field(default_factory=list)
 
 
+def sample_windows(
+    chunks: list[tuple[int | None, str]], count: int, chunks_per_window: int = 3
+) -> list[tuple[list[int], str]]:
+    """Pick up to `count` runs of consecutive chunks, spread evenly through a document.
+
+    Each window is returned as its page numbers and its text.
+    """
+    starts = sorted({index * len(chunks) // count for index in range(count)})
+    windows = []
+    for start in starts:
+        run = chunks[start : start + chunks_per_window]
+        pages = sorted({page for page, _ in run if page is not None})
+        windows.append((pages, "\n\n".join(text for _, text in run)))
+    return windows
+
+
 def draft_for_document(
-    llm, document_id: str, title: str, text: str, limit: int
+    llm,
+    document_id: str,
+    title: str,
+    text: str,
+    limit: int,
+    source: str = "",
 ) -> list[LabelledQuestion]:
     """Ask the LLM for questions about one document. A failure yields none."""
     from app.llm import ChatMessage, LLMError
@@ -70,6 +95,7 @@ def draft_for_document(
             gold_answer=item.gold_answer,
             relevant_document_ids=[document_id],
             category=item.category,
+            source=source,
         )
         for item in reply.questions[:limit]
         if item.category != "unanswerable"
@@ -108,16 +134,22 @@ def main() -> None:
             select(Document).where(Document.status == "ready", Document.superseded_by_id.is_(None))
         ).all()
         for document in documents:
-            text = "\n\n".join(
-                session.scalars(
-                    select(ChunkMeta.text)
-                    .where(ChunkMeta.document_id == document.id)
-                    .order_by(ChunkMeta.chunk_index)
+            chunks = session.execute(
+                select(ChunkMeta.page_number, ChunkMeta.text)
+                .where(ChunkMeta.document_id == document.id)
+                .order_by(ChunkMeta.chunk_index)
+            ).all()
+            windows = sample_windows([(page, text) for page, text in chunks], args.per_document)
+            for pages, text in windows:
+                where = f", pages {pages[0]}-{pages[-1]}" if pages else ""
+                questions += draft_for_document(
+                    llm,
+                    str(document.id),
+                    document.title,
+                    text,
+                    1,
+                    source=f"{document.title}{where}",
                 )
-            )
-            questions += draft_for_document(
-                llm, str(document.id), document.title, text, args.per_document
-            )
 
     questions += unanswerable_questions()
     save_testset(questions, args.output)

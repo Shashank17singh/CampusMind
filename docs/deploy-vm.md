@@ -42,7 +42,8 @@ You need a domain name pointing at the server's public IP.
    | `SECRET_KEY` | Output of `openssl rand -hex 32` |
    | `POSTGRES_PASSWORD` | Output of `openssl rand -hex 16` |
    | `GRAFANA_PASSWORD` | A password of your choice |
-   | `LLM_PROVIDER`, `ANTHROPIC_API_KEY` | Your LLM |
+   | `LLM_PROVIDER` and `GROQ_API_KEY` or `ANTHROPIC_API_KEY` | Your LLM. The production stack has no Ollama, so pick a hosted one |
+   | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI` | Optional, for Google sign-in |
    | `ALLOWED_EMAIL_DOMAIN` | Your college's domain |
    | `SMTP_*` | A mail provider. Without this, no verification email is sent, so nobody can log in |
    | `COOKIE_SECURE` | `true` |

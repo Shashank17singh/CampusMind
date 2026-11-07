@@ -21,9 +21,10 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     celery_eager: bool = False
 
-    llm_provider: Literal["anthropic", "ollama"] = "ollama"
+    llm_provider: Literal["anthropic", "groq", "ollama"] = "ollama"
     llm_model: str = ""
     anthropic_api_key: str = ""
+    groq_api_key: str = ""
     ollama_base_url: str = "http://localhost:11434"
     llm_timeout_seconds: float = 120.0
     llm_max_concurrency: int = Field(default=5, ge=1, le=5)
@@ -69,6 +70,9 @@ class Settings(BaseSettings):
     refresh_token_days: int = 7
     cookie_secure: bool = False
     allowed_email_domain: str = "college.edu"
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    google_redirect_uri: str = ""
     frontend_url: str = "http://localhost:5173"
     cors_origins: str = "http://localhost:5173"
 
@@ -83,6 +87,11 @@ class Settings(BaseSettings):
         return {part.strip().lower() for part in self.allowed_email_domain.split(",") if part}
 
     @property
+    def google_enabled(self) -> bool:
+        """Google sign-in is offered only when a client ID is configured."""
+        return bool(self.google_client_id)
+
+    @property
     def cors_origin_list(self) -> list[str]:
         """The allowed browser origins, from a comma-separated setting."""
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
@@ -92,18 +101,23 @@ class Settings(BaseSettings):
         """The configured model, or the default for the selected provider."""
         if self.llm_model:
             return self.llm_model
-        return "claude-opus-5-5" if self.llm_provider == "anthropic" else "llama3.2:1b"
+        defaults = {"anthropic": "claude-opus-5-5", "groq": "openai/gpt-oss-120b"}
+        return defaults.get(self.llm_provider, "llama3.2:1b")
 
     @model_validator(mode="after")
     def _check(self) -> "Settings":
         """Reject combinations that can only fail later, at a worse time."""
         if self.chunk_overlap_tokens >= self.chunk_size_tokens:
             raise ValueError("CHUNK_OVERLAP_TOKENS must be smaller than CHUNK_SIZE_TOKENS")
+        if self.google_client_id and not (self.google_client_secret and self.google_redirect_uri):
+            raise ValueError("GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URI are needed with an ID")
         if self.environment == "production":
             if self.secret_key.startswith("dev-only") or len(self.secret_key) < 32:
                 raise ValueError("SECRET_KEY must be a real secret of 32+ characters in production")
             if self.llm_provider == "anthropic" and not self.anthropic_api_key:
                 raise ValueError("ANTHROPIC_API_KEY is required when LLM_PROVIDER=anthropic")
+            if self.llm_provider == "groq" and not self.groq_api_key:
+                raise ValueError("GROQ_API_KEY is required when LLM_PROVIDER=groq")
             if not self.cookie_secure:
                 raise ValueError("COOKIE_SECURE must be true in production")
         return self

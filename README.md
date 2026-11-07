@@ -107,7 +107,7 @@ graph TD
 | **Accounts and Roles** | Student, faculty and admin roles, Argon2 passwords, rotating refresh tokens, and login lockout                   |
 | **Conversations**      | History, full-text search, feedback on answers, and a retention limit                                            |
 | **Admin Analytics**    | Top questions, unanswered questions, knowledge gaps, LLM cost and document status                                |
-| **Swappable Parts**    | Chroma or Qdrant, and Anthropic or Ollama, each chosen by one environment variable                               |
+| **Swappable Parts**    | Chroma or Qdrant, and Anthropic, Groq or Ollama, each chosen by one environment variable                         |
 | **Evaluation Suite**   | Retrieval benchmarks, an LLM judge, Cohen's kappa against human labels, and a paired bootstrap                   |
 | **Web App**            | Light and dark themes, role-based pages, and layouts that hold down to 360px                                     |
 | **Monitoring**         | Prometheus metrics and a Grafana dashboard                                                                       |
@@ -120,7 +120,7 @@ graph TD
 | -------------- | --------------------------------------------------------------- |
 | Backend        | Python 3.11, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic        |
 | AI             | LangGraph, sentence-transformers (bge-small-en-v1.5), rank-bm25 |
-| LLM            | Anthropic API or Ollama, behind one `LLMClient` interface       |
+| LLM            | Anthropic, Groq or Ollama, behind one `LLMClient` interface     |
 | Data           | PostgreSQL 16, Redis, ChromaDB or Qdrant                        |
 | Jobs           | Celery worker and beat                                          |
 | Frontend       | React 18, TypeScript, Vite, Tailwind, React Query, Zustand      |
@@ -172,7 +172,7 @@ CampusMind/
 
 - Docker
 - Node.js 22
-- [Ollama](https://ollama.com), or an Anthropic API key
+- [Ollama](https://ollama.com), or a Groq or Anthropic API key
 
 ### Quick Start
 
@@ -237,21 +237,22 @@ The [deployment guide](docs/deploy-vm.md) covers running everything on one cloud
 
 CI builds the backend and frontend images and pushes them to GHCR on every push to `main`.
 
-| Variable                                    | Required           | Purpose                                                                  |
-| ------------------------------------------- | ------------------ | ------------------------------------------------------------------------ |
-| `SECRET_KEY`                                | Yes in production  | Signs tokens, at least 32 characters                                     |
-| `DATABASE_URL`, `REDIS_URL`                 | Yes in production  | Datastores. Local defaults apply otherwise                               |
-| `LLM_PROVIDER`                              | No                 | `anthropic` or `ollama`. `ollama` by default                             |
-| `LLM_MODEL`                                 | No                 | Overrides the provider's default model                                   |
-| `ANTHROPIC_API_KEY`                         | For the hosted LLM | Anthropic API key                                                        |
-| `LLM_MAX_CONCURRENCY`                       | No                 | Parallel summarizer calls. Use 1 with Ollama                             |
-| `VECTOR_BACKEND`                            | No                 | `chroma` or `qdrant`. Use `qdrant` once an API and a worker run together |
-| `CHUNK_SIZE_TOKENS`, `CHUNK_OVERLAP_TOKENS` | No                 | Chunking                                                                 |
-| `RERANK_ENABLED`                            | No                 | Adds the cross-encoder. Needs about 600 MB more memory                   |
-| `ALLOWED_EMAIL_DOMAIN`                      | No                 | Who may register, comma-separated. `college.edu` by default              |
-| `SMTP_HOST` and related                     | No                 | Mail. If empty, messages are logged and not sent                         |
-| `COOKIE_SECURE`                             | Yes in production  | Must be `true` in production                                             |
-| `CONVERSATION_RETENTION_DAYS`               | No                 | Older conversations are deleted. `0` keeps everything                    |
+| Variable                                    | Required          | Purpose                                                                  |
+| ------------------------------------------- | ----------------- | ------------------------------------------------------------------------ |
+| `SECRET_KEY`                                | Yes in production | Signs tokens, at least 32 characters                                     |
+| `DATABASE_URL`, `REDIS_URL`                 | Yes in production | Datastores. Local defaults apply otherwise                               |
+| `LLM_PROVIDER`                              | No                | `anthropic`, `groq` or `ollama`. `ollama` by default                     |
+| `LLM_MODEL`                                 | No                | Overrides the provider's default model                                   |
+| `ANTHROPIC_API_KEY`, `GROQ_API_KEY`         | For a hosted LLM  | The key for the chosen provider                                          |
+| `GOOGLE_CLIENT_ID` and related              | No                | Google sign-in. Off when empty                                           |
+| `LLM_MAX_CONCURRENCY`                       | No                | Parallel summarizer calls. Use 1 with Ollama                             |
+| `VECTOR_BACKEND`                            | No                | `chroma` or `qdrant`. Use `qdrant` once an API and a worker run together |
+| `CHUNK_SIZE_TOKENS`, `CHUNK_OVERLAP_TOKENS` | No                | Chunking                                                                 |
+| `RERANK_ENABLED`                            | No                | Adds the cross-encoder. Needs about 600 MB more memory                   |
+| `ALLOWED_EMAIL_DOMAIN`                      | No                | Who may register, comma-separated. `college.edu` by default              |
+| `SMTP_HOST` and related                     | No                | Mail. If empty, messages are logged and not sent                         |
+| `COOKIE_SECURE`                             | Yes in production | Must be `true` in production                                             |
+| `CONVERSATION_RETENTION_DAYS`               | No                | Older conversations are deleted. `0` keeps everything                    |
 
 Every variable is listed in [.env.example](.env.example).
 
@@ -277,14 +278,14 @@ Every variable is listed in [.env.example](.env.example).
 
 - No container has been started. CI builds both images, but the compose services, Nginx, certificates, backups and Grafana have not run.
 - Redis, Celery workers and beat, and SMTP have not run for real. Tests use fakes and eager tasks.
-- The hosted LLM client has only been tested against a stub, because it needs an API key.
-- Tesseract OCR and the re-ranker model have not been run. OCR tests use a stub.
+- The Anthropic and Groq clients have only been tested against stubs, because they need an API key.
+- Tesseract OCR has not been run. OCR tests use a stub.
 - Clickable citation chips are proven by component tests only, because `llama3.2:1b` never wrote a `[n]` marker in the browser runs.
 - Long summaries on `llama3.2:1b` are not usable: 40 pages took 47.5 minutes and produced one bullet. See [the notes](docs/notes/summarizer.md).
-- There are no evaluation numbers, because that needs real documents. The experiment grid has only run on a synthetic corpus, without the re-ranker.
+- There are no evaluation numbers, because that needs real documents. The experiment grid, re-ranker included, has only run on a synthetic corpus.
 - Chat has no per-user rate limit, only Nginx's limit per IP address, so one account could run up a hosted LLM bill.
 - When Redis is down, each failed cache call waits about 4 seconds before carrying on.
-- Google sign-in is not built.
+- Google sign-in is tested against a stand-in for Google only. It needs a real Google Cloud client ID to try for real.
 
 ---
 

@@ -18,10 +18,11 @@ from dataset import (  # noqa: E402
     save_testset,
     summarize,
 )
-from draft_testset import draft_for_document, unanswerable_questions  # noqa: E402
+from draft_testset import draft_for_document, sample_windows, unanswerable_questions  # noqa: E402
 from experiments import Config, add_significance, corpus_key, default_grid  # noqa: E402
 from metrics import cohen_kappa, paired_bootstrap, percentile  # noqa: E402
 from report import SYNTHETIC_NOTE, markdown_tables, write_report  # noqa: E402
+from review_sheet import export_sheet, import_sheet  # noqa: E402
 from run_eval import (  # noqa: E402
     JUDGE_SYSTEM,
     QuestionResult,
@@ -100,6 +101,21 @@ class TestDrafting:
 
     def test_an_llm_failure_skips_the_document(self) -> None:
         assert draft_for_document(FakeLLM([LLMError("x")]), "d", "T", "x", 2) == []
+
+    def test_the_source_hint_is_kept(self) -> None:
+        reply = json.dumps({"questions": [{"question": "When?", "gold_answer": "June"}]})
+        drafts = draft_for_document(FakeLLM([reply]), "d1", "T", "text", 1, source="T, pages 4-5")
+        assert drafts[0].source == "T, pages 4-5"
+
+    def test_windows_cover_the_whole_document(self) -> None:
+        chunks = [(page, f"chunk {page}") for page in range(1, 41)]
+        windows = sample_windows(chunks, count=3, chunks_per_window=2)
+        assert [pages for pages, _ in windows] == [[1, 2], [14, 15], [27, 28]]
+        assert windows[0][1] == "chunk 1\n\nchunk 2"
+
+    def test_a_short_document_gives_one_window(self) -> None:
+        windows = sample_windows([(None, "only")], count=3, chunks_per_window=2)
+        assert windows == [([], "only")]
 
     def test_refusal_cases_have_no_sources_and_need_review(self) -> None:
         cases = unanswerable_questions()
@@ -335,3 +351,58 @@ class TestReport:
         assert "| hybrid | 0.500 | 0.800 | 0.700 | baseline |" in markdown_tables(
             self.rows(), False, 4
         )
+
+
+class TestReviewSheet:
+    IDS = {"ordinance.pdf": "d1", "syllabus.pdf": "d2"}
+
+    def test_round_trip_keeps_only_rows_marked_keep(self, tmp_path: Path) -> None:
+        drafts = [
+            question(question="What is the fee?", verified=False, source="Ordinance, page 3"),
+            question(question="Bad draft?", verified=False),
+        ]
+        sheet = tmp_path / "review.csv"
+        export_sheet(drafts, self.IDS, sheet)
+        rows = list(csv.DictReader(sheet.open(encoding="utf-8-sig")))
+        assert rows[0]["documents"] == "ordinance.pdf"
+        assert rows[0]["source"] == "Ordinance, page 3"
+        rows[0]["keep"] = "y"
+        rows[0]["gold_answer"] = "Rs 800, corrected"
+        rows[1]["keep"] = ""
+        with sheet.open("w", newline="", encoding="utf-8-sig") as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+            writer.writeheader()
+            writer.writerows(rows)
+
+        kept = import_sheet(sheet, self.IDS)
+        assert [item.question for item in kept] == ["What is the fee?"]
+        assert kept[0].gold_answer == "Rs 800, corrected"
+        assert kept[0].verified is True
+        assert kept[0].relevant_document_ids == ["d1"]
+
+    def test_a_hand_written_multi_hop_row_is_accepted(self, tmp_path: Path) -> None:
+        sheet = tmp_path / "review.csv"
+        export_sheet([], self.IDS, sheet)
+        with sheet.open("a", newline="", encoding="utf-8-sig") as handle:
+            csv.writer(handle).writerow(
+                [
+                    "",
+                    "y",
+                    "multi-hop",
+                    "Which rule and course?",
+                    "Both",
+                    "",
+                    "ordinance.pdf; syllabus.pdf",
+                ]
+            )
+        kept = import_sheet(sheet, self.IDS)
+        assert kept[0].category == "multi-hop"
+        assert kept[0].relevant_document_ids == ["d1", "d2"]
+
+    def test_an_unknown_document_name_is_reported(self, tmp_path: Path) -> None:
+        sheet = tmp_path / "review.csv"
+        export_sheet([], self.IDS, sheet)
+        with sheet.open("a", newline="", encoding="utf-8-sig") as handle:
+            csv.writer(handle).writerow(["", "y", "factual", "Q?", "A", "", "missing.pdf"])
+        with pytest.raises(ValueError, match="missing.pdf"):
+            import_sheet(sheet, self.IDS)

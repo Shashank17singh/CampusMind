@@ -19,6 +19,8 @@ class LabelledQuestion(BaseModel):
     category: Category
     verified: bool = False
     synthetic: bool = False
+    source: str = ""
+    """Where a reviewer can check the answer, such as a title and pages."""
 
     @model_validator(mode="after")
     def _check_consistency(self) -> "LabelledQuestion":

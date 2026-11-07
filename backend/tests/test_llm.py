@@ -9,9 +9,11 @@ import httpx
 import pytest
 from pydantic import BaseModel
 
+from app.config import Settings
 from app.llm import ChatMessage, LLMError, StreamResult
 from app.llm.anthropic_client import AnthropicClient, _strict_schema
 from app.llm.base import extract_json
+from app.llm.groq_client import GroqClient
 from app.llm.ollama_client import OllamaClient
 
 MESSAGES = [ChatMessage("user", "hello")]
@@ -214,3 +216,155 @@ def test_strict_schema_handles_nested_objects() -> None:
     assert schema["additionalProperties"] is False
     assert schema["$defs"]["Inner"]["additionalProperties"] is False
     assert "title" not in schema
+
+
+def groq(handler: Any, model: str = "openai/gpt-oss-120b", retries: int = 2) -> GroqClient:
+    """Build a Groq client whose HTTP calls go to `handler`, without real waiting."""
+    return GroqClient(
+        "test-key",
+        model,
+        transport=httpx.MockTransport(handler),
+        max_retries=retries,
+        sleep=lambda _: None,
+    )
+
+
+def groq_reply(content: str, prompt: int = 11, completion: int = 4) -> dict[str, Any]:
+    return {
+        "model": "openai/gpt-oss-120b",
+        "choices": [{"message": {"role": "assistant", "content": content}}],
+        "usage": {"prompt_tokens": prompt, "completion_tokens": completion},
+    }
+
+
+class TestGroq:
+    def test_complete_sends_key_system_prompt_and_reads_usage(self) -> None:
+        seen: dict[str, Any] = {}
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            seen["auth"] = request.headers["authorization"]
+            seen["url"] = str(request.url)
+            seen["body"] = json.loads(request.content)
+            return httpx.Response(200, json=groq_reply("hi"))
+
+        response = groq(handler).complete(MESSAGES, system="Be brief", max_tokens=50)
+        body = seen["body"]
+        assert seen["auth"] == "Bearer test-key"
+        assert seen["url"].endswith("/openai/v1/chat/completions")
+        assert body["messages"] == [
+            {"role": "system", "content": "Be brief"},
+            {"role": "user", "content": "hello"},
+        ]
+        assert body["max_completion_tokens"] == 50
+        assert body["reasoning_effort"] == "low"
+        assert body["include_reasoning"] is False
+        assert (response.text, response.tokens_in, response.tokens_out) == ("hi", 11, 4)
+
+    def test_reasoning_options_are_only_sent_to_gpt_oss(self) -> None:
+        seen: dict[str, Any] = {}
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            seen.update(json.loads(request.content))
+            return httpx.Response(200, json=groq_reply("hi"))
+
+        groq(handler, model="llama-3.3-70b-versatile").complete(MESSAGES)
+        assert "reasoning_effort" not in seen
+        assert "include_reasoning" not in seen
+
+    def test_json_mode_puts_the_schema_in_the_prompt(self) -> None:
+        seen: dict[str, Any] = {}
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            seen.update(json.loads(request.content))
+            return httpx.Response(200, json=groq_reply('{"value": 5}'))
+
+        parsed, _ = groq(handler).complete_json(MESSAGES, Answer, system="Count.")
+        assert parsed.value == 5
+        assert seen["response_format"] == {"type": "json_object"}
+        system = seen["messages"][0]["content"]
+        assert system.startswith("Count.")
+        assert '"value"' in system and "JSON" in system
+
+    def test_rate_limit_is_retried_after_the_given_wait(self) -> None:
+        waits: list[float] = []
+        calls = iter(
+            [
+                httpx.Response(429, headers={"retry-after": "3"}),
+                httpx.Response(200, json=groq_reply("ok")),
+            ]
+        )
+        client = GroqClient(
+            "k",
+            "openai/gpt-oss-120b",
+            transport=httpx.MockTransport(lambda _: next(calls)),
+            sleep=waits.append,
+        )
+        assert client.complete(MESSAGES).text == "ok"
+        assert waits == [3.0]
+
+    def test_rate_limit_gives_up_after_the_retries(self) -> None:
+        attempts: list[int] = []
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            attempts.append(1)
+            return httpx.Response(429, headers={"retry-after": "1"})
+
+        with pytest.raises(LLMError, match="429"):
+            groq(handler, retries=2).complete(MESSAGES)
+        assert len(attempts) == 3
+
+    def test_client_errors_are_not_retried(self) -> None:
+        attempts: list[int] = []
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            attempts.append(1)
+            return httpx.Response(401, json={"error": {"message": "Invalid API Key"}})
+
+        with pytest.raises(LLMError, match="Invalid API Key"):
+            groq(handler).complete(MESSAGES)
+        assert len(attempts) == 1
+
+    def test_connection_failure_raises_llm_error(self) -> None:
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.ConnectError("refused")
+
+        with pytest.raises(LLMError):
+            groq(handler, retries=0).complete(MESSAGES)
+
+    def test_stream_yields_fragments_and_records_usage(self) -> None:
+        events = [
+            {"model": "openai/gpt-oss-120b", "choices": [{"delta": {"role": "assistant"}}]},
+            {"choices": [{"delta": {"content": "Hel"}}]},
+            {"choices": [{"delta": {"content": "lo"}}]},
+            {
+                "choices": [{"delta": {}, "finish_reason": "stop"}],
+                "x_groq": {"usage": {"prompt_tokens": 9, "completion_tokens": 2}},
+            },
+        ]
+        body = "".join(f"data: {json.dumps(event)}\n\n" for event in events) + "data: [DONE]\n\n"
+        seen: dict[str, Any] = {}
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            seen.update(json.loads(request.content))
+            return httpx.Response(200, text=body)
+
+        result = StreamResult()
+        assert list(groq(handler).stream(MESSAGES, result=result)) == ["Hel", "lo"]
+        assert seen["stream"] is True
+        assert (result.text, result.tokens_in, result.tokens_out) == ("Hello", 9, 2)
+        assert result.model == "openai/gpt-oss-120b"
+
+    def test_stream_failure_raises_llm_error(self) -> None:
+        with pytest.raises(LLMError):
+            list(groq(lambda _: httpx.Response(500), retries=0).stream(MESSAGES))
+
+
+class TestGroqSettings:
+    def test_groq_defaults_to_gpt_oss_120b(self) -> None:
+        assert Settings(llm_provider="groq").resolved_llm_model == "openai/gpt-oss-120b"
+
+    def test_production_needs_a_groq_key(self) -> None:
+        secure = {"environment": "production", "secret_key": "s" * 40, "cookie_secure": True}
+        with pytest.raises(ValueError, match="GROQ_API_KEY"):
+            Settings(llm_provider="groq", **secure)
+        Settings(llm_provider="groq", groq_api_key="gsk-test", **secure)

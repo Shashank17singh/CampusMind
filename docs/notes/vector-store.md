@@ -18,7 +18,7 @@ pytest -m "not model"   # both real stores, real BM25, hashed embeddings
 pytest -m model         # the real bge-small model
 ```
 
-Every store test runs against both Chroma and Qdrant, so the two cannot quietly drift apart. No re-ranker test runs the real cross-encoder yet, because the model has not been downloaded on this machine.
+Every store test runs against both Chroma and Qdrant, so the two cannot quietly drift apart. No unit test runs the real cross-encoder, because it is a 1.1 GB download. The experiment grid has run it on the synthetic corpus.
 
 ## Key decisions
 

@@ -16,14 +16,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
 }
 
+/** Button styling, for links that should look like buttons. */
+export function buttonClasses(variant: Variant = "secondary", className = "") {
+  return `inline-flex min-h-10 items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${VARIANTS[variant]} ${className}`;
+}
+
 export function Button({ variant = "secondary", className = "", type, ...rest }: ButtonProps) {
-  return (
-    <button
-      type={type ?? "button"}
-      className={`inline-flex min-h-10 items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${VARIANTS[variant]} ${className}`}
-      {...rest}
-    />
-  );
+  return <button type={type ?? "button"} className={buttonClasses(variant, className)} {...rest} />;
 }
 
 interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {

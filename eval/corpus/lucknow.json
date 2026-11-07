@@ -1,0 +1,280 @@
+{
+  "institution": "University of Lucknow",
+  "source": "https://www.lkouniv.ac.in and https://udrc.lkouniv.ac.in",
+  "retrieved": "2026-11-07",
+  "note": "Public English documents, centred on B.Tech. at the Faculty of Engineering and Technology, used only to evaluate CampusMind. The files are not redistributed: run fetch_corpus.py to download them. Most are scans, read through OCR. Hindi notices, including every examination notice and the academic calendar, are left out because the embedding model reads English only.",
+  "documents": [
+    {
+      "file": "btech_ordinance_nep_revised_2026.pdf",
+      "title": "B.Tech. Ordinance, Rules and Regulations (NEP), revised, from session 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_898506b5-799d-46e8-87a1-866135ac8105_58.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "02ad0ff985dd416638e57819a39640bd0c9f9e5c69db98a051ba66ebf3882717"
+    },
+    {
+      "file": "btech_ordinance_nep_2023.pdf",
+      "title": "B.Tech. Ordinance, Rules and Regulations (NEP), from session 2023-24",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_0a2e1d94-cc00-468e-8236-5ddeef8b0411_58.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "c839456b37831312147efb20e91c88b0173ca56e4e8c60e6a4c72cd5403d1a9f"
+    },
+    {
+      "file": "btech_ordinance_2018.pdf",
+      "title": "B.Tech. Ordinance, Rules and Regulations, Faculty of Engineering (2018)",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/201809081143200809Ordinances-Rules-Regulations.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "8c087df53c61f544662f9297ab90b5a55f69d82a3dcc34d4502729a7ca098edb"
+    },
+    {
+      "file": "ug_ordinance_2023.pdf",
+      "title": "Ordinance for Undergraduate Programmes (2023), NEP 2020 framework",
+      "url": "https://www.lkouniv.ac.in/pdf/UG-Ordinance-2023_030824.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "22eb5556dfae172d3fe56d9b9c0089612bfa37a3d4a9253f06d3f167ca784b5c"
+    },
+    {
+      "file": "project_report_guidelines.pdf",
+      "title": "Guidelines for preparing the project report, Faculty of Engineering and Technology",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_02082211-d717-436d-93f9-881366cb39f8_58.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "ddadd362d421108b9000084d968ea64ec2ead35c536a483ad00ed51f107dd48d"
+    },
+    {
+      "file": "pol_code_of_conduct.pdf",
+      "title": "Code of Conduct for Students",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/7-Code-of-conduct-for-students_160424.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "11fdd8cacff188bab37e6f3cba23250b06c756d119dc93e496479e795facef92"
+    },
+    {
+      "file": "pol_grievance.pdf",
+      "title": "Grievance Redressal Policy",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/14-Grievance-Redressal-Policy_160424.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "b1f28f4bfed257eb97cb0fe9253583833cb64836ec374a9eb7cdf25bbeedb5a5"
+    },
+    {
+      "file": "pol_anti_discrimination.pdf",
+      "title": "Anti-Discrimination and Anti-Harassment Policy",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/5-Anti-Discrimination-and-Anti-Harassment_160424.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "79666a1338130f6f3259aa10db5a6052419215706223b40db0c2facaa8f864df"
+    },
+    {
+      "file": "pol_it.pdf",
+      "title": "Information Technology Policy",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/9-Information-Technology-Policy_160424.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "0f2f5387263521fd400838563afdadc524dcf671177e1f535d5d74cadc2860d5"
+    },
+    {
+      "file": "pol_placement_2026.pdf",
+      "title": "Placement Policy 2026",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/202609191213131309Placement-Policy-2026_190926.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "f76898fcee7de5c3db2c0fe4d2da5757af4debf72ea32930d3e1eeee1b54a85a"
+    },
+    {
+      "file": "pol_internship.pdf",
+      "title": "Internship and Dissertation Programme Policy (draft)",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/202609191632011067Draft-Internship-program_190926.pdf",
+      "doc_type": "regulation",
+      "department": null,
+      "sha256": "2ecbc17fb1f08c535cc9fde4e4efba2485ecc754e290b4c5028e46a23e8ee48b"
+    },
+    {
+      "file": "syl_cseai_1st_2026.pdf",
+      "title": "B.Tech. CSE (AI) first year syllabus and course structure (revised NEP), 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_74c9724d-ce52-43ee-9401-d223d1b3b9db_58.pdf",
+      "doc_type": "syllabus",
+      "department": "CSE-AI",
+      "sha256": "d22ad44f041becc2083666cd6806b4c3bfd8f25420cb02a936e1ca447e111bde"
+    },
+    {
+      "file": "syl_cseai_2nd_2024.pdf",
+      "title": "B.Tech. CSE (AI) second year syllabus (NEP), from 2024-25",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_7dffe4c1-ec93-4eff-934e-0274fcc7f8fd_58.pdf",
+      "doc_type": "syllabus",
+      "department": "CSE-AI",
+      "sha256": "6db0fd634eb363bc501f2b9d0da97e5492809ce7f36edcd9defc68aea17da255"
+    },
+    {
+      "file": "syl_cseai_3rd_2025.pdf",
+      "title": "B.Tech. CSE (AI) third year syllabus (NEP), from 2025-26",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_1b20b208-b358-481e-a829-2a49f29fae8d_58.pdf",
+      "doc_type": "syllabus",
+      "department": "CSE-AI",
+      "sha256": "2218386bdf80045498bdafe6555f80ff02ac7146929f1ebbbc94111db6c1251f"
+    },
+    {
+      "file": "syl_cseai_4th_2026.pdf",
+      "title": "B.Tech. CSE (AI) fourth year syllabus (NEP), from 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_8c548d77-d132-4870-bfc9-8d3771559b5b_58.pdf",
+      "doc_type": "syllabus",
+      "department": "CSE-AI",
+      "sha256": "361c039a3690580a8fa42d33ab0919c945de3fad99a5c0a96edc71dc2ff1ca46"
+    },
+    {
+      "file": "syl_cseai_4th_2024.pdf",
+      "title": "B.Tech. CSE (AI) fourth year syllabus, from 2024-25",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_bf8b8e24-d79b-4862-aa20-ea6237f8afe6_58.pdf",
+      "doc_type": "syllabus",
+      "department": "CSE-AI",
+      "sha256": "7854f6948b2b3ef1e5afa4841afefb78b0376fcd9392dd8799f78dd6d19d1429"
+    },
+    {
+      "file": "syl_cse_1st_2026.pdf",
+      "title": "B.Tech. CSE first year syllabus and course structure (revised NEP), 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_7f9d0b27-3e82-4a70-afed-1d21d19ec71b_58.pdf",
+      "doc_type": "syllabus",
+      "department": "CSE",
+      "sha256": "c449752868843ba851ea0e19e7c26f15f33a2e740d2aa6466a8ebab8427bda89"
+    },
+    {
+      "file": "syl_cse_3rd_2025.pdf",
+      "title": "B.Tech. CSE third year syllabus (NEP), from 2025-26",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_fd4c75bb-e62c-4274-99de-60115f314304_58.pdf",
+      "doc_type": "syllabus",
+      "department": "CSE",
+      "sha256": "75c79455394060290f2bc441ef63d5ed900478d8e6bcd4e5c58d22fc1edfca00"
+    },
+    {
+      "file": "syl_cse_4th_2026.pdf",
+      "title": "B.Tech. CSE fourth year syllabus (NEP), from 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_06998da1-0cc5-462d-bf19-b6b5787159d4_58.pdf",
+      "doc_type": "syllabus",
+      "department": "CSE",
+      "sha256": "f359c7dbb21a4dedd043e8dc9fa0e258b6f0badf92bbad72ddd712649323914f"
+    },
+    {
+      "file": "syl_ece_3rd_2025.pdf",
+      "title": "B.Tech. ECE third year syllabus (NEP), from 2025-26",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_63246c0e-c797-4303-b2e1-ebe0d1aac636_57.pdf",
+      "doc_type": "syllabus",
+      "department": "ECE",
+      "sha256": "4f81a61588a438743ae3effe7bc45c83f87f47cf9e87eefd4ff93debdabb5e7f"
+    },
+    {
+      "file": "syl_ece_4th_2026.pdf",
+      "title": "B.Tech. ECE fourth year syllabus (NEP), from 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_3af8d979-1afe-419d-afa0-859305c1ae1c_57.pdf",
+      "doc_type": "syllabus",
+      "department": "ECE",
+      "sha256": "fa0c9b92c94e056867c3ca3b26b1c196c83da41d478dd8b5305baef948a865d5"
+    },
+    {
+      "file": "syl_me_4th_2026.pdf",
+      "title": "B.Tech. Mechanical Engineering fourth year syllabus (NEP), from 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_e98d5abd-6271-430d-ab31-f25f593ddfc7_55.pdf",
+      "doc_type": "syllabus",
+      "department": "MECH",
+      "sha256": "76ae51495d7f99f690bc01f973c418a92e19af92aa624cfd2af7c48a6fda0c15"
+    },
+    {
+      "file": "syl_ee_4th_2026.pdf",
+      "title": "B.Tech. Electrical Engineering fourth year syllabus (NEP), from 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_068cf47a-ed4d-4830-b90f-1d9f2d8ec83f_56.pdf",
+      "doc_type": "syllabus",
+      "department": "EE",
+      "sha256": "7c373a1431f3bf5f17dd2a0a3c54f2804ed39af30c8d76e2dc2f51fed8343af6"
+    },
+    {
+      "file": "syl_ce_4th_2026.pdf",
+      "title": "B.Tech. Civil Engineering fourth year syllabus (NEP), from 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_2316ebe0-2ca9-4f2a-8f17-2abd7dc63d03_59.pdf",
+      "doc_type": "syllabus",
+      "department": "CIVIL",
+      "sha256": "078866aa2f70d7167865930af84ca956517c54dc5a725f121610133984e30cb5"
+    },
+    {
+      "file": "syl_open_elective_4th_2026.pdf",
+      "title": "B.Tech. fourth year open elective syllabus (NEP), 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_b4102acf-f325-4c42-afd7-80e35b726ddc_58.pdf",
+      "doc_type": "syllabus",
+      "department": null,
+      "sha256": "98ea2b4ef7bcbab7fa1b253fc0a562bdcfe3f8fe8f31530d5ae9e26d98a9850c"
+    },
+    {
+      "file": "syl_btech_1st_common_2023.pdf",
+      "title": "B.Tech. first year syllabus, common to all branches (NEP), 2023-24",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_2fdeb5d2-8e3f-4f3d-a965-db93edfc2c04_58.pdf",
+      "doc_type": "syllabus",
+      "department": null,
+      "sha256": "acf3a62469a599ed624ad0c92786dc130dabc6e39ae17746e35c1d28ef57d13d"
+    },
+    {
+      "file": "swayam_moocs_odd_2026.pdf",
+      "title": "SWAYAM MOOCs aligned courses, B.Tech. CSE, odd semester 2026-27",
+      "url": "https://udrc.lkouniv.ac.in/Content/DepartmentContent/SY_cf7546f9-0564-4c30-9258-938f4cb41157_58.pdf",
+      "doc_type": "notice",
+      "department": "CSE",
+      "sha256": "a5a113f0db51c580373dcfbbe21510265c67c46b7a257944b06d5d1a607b893b"
+    },
+    {
+      "file": "btech_direct_admission_0718.pdf",
+      "title": "Direct admission to vacant B.Tech., lateral entry and MCA seats after UPTAC-2026 (18 July 2026)",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/202607181707538095Direct-admissions_180726.pdf",
+      "doc_type": "circular",
+      "department": null,
+      "sha256": "f4bbe2d638588ddc1e92b1a3f2f9849ae93558c36ab97819533c460a5d5a8f3b"
+    },
+    {
+      "file": "btech_direct_admission_ext_0813.pdf",
+      "title": "Extended last date for direct admission, B.Tech. and lateral entry (13 August 2026)",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/202608131657315612UPTAC_130826.pdf",
+      "doc_type": "circular",
+      "department": null,
+      "sha256": "26afd871fa5c61616d5cc381e8a677bcda7a05961b34106182149e596b035c1a"
+    },
+    {
+      "file": "btech_direct_admission_0903.pdf",
+      "title": "Direct admission schedule for vacant seats after UPTAC-2026 (3 September 2026)",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/202609031738007003UPTAC_030926.pdf",
+      "doc_type": "circular",
+      "department": null,
+      "sha256": "e8b24b965df5214031e2875264a057c28b2121c7b49e2c0b3df96b56eaa75cae"
+    },
+    {
+      "file": "n_hms_registration_0908.pdf",
+      "title": "HMS registration for newly admitted students (8 September 2026)",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/UploadNews/pdf/C_202609081044528295.pdf",
+      "doc_type": "notice",
+      "department": null,
+      "sha256": "7a9b474771c670e08a4c186b97f67ed06dbcc45b0e9406f7cb5533a80d79a08d"
+    },
+    {
+      "file": "n_shodh_medha_0831.pdf",
+      "title": "Submission of Shodh Medha scholarship applications, 2026-27",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/UploadNews/pdf/C_202608311805025785.pdf",
+      "doc_type": "notice",
+      "department": null,
+      "sha256": "96e12813ba073f3184f6169dfe56d826d334d26c2d086e5c4e395e743ec8f880"
+    },
+    {
+      "file": "samarth_student_guide.pdf",
+      "title": "Samarth student portal login guide",
+      "url": "https://www.lkouniv.ac.in/pdf/Student-Portal_170824.pdf",
+      "doc_type": "notice",
+      "department": null,
+      "sha256": "44101bbd98afe85920c202f0b7cd233186c7a5bc28a68bd56fde33d7af6ef9aa"
+    },
+    {
+      "file": "ug_brochure_2026.pdf",
+      "title": "UG Admission Information Brochure 2026-27",
+      "url": "https://www.lkouniv.ac.in/site/writereaddata/siteContent/202604171716267662UG-Admission-Information-Brochure_LU_2026-2027_compressed.pdf",
+      "doc_type": "notice",
+      "department": null,
+      "sha256": "5790d2cc58538a872c2606ba0dadaba16097caa96b4ec103c5674beb4e449259"
+    }
+  ]
+}

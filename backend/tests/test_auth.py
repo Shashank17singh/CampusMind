@@ -933,6 +933,9 @@ PUBLIC = {
     ("POST", f"{V1}/auth/logout"),
     ("POST", f"{V1}/auth/forgot-password"),
     ("POST", f"{V1}/auth/reset-password"),
+    ("GET", f"{V1}/auth/providers"),
+    ("GET", f"{V1}/auth/google/start"),
+    ("GET", f"{V1}/auth/google/callback"),
 }
 
 

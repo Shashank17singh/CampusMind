@@ -14,6 +14,7 @@ from app.ingestion.clean import (
 from app.ingestion.dedupe import jaccard, shingles
 from app.ingestion.errors import CorruptedFileError, FileTooLargeError, UnsupportedFileError
 from app.ingestion.extract import table_to_markdown
+from app.ingestion.ocr import Word, join_rows
 from app.ingestion.tagging import TagResult, auto_tag, tag_with_rules
 from app.ingestion.tokens import count_tokens
 from app.ingestion.types import Block
@@ -314,3 +315,33 @@ def test_table_to_markdown_pads_short_rows_and_escapes_pipes() -> None:
         "| x\\|y |  |",
         "|  | multi line |",
     ]
+
+
+def word(text: str, left: int, top: int, height: int = 20) -> Word:
+    return Word(text=text, left=left, top=top, height=height)
+
+
+class TestJoinRows:
+    def test_a_table_row_read_column_by_column_is_put_back_together(self) -> None:
+        # Tesseract lists the date column first, then the activity column.
+        words = [
+            word("July", 100, 100),
+            word("20,", 160, 101),
+            word("2026", 210, 99),
+            word("July", 100, 140),
+            word("25,", 160, 141),
+            word("2026", 210, 140),
+            word("Commencement", 500, 102),
+            word("of", 700, 100),
+            word("classes", 740, 101),
+            word("Late", 500, 139),
+            word("fee", 570, 141),
+        ]
+        assert join_rows(words) == "July 20, 2026 Commencement of classes\nJuly 25, 2026 Late fee"
+
+    def test_a_large_gap_starts_a_new_paragraph(self) -> None:
+        words = [word("Notice", 100, 100), word("Fees", 100, 130), word("Signed", 100, 400)]
+        assert join_rows(words) == "Notice\nFees\n\nSigned"
+
+    def test_no_words_gives_no_text(self) -> None:
+        assert join_rows([]) == ""

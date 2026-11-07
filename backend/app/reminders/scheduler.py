@@ -9,8 +9,9 @@ Every tick does three things:
 
 The key and the row lock guarantee one row and one claimant. They cannot make SMTP
 transactional: a crash after the mail server accepts a message and before the commit
-would send that email again on the next tick. In-app delivery has no such gap, because the
-row itself is the notification.
+would send that email again on the next tick. Nothing is lost, and the copy carries the
+same Message-ID, derived from the idempotency key, so mail clients that deduplicate show
+it once. In-app delivery has no such gap, because the row itself is the notification.
 """
 
 import json
@@ -155,7 +156,9 @@ def _deliver(
     """Send one notification on its channel."""
     body = _format_body(row.payload, user.timezone)
     if row.channel == "email":
-        email.send(user.email, f"Reminder: {row.payload['title']}", body)
+        email.send(
+            user.email, f"Reminder: {row.payload['title']}", body, message_id=row.idempotency_key
+        )
         return
     publisher.publish(
         user.id,

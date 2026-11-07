@@ -2,12 +2,14 @@
 
 from typing import Annotated
 
+import httpx
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, EmailStr, Field
 
 from app.api.users import UserOut
 from app.audit import record_audit
-from app.auth import service
+from app.auth import google, service
 from app.auth.deps import DbSession
 from app.auth.ratelimit import LoginLimiter
 from app.auth.service import AuthError, TokenReuseError
@@ -21,10 +23,13 @@ log = get_logger(__name__)
 
 COOKIE_NAME = "campusmind_refresh"
 COOKIE_PATH = "/api/v1/auth"
+GOOGLE_STATE_COOKIE = "campusmind_google_state"
+GOOGLE_STATE_PATH = "/api/v1/auth/google"
 ACCEPTED_MESSAGE = "If that address is valid, a message is on its way."
 
 Mailer = Annotated[EmailSender, Depends(get_email_sender)]
 RefreshCookie = Annotated[str | None, Cookie(alias=COOKIE_NAME)]
+GoogleStateCookie = Annotated[str | None, Cookie(alias=GOOGLE_STATE_COOKIE)]
 
 
 def get_login_limiter() -> LoginLimiter:
@@ -262,3 +267,98 @@ def reset_password(body: ResetRequest, request: Request, db: DbSession) -> None:
         raise _raise(exc) from exc
     record_audit(db, "auth.password_reset", actor_id=user.id, request=request)
     db.commit()
+
+
+class ProvidersOut(BaseModel):
+    """Which sign-in methods besides email and password are available."""
+
+    google: bool
+
+
+def get_google_transport() -> httpx.BaseTransport | None:
+    """The HTTP transport for Google's token endpoint. Tests replace it with a stub."""
+    return None
+
+
+GoogleTransport = Annotated[httpx.BaseTransport | None, Depends(get_google_transport)]
+
+
+@router.get("/providers", response_model=ProvidersOut)
+def providers() -> ProvidersOut:
+    """Tell the login page which extra sign-in buttons to show."""
+    return ProvidersOut(google=get_settings().google_enabled)
+
+
+@router.get("/google/start", status_code=status.HTTP_302_FOUND)
+def google_start() -> RedirectResponse:
+    """Send the browser to Google, remembering the state in a short-lived signed cookie."""
+    settings = get_settings()
+    if not settings.google_enabled:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Google sign-in is not configured")
+    url, cookie = google.begin()
+    response = RedirectResponse(url, status_code=status.HTTP_302_FOUND)
+    # Lax, not Strict: Google's redirect back is cross-site, and a Strict cookie would not
+    # be sent with it.
+    response.set_cookie(
+        GOOGLE_STATE_COOKIE,
+        cookie,
+        max_age=google.STATE_MINUTES * 60,
+        httponly=True,
+        secure=settings.cookie_secure,
+        samesite="lax",
+        path=GOOGLE_STATE_PATH,
+    )
+    return response
+
+
+@router.get("/google/callback", status_code=status.HTTP_302_FOUND)
+def google_callback(
+    request: Request,
+    db: DbSession,
+    transport: GoogleTransport,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+    state_cookie: GoogleStateCookie = None,
+) -> RedirectResponse:
+    """Finish Google sign-in, set the refresh cookie and return to the app.
+
+    Failures go back to the login page with a short reason. The app then restores the
+    session from the refresh cookie, exactly as it does on any page load.
+    """
+    frontend = get_settings().frontend_url.rstrip("/")
+    try:
+        identity = google.complete(
+            code=code, state=state, cookie=state_cookie, error=error, transport=transport
+        )
+        pair = service.google_login(db, identity)
+    except (google.GoogleSignInError, AuthError) as exc:
+        db.rollback()
+        reason = exc.reason if isinstance(exc, google.GoogleSignInError) else "google"
+        if isinstance(exc, service.DomainNotAllowedError):
+            reason = "domain"
+        log.warning("google_sign_in_failed", reason=reason, error=str(exc))
+        record_audit(
+            db,
+            "auth.login_failed",
+            request=request,
+            details={"method": "google", "reason": reason},
+        )
+        db.commit()
+        failed = RedirectResponse(f"{frontend}/login?error={reason}", status.HTTP_302_FOUND)
+        failed.delete_cookie(GOOGLE_STATE_COOKIE, path=GOOGLE_STATE_PATH)
+        return failed
+
+    record_audit(
+        db,
+        "auth.login",
+        actor_id=pair.user.id,
+        entity_type="user",
+        request=request,
+        details={"method": "google"},
+    )
+    db.commit()
+    response = RedirectResponse(f"{frontend}/", status_code=status.HTTP_302_FOUND)
+    response.delete_cookie(GOOGLE_STATE_COOKIE, path=GOOGLE_STATE_PATH)
+    _set_cookie(response, pair.refresh_token)
+    return response
