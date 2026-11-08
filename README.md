@@ -1,22 +1,6 @@
-<div align="center">
+# CampusMind
 
-# CampusMind - AI Campus Assistant
-
-**A college assistant that answers from official documents with citations, and acts through agents that plan study schedules, set reminders and summarize notes.**
-
-[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![LangGraph](https://img.shields.io/badge/LangGraph-Agents-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)](https://langchain-ai.github.io/langgraph/)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Qdrant](https://img.shields.io/badge/Qdrant-Vector%20Search-C52B9B?style=for-the-badge&logo=qdrant&logoColor=white)](https://qdrant.tech/)
-[![Celery](https://img.shields.io/badge/Celery-Jobs-37814A?style=for-the-badge&logo=celery&logoColor=white)](https://docs.celeryq.dev/)
-[![CI](https://github.com/Shashank17singh/CampusMind/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Shashank17singh/CampusMind/actions/workflows/ci.yml)
-
-</div>
-
----
+A college assistant that answers from official documents with citations, and acts through agents that plan study schedules, set reminders and summarize notes.
 
 ## Overview
 
