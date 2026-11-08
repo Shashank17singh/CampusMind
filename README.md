@@ -12,7 +12,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Qdrant](https://img.shields.io/badge/Qdrant-Vector%20Search-C52B9B?style=for-the-badge&logo=qdrant&logoColor=white)](https://qdrant.tech/)
 [![Celery](https://img.shields.io/badge/Celery-Jobs-37814A?style=for-the-badge&logo=celery&logoColor=white)](https://docs.celeryq.dev/)
-[![CI](https://img.shields.io/github/actions/workflow/status/Shashank17singh/CampusMind/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI)](https://github.com/Shashank17singh/CampusMind/actions/workflows/ci.yml)
+[![CI](https://github.com/Shashank17singh/CampusMind/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Shashank17singh/CampusMind/actions/workflows/ci.yml)
 
 </div>
 
