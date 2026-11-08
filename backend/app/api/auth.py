@@ -1,6 +1,6 @@
 """Authentication endpoints."""
 
-from typing import Annotated
+from typing import Annotated, Literal
 
 import httpx
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
@@ -270,9 +270,10 @@ def reset_password(body: ResetRequest, request: Request, db: DbSession) -> None:
 
 
 class ProvidersOut(BaseModel):
-    """Which sign-in methods besides email and password are available."""
+    """Which sign-in methods are available, and whether anyone may sign up."""
 
     google: bool
+    registration: Literal["open", "roster"]
 
 
 def get_google_transport() -> httpx.BaseTransport | None:
@@ -286,7 +287,9 @@ GoogleTransport = Annotated[httpx.BaseTransport | None, Depends(get_google_trans
 @router.get("/providers", response_model=ProvidersOut)
 def providers() -> ProvidersOut:
     """Tell the login page which extra sign-in buttons to show."""
-    return ProvidersOut(google=get_settings().google_enabled)
+    settings = get_settings()
+    roster = settings.registration_mode == "roster"
+    return ProvidersOut(google=settings.google_enabled, registration="roster" if roster else "open")
 
 
 @router.get("/google/start", status_code=status.HTTP_302_FOUND)
@@ -337,6 +340,8 @@ def google_callback(
         reason = exc.reason if isinstance(exc, google.GoogleSignInError) else "google"
         if isinstance(exc, service.DomainNotAllowedError):
             reason = "domain"
+        elif isinstance(exc, service.NotOnRosterError):
+            reason = "roster"
         log.warning("google_sign_in_failed", reason=reason, error=str(exc))
         record_audit(
             db,

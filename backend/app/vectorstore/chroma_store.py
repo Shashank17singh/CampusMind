@@ -31,7 +31,7 @@ def _build_where(filters: SearchFilters | None) -> dict[str, Any] | None:
     if not active.include_superseded:
         clauses.append({"superseded": False})
     if active.department:
-        clauses.append({"department": {"$in": [active.department, NO_DEPARTMENT]}})
+        clauses.append({"department": {"$in": [*active.departments(), NO_DEPARTMENT]}})
     if active.semester:
         clauses.append({"semester": {"$in": [active.semester, NO_SEMESTER]}})
     if active.doc_type:

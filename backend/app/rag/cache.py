@@ -38,7 +38,13 @@ class AnswerCache:
         """Build the key from the question, the filter set and the current generation."""
         generation = str(self._client.get(GENERATION_KEY) or "0")
         material = json.dumps(
-            [normalize_question(question), filters.department, filters.semester, filters.doc_type]
+            [
+                normalize_question(question),
+                filters.department,
+                filters.semester,
+                filters.doc_type,
+                list(filters.shared_departments),
+            ]
         )
         digest = hashlib.sha256(material.encode()).hexdigest()
         return f"rag:answer:{generation}:{digest}"

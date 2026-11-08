@@ -237,22 +237,24 @@ The [deployment guide](docs/deploy-vm.md) covers running everything on one cloud
 
 CI builds the backend and frontend images and pushes them to GHCR on every push to `main`.
 
-| Variable                                    | Required          | Purpose                                                                  |
-| ------------------------------------------- | ----------------- | ------------------------------------------------------------------------ |
-| `SECRET_KEY`                                | Yes in production | Signs tokens, at least 32 characters                                     |
-| `DATABASE_URL`, `REDIS_URL`                 | Yes in production | Datastores. Local defaults apply otherwise                               |
-| `LLM_PROVIDER`                              | No                | `anthropic`, `groq` or `ollama`. `ollama` by default                     |
-| `LLM_MODEL`                                 | No                | Overrides the provider's default model                                   |
-| `ANTHROPIC_API_KEY`, `GROQ_API_KEY`         | For a hosted LLM  | The key for the chosen provider                                          |
-| `GOOGLE_CLIENT_ID` and related              | No                | Google sign-in. Off when empty                                           |
-| `LLM_MAX_CONCURRENCY`                       | No                | Parallel summarizer calls. Use 1 with Ollama                             |
-| `VECTOR_BACKEND`                            | No                | `chroma` or `qdrant`. Use `qdrant` once an API and a worker run together |
-| `CHUNK_SIZE_TOKENS`, `CHUNK_OVERLAP_TOKENS` | No                | Chunking                                                                 |
-| `RERANK_ENABLED`                            | No                | Adds the cross-encoder. Needs about 600 MB more memory                   |
-| `ALLOWED_EMAIL_DOMAIN`                      | No                | Who may register, comma-separated. `college.edu` by default              |
-| `SMTP_HOST` and related                     | No                | Mail. If empty, messages are logged and not sent                         |
-| `COOKIE_SECURE`                             | Yes in production | Must be `true` in production                                             |
-| `CONVERSATION_RETENTION_DAYS`               | No                | Older conversations are deleted. `0` keeps everything                    |
+| Variable                                    | Required          | Purpose                                                                        |
+| ------------------------------------------- | ----------------- | ------------------------------------------------------------------------------ |
+| `SECRET_KEY`                                | Yes in production | Signs tokens, at least 32 characters                                           |
+| `DATABASE_URL`, `REDIS_URL`                 | Yes in production | Datastores. Local defaults apply otherwise                                     |
+| `LLM_PROVIDER`                              | No                | `anthropic`, `groq` or `ollama`. `ollama` by default                           |
+| `LLM_MODEL`                                 | No                | Overrides the provider's default model                                         |
+| `ANTHROPIC_API_KEY`, `GROQ_API_KEY`         | For a hosted LLM  | The key for the chosen provider                                                |
+| `GOOGLE_CLIENT_ID` and related              | No                | Google sign-in. Off when empty                                                 |
+| `LLM_MAX_CONCURRENCY`                       | No                | Parallel summarizer calls. Use 1 with Ollama                                   |
+| `VECTOR_BACKEND`                            | No                | `chroma` or `qdrant`. Use `qdrant` once an API and a worker run together       |
+| `CHUNK_SIZE_TOKENS`, `CHUNK_OVERLAP_TOKENS` | No                | Chunking                                                                       |
+| `RERANK_ENABLED`                            | No                | Adds the cross-encoder. Needs about 600 MB more memory                         |
+| `REGISTRATION_MODE`                         | No                | `domain`, or `roster` when the college gives students no email address         |
+| `SHARED_DEPARTMENTS`                        | No                | Departments that also see another department's documents, such as `CSE-AI=CSE` |
+| `ALLOWED_EMAIL_DOMAIN`                      | No                | Who may register, comma-separated. `college.edu` by default                    |
+| `SMTP_HOST` and related                     | No                | Mail. If empty, messages are logged and not sent                               |
+| `COOKIE_SECURE`                             | Yes in production | Must be `true` in production                                                   |
+| `CONVERSATION_RETENTION_DAYS`               | No                | Older conversations are deleted. `0` keeps everything                          |
 
 Every variable is listed in [.env.example](.env.example).
 

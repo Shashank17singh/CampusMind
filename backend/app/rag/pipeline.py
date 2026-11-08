@@ -170,7 +170,7 @@ class RagPipeline:
     def stream(self, request: RagRequest) -> Iterator[TokenEvent | FinalEvent]:
         """Yield answer tokens, then one FinalEvent."""
         standalone = self.rewrite(request.question, request.history)
-        filters = _filters_for(request.profile)
+        filters = _filters_for(request.profile, self._settings)
 
         cached = self._cache.get(standalone, filters)
         if cached is not None:
@@ -233,6 +233,9 @@ class RagPipeline:
         return final
 
 
-def _filters_for(profile: UserProfile) -> SearchFilters:
+def _filters_for(profile: UserProfile, settings: Settings) -> SearchFilters:
     """Build search filters from a user's profile."""
-    return SearchFilters(department=profile.department, semester=profile.semester)
+    shared = settings.shared_department_map.get(profile.department or "", ())
+    return SearchFilters(
+        department=profile.department, semester=profile.semester, shared_departments=shared
+    )

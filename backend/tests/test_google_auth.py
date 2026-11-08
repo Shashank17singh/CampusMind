@@ -104,11 +104,11 @@ def failed_with(response: httpx.Response, reason: str) -> bool:
 
 class TestProviders:
     def test_google_is_off_until_configured(self, api: TestClient) -> None:
-        assert api.get(f"{V1}/auth/providers").json() == {"google": False}
+        assert api.get(f"{V1}/auth/providers").json()["google"] is False
         assert api.get(f"{V1}/auth/google/start").status_code == 404
 
     def test_google_is_on_when_configured(self, api: TestClient, google_on: None) -> None:
-        assert api.get(f"{V1}/auth/providers").json() == {"google": True}
+        assert api.get(f"{V1}/auth/providers").json()["google"] is True
 
 
 @pytest.mark.usefixtures("google_on")

@@ -69,7 +69,13 @@ class Settings(BaseSettings):
     access_token_minutes: int = 15
     refresh_token_days: int = 7
     cookie_secure: bool = False
+    # "domain": anyone with a college address can sign up. "roster": only students an admin
+    # has imported can get in, from any address, for colleges that give students no email.
+    registration_mode: Literal["domain", "roster"] = "domain"
     allowed_email_domain: str = "college.edu"
+    # Departments that also see another department's documents, as "CSE-AI=CSE, CSE-AI=IT".
+    # Sharing goes one way: CSE students do not see CSE-AI documents.
+    shared_departments: str = ""
     google_client_id: str = ""
     google_client_secret: str = ""
     google_redirect_uri: str = ""
@@ -85,6 +91,19 @@ class Settings(BaseSettings):
     def allowed_email_domains(self) -> set[str]:
         """The college domains, from a comma-separated setting."""
         return {part.strip().lower() for part in self.allowed_email_domain.split(",") if part}
+
+    @property
+    def shared_department_map(self) -> dict[str, tuple[str, ...]]:
+        """Each department, and the other departments whose documents it also sees."""
+        shared: dict[str, tuple[str, ...]] = {}
+        for pair in self.shared_departments.split(","):
+            if not pair.strip():
+                continue
+            department, separator, other = (part.strip() for part in pair.partition("="))
+            if not separator or not department or not other:
+                raise ValueError(f"SHARED_DEPARTMENTS: expected DEPARTMENT=OTHER, got {pair!r}")
+            shared[department] = (*shared.get(department, ()), other)
+        return shared
 
     @property
     def google_enabled(self) -> bool:
@@ -109,6 +128,7 @@ class Settings(BaseSettings):
         """Reject combinations that can only fail later, at a worse time."""
         if self.chunk_overlap_tokens >= self.chunk_size_tokens:
             raise ValueError("CHUNK_OVERLAP_TOKENS must be smaller than CHUNK_SIZE_TOKENS")
+        self.shared_department_map  # noqa: B018, read once so a bad value fails at startup
         if self.google_client_id and not (self.google_client_secret and self.google_redirect_uri):
             raise ValueError("GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URI are needed with an ID")
         if self.environment == "production":

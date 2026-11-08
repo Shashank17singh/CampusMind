@@ -27,6 +27,11 @@ class SearchFilters:
     semester: int | None = None
     doc_type: str | None = None
     include_superseded: bool = False
+    shared_departments: tuple[str, ...] = ()
+
+    def departments(self) -> list[str]:
+        """The departments whose documents match: the user's own, then any it shares."""
+        return [self.department, *self.shared_departments] if self.department else []
 
 
 @dataclass(frozen=True)

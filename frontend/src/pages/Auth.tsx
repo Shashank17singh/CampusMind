@@ -28,8 +28,27 @@ function Notice({ tone, children }: { tone: "error" | "info"; children: ReactNod
   );
 }
 
+interface Providers {
+  google: boolean;
+  registration: "open" | "roster";
+}
+
+/** Which sign-in options the server offers, and whether anyone may sign up. */
+function useProviders() {
+  return useQuery({
+    queryKey: ["auth-providers"],
+    queryFn: () => api.get<Providers>("/auth/providers").then((response) => response.data),
+    staleTime: Infinity,
+    retry: false,
+  });
+}
+
+const ROSTER_HELP =
+  "Accounts are added by your department. If you are on the list, use Forgot password to set your password.";
+
 const GOOGLE_ERRORS: Record<string, string> = {
   domain: "Use your college Google account.",
+  roster: "This Google account is not on your department's list. Use the email address the department has for you.",
   cancelled: "Google sign-in was cancelled.",
   google: "Google sign-in did not work. Try again, or log in with your password.",
 };
@@ -43,12 +62,8 @@ export function LoginPage() {
   const [params] = useSearchParams();
   const googleError = params.get("error");
 
-  const providers = useQuery({
-    queryKey: ["auth-providers"],
-    queryFn: () => api.get<{ google: boolean }>("/auth/providers").then((response) => response.data),
-    staleTime: Infinity,
-    retry: false,
-  });
+  const providers = useProviders();
+  const roster = providers.data?.registration === "roster";
 
   const login = useMutation({
     mutationFn: () =>
@@ -76,7 +91,7 @@ export function LoginPage() {
       )}
       <form onSubmit={submit} className="space-y-4">
         <Field
-          label="College email"
+          label={roster ? "Email" : "College email"}
           type="email"
           autoComplete="email"
           required
@@ -101,10 +116,13 @@ export function LoginPage() {
           Continue with Google
         </a>
       )}
+      {roster && <p className="mt-4 text-sm">{ROSTER_HELP}</p>}
       <div className="mt-4 flex justify-between text-sm">
-        <Link to="/register" className="underline">
-          Create an account
-        </Link>
+        {!roster && (
+          <Link to="/register" className="underline">
+            Create an account
+          </Link>
+        )}
         <Link to="/forgot-password" className="underline">
           Forgot password
         </Link>
@@ -114,6 +132,7 @@ export function LoginPage() {
 }
 
 export function RegisterPage() {
+  const providers = useProviders();
   const [form, setForm] = useState({ full_name: "", email: "", password: "", department: "" });
   const [semester, setSemester] = useState("");
 
@@ -128,6 +147,17 @@ export function RegisterPage() {
 
   const update = (key: keyof typeof form) => (event: { target: { value: string } }) =>
     setForm((current) => ({ ...current, [key]: event.target.value }));
+
+  if (providers.data?.registration === "roster") {
+    return (
+      <AuthCard title="Create an account">
+        <Notice tone="info">{ROSTER_HELP}</Notice>
+        <Link to="/forgot-password" className={buttonClasses("primary", "mt-6 w-full")}>
+          Set my password
+        </Link>
+      </AuthCard>
+    );
+  }
 
   if (register.isSuccess) {
     return (

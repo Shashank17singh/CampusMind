@@ -74,7 +74,7 @@ def begin() -> tuple[str, str]:
         "prompt": "select_account",
     }
     domains = settings.allowed_email_domains
-    if len(domains) == 1:
+    if settings.registration_mode == "domain" and len(domains) == 1:
         # A hint that narrows Google's account chooser. The email check below still decides.
         params["hd"] = next(iter(domains))
     cookie = _encode(

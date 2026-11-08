@@ -20,18 +20,18 @@ Base path: `/api/v1`. Requests and responses are JSON unless noted. Authenticate
 | POST | `/auth/logout` | public, cookie | none | `204`, revokes token family |
 | POST | `/auth/forgot-password` | public | `{email}` | `202 {message}` |
 | POST | `/auth/reset-password` | public | `{token, new_password}` | `204` |
-| GET | `/auth/providers` | public | none | `{google}`, which sign-in buttons to show |
+| GET | `/auth/providers` | public | none | `{google, registration}`: which sign-in buttons to show, and `open` or `roster` |
 | GET | `/auth/google/start` | public | none | `302` to Google, sets a signed state cookie. `404` when not configured |
 | GET | `/auth/google/callback` | public, cookie | `?code&state` from Google | `302` to the app with the refresh cookie set, or to `/login?error=` |
 | GET | `/users/me` | any | none | `User` |
-| PATCH | `/users/me` | any | `{full_name?, department?, semester?, section?, timezone?}` | `User` |
+| PATCH | `/users/me` | any | `{full_name?, department?, semester?, section?, timezone?}` | `User`. In roster mode, changing `department` returns `403` |
 
 ## Users (admin)
 
 | Method | Path | Role | Request | Response |
 |---|---|---|---|---|
 | GET | `/admin/users` | admin | `?role&department&q` | page of `User` |
-| PATCH | `/admin/users/{id}` | admin | `{role?, is_active?}` | `User` |
+| PATCH | `/admin/users/{id}` | admin | `{role?, is_active?, department?, semester?}` | `User` |
 | POST | `/admin/users/import` | admin | multipart CSV | `{created, skipped, errors[]}` |
 
 ## Documents

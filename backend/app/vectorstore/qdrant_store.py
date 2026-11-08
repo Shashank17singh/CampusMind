@@ -38,7 +38,7 @@ def _build_filter(filters: SearchFilters | None) -> models.Filter | None:
     if not active.include_superseded:
         conditions.append(_match("superseded", False))
     if active.department:
-        conditions.append(_match_any("department", [active.department, NO_DEPARTMENT]))
+        conditions.append(_match_any("department", [*active.departments(), NO_DEPARTMENT]))
     if active.semester:
         conditions.append(_match_any("semester", [active.semester, NO_SEMESTER]))
     if active.doc_type:

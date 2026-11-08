@@ -63,6 +63,20 @@ class DomainNotAllowedError(AuthError):
     status_code = 422
 
 
+class RegistrationClosedError(AuthError):
+    """Roster mode: accounts come from the admin's import, not from sign-up."""
+
+    code = "registration_closed"
+    status_code = 403
+
+
+class NotOnRosterError(AuthError):
+    """Roster mode: a Google sign-in for someone the admin has not imported."""
+
+    code = "not_on_roster"
+    status_code = 403
+
+
 class TokenReuseError(AuthError):
     """A spent refresh token was presented, which suggests it was stolen."""
 
@@ -94,9 +108,11 @@ def normalize_email(email: str) -> str:
 
 
 def domain_allowed(email: str) -> bool:
-    """Check an address against the configured college domains."""
-    allowed = get_settings().allowed_email_domains
-    return email.rsplit("@", 1)[-1] in allowed
+    """Check an address against the college domains. In roster mode any address will do."""
+    settings = get_settings()
+    if settings.registration_mode == "roster":
+        return True
+    return email.rsplit("@", 1)[-1] in settings.allowed_email_domains
 
 
 def find_user(session: Session, email: str) -> User | None:
@@ -136,6 +152,12 @@ def register(
     The caller replies the same way in both cases, so this endpoint cannot be used to
     find out who has an account.
     """
+    if get_settings().registration_mode == "roster":
+        # The same refusal for every address, so it says nothing about who is on the roster.
+        raise RegistrationClosedError(
+            "Accounts are added by your department. If you are on the list, use Forgot "
+            "password to set your password."
+        )
     address = normalize_email(email)
     if not domain_allowed(address):
         raise DomainNotAllowedError("Please register with your college email address.")
@@ -220,12 +242,15 @@ def google_login(session: Session, identity: GoogleIdentity) -> TokenPair:
     """Start a session for someone Google has vouched for, creating a student if new.
 
     An existing account with the same address is reused, whatever its role, and is marked
-    verified because Google has verified the address.
+    verified because Google has verified the address. In roster mode nobody is created:
+    the address must already be on the admin's import.
     """
     address = normalize_email(identity.email)
     if not domain_allowed(address):
         raise DomainNotAllowedError("Please use your college Google account.")
     user = find_user(session, address)
+    if user is None and get_settings().registration_mode == "roster":
+        raise NotOnRosterError("This Google account is not on your department's list.")
     if user is None:
         user = User(email=address, full_name=identity.name, role="student")
         session.add(user)

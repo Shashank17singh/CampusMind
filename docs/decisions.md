@@ -19,6 +19,8 @@ Where a requirement was ambiguous, or two requirements pulled apart, the choice 
 | 11 | Cached answers could be cleared when a related document is re-ingested, but a new circular cannot be related to an answer written before it existed. | Any document change invalidates every cached answer, through a generation number in the key. |
 | 12 | A student's file uploaded to the summarizer would otherwise enter the document store, where search treats everything as official. | Uploads are read, summarized and deleted. They never reach `documents` or the vector store. `summaries.document_id` is nullable for this. |
 | 13 | Google OAuth is optional, and it needs real Google credentials to test. | Built, and off until `GOOGLE_CLIENT_ID` is set. Tests stand in for Google's token endpoint, so it has not been tried against Google itself. |
+| 14 | Registration is limited to the college email domain, but some colleges, the University of Lucknow among them, give students no email address. | `REGISTRATION_MODE=roster`: an admin imports students by CSV with whatever address the college holds, and students set a password through the reset link, which proves they own the address. Open sign-up returns the same refusal for every address, and Google sign-in only signs in students already imported. |
+| 15 | A student has one department, but branches such as CSE (AI) share courses and documents with CSE. | `SHARED_DEPARTMENTS=CSE-AI=CSE` lets CSE (AI) students search CSE documents too, one way only. A full many-departments model, for minors and dual degrees, is not built. In roster mode only an admin can change a student's department, because it decides which documents they see and which assignments reach them. |
 
 ## Local development without Docker
 

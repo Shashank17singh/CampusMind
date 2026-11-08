@@ -224,6 +224,12 @@ class TestCache:
         cache.set("fee", self.filters, self.answer())
         assert cache.get("fee", SearchFilters(department="ECE", semester=3)) is None
 
+    def test_shared_departments_are_part_of_the_key(self) -> None:
+        cache = self.cache()
+        cache.set("fee", SearchFilters(department="CSE-AI"), self.answer())
+        shared = SearchFilters(department="CSE-AI", shared_departments=("CSE",))
+        assert cache.get("fee", shared) is None
+
     def test_invalidation_hides_everything(self) -> None:
         cache = self.cache()
         cache.set("fee", self.filters, self.answer())
@@ -416,6 +422,19 @@ class TestPipeline:
             RagRequest("lab rule attendance", UserProfile(department="CSE"))
         )
         assert "ECE lab rule" not in llm.calls[0]["messages"][0].content
+
+    def test_a_shared_department_is_searched_with_the_users_own(self, harness: Harness) -> None:
+        harness.settings = harness.settings.model_copy(update={"shared_departments": "CSE-AI=CSE"})
+        for number in range(3):
+            harness.add(f"CSE lab rule number {number} covers attendance", department="CSE")
+        harness.add("ECE lab rule covers attendance", department="ECE")
+        llm = FakeLLM(["Rules [1]."])
+        harness.pipeline(llm).answer(
+            RagRequest("lab rule attendance", UserProfile(department="CSE-AI"))
+        )
+        prompt = llm.calls[0]["messages"][0].content
+        assert "CSE lab rule number 0" in prompt
+        assert "ECE lab rule" not in prompt
 
     def test_filters_are_dropped_when_too_few_results_match(self, harness: Harness) -> None:
         for number in range(3):

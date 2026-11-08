@@ -110,7 +110,7 @@ class BM25Index:
         chunk = row.chunk
         if row.superseded and not filters.include_superseded:
             return False
-        if filters.department and chunk.department not in (filters.department, None):
+        if filters.department and chunk.department not in (*filters.departments(), None):
             return False
         if filters.semester and chunk.semester not in (filters.semester, None):
             return False

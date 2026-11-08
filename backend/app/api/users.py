@@ -12,6 +12,7 @@ from sqlalchemy import ColumnElement, func, or_, select
 from app.audit import record_audit
 from app.auth.deps import CurrentUser, DbSession, require_role
 from app.auth.service import import_students
+from app.config import get_settings
 from app.models import User
 
 router = APIRouter(tags=["users"])
@@ -63,6 +64,8 @@ class AdminUserUpdate(BaseModel):
 
     role: Literal["student", "faculty", "admin"] | None = None
     is_active: bool | None = None
+    department: str | None = Field(default=None, max_length=50)
+    semester: int | None = Field(default=None, ge=1, le=8)
 
 
 class UserPage(BaseModel):
@@ -88,8 +91,19 @@ def get_me(user: CurrentUser) -> User:
 
 @router.patch("/users/me", response_model=UserOut)
 def update_me(body: ProfileUpdate, db: DbSession, user: CurrentUser) -> User:
-    """Update the signed-in user's profile."""
-    for key, value in body.model_dump(exclude_unset=True).items():
+    """Update the signed-in user's profile.
+
+    In roster mode the department comes from the admin's import, because it decides which
+    documents a student sees and which assignments reach them.
+    """
+    changes = body.model_dump(exclude_unset=True)
+    roster = get_settings().registration_mode == "roster"
+    if roster and "department" in changes and changes["department"] != user.department:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            detail="Your department is set by the admin. Ask them to change it.",
+        )
+    for key, value in changes.items():
         setattr(user, key, value)
     db.commit()
     return user

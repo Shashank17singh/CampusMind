@@ -38,5 +38,7 @@ pytest tests/test_auth.py
 
 - Two browser tabs refreshing at the same moment look like token reuse, and sign the user out. The frontend must allow only one refresh at a time.
 - The IP limit is meaningless behind a proxy unless the real address is forwarded, which the production setup does with `--proxy-headers`.
+- **Department is admin-only in roster mode.** It decides which documents a student sees and which assignments reach them, so a student cannot change it. An admin can, through `PATCH /admin/users/{id}`.
+- **Roster mode** (`REGISTRATION_MODE=roster`) is for colleges that give students no email address. Only students an admin imports can get in, from any address. They set a password with the reset link, and sign-up refuses every address in the same words, so it cannot be used to find out who is on the list.
 - Google sign-in has only been tested against a stand-in for Google, because real use needs a Google Cloud client ID.
 - **Google sign-in checks.** PKCE, a state and a nonce, carried in a signed cookie that lasts 10 minutes. The ID token comes straight from Google's token endpoint over TLS, so its signature is not checked again (OpenID Connect Core 3.1.3.7), but its issuer, audience, expiry, nonce, `email_verified` and the college domain all are. The state cookie is `SameSite=Lax`, because a `Strict` cookie is not sent with Google's cross-site redirect back.

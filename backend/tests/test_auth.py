@@ -1044,3 +1044,64 @@ def test_cors_refuses_other_origins(client: TestClient) -> None:
         headers={"Origin": "http://evil.example", "Access-Control-Request-Method": "GET"},
     )
     assert "access-control-allow-origin" not in response.headers
+
+
+class TestSharedDepartmentSettings:
+    def test_pairs_are_read_into_a_map(self) -> None:
+        settings = Settings(shared_departments="CSE-AI=CSE, CSE-AI=IT, ECE-VLSI=ECE")
+        assert settings.shared_department_map == {"CSE-AI": ("CSE", "IT"), "ECE-VLSI": ("ECE",)}
+
+    def test_sharing_goes_one_way(self) -> None:
+        assert "CSE" not in Settings(shared_departments="CSE-AI=CSE").shared_department_map
+
+    def test_a_malformed_pair_is_refused(self) -> None:
+        with pytest.raises(ValueError, match="SHARED_DEPARTMENTS"):
+            Settings(shared_departments="CSE-AI")
+
+
+class TestRosterDepartment:
+    def test_a_student_cannot_change_department_in_roster_mode(
+        self, client: TestClient, make_user: Callable[..., User], monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(get_settings(), "registration_mode", "roster")
+        user = make_user(department="CSE-AI")
+        response = client.patch(
+            "/api/v1/users/me", headers=auth_header(user), json={"department": "CSE"}
+        )
+        assert response.status_code == 403
+        assert "admin" in response.json()["error"]["message"].lower()
+
+    def test_other_fields_still_change_in_roster_mode(
+        self, client: TestClient, make_user: Callable[..., User], monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(get_settings(), "registration_mode", "roster")
+        user = make_user(department="CSE-AI")
+        response = client.patch(
+            "/api/v1/users/me",
+            headers=auth_header(user),
+            json={"semester": 8, "department": "CSE-AI"},
+        )
+        assert response.status_code == 200
+        assert (response.json()["semester"], response.json()["department"]) == (8, "CSE-AI")
+
+    def test_students_choose_their_department_in_domain_mode(
+        self, client: TestClient, make_user: Callable[..., User]
+    ) -> None:
+        user = make_user(department="CSE-AI")
+        response = client.patch(
+            "/api/v1/users/me", headers=auth_header(user), json={"department": "CSE"}
+        )
+        assert response.json()["department"] == "CSE"
+
+    def test_an_admin_can_still_change_a_department(
+        self, client: TestClient, make_user: Callable[..., User], monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(get_settings(), "registration_mode", "roster")
+        student = make_user(department="CSE-AI")
+        response = client.patch(
+            f"/api/v1/admin/users/{student.id}",
+            headers=auth_header(make_user("admin")),
+            json={"department": "CSE"},
+        )
+        assert response.status_code == 200
+        assert response.json()["department"] == "CSE"

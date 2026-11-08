@@ -126,6 +126,18 @@ class TestVectorStores:
         hits = store.search(query_vector("x"), 5, SearchFilters(department="ECE"))
         assert [hit.department for hit in hits] == ["ECE"]
 
+    def test_shared_departments_are_searched_too(self, store: VectorStore) -> None:
+        store.add_chunks(
+            embedded(
+                record("x", department="CSE-AI"),
+                record("y", department="CSE"),
+                record("z", department="ECE"),
+            )
+        )
+        filters = SearchFilters(department="CSE-AI", shared_departments=("CSE",))
+        hits = store.search(query_vector("x"), 5, filters)
+        assert sorted(hit.department or "" for hit in hits) == ["CSE", "CSE-AI"]
+
     def test_college_wide_documents_pass_department_and_semester_filters(
         self, store: VectorStore
     ) -> None:
@@ -377,6 +389,14 @@ class TestBm25:
             "exam", 5, SearchFilters(department="CSE", semester=3)
         )
         assert sorted(hit.text for hit in hits) == ["exam for cse", "exam for everyone"]
+
+    def test_shared_departments_match_the_vector_store_meaning(self, db: Session) -> None:
+        add_ready_document(db, "exam for cse ai", department="CSE-AI")
+        add_ready_document(db, "exam for cse", department="CSE")
+        add_ready_document(db, "exam for ece", department="ECE")
+        filters = SearchFilters(department="CSE-AI", shared_departments=("CSE",))
+        hits = BM25Index(get_session_factory()).search("exam", 5, filters)
+        assert sorted(hit.text for hit in hits) == ["exam for cse", "exam for cse ai"]
 
     def test_superseded_documents_are_hidden_unless_requested(self, db: Session) -> None:
         new_id, _ = add_ready_document(db, "new attendance rule")
