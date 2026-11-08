@@ -37,6 +37,9 @@ _FOLLOW_UP = re.compile(
     re.IGNORECASE,
 )
 _CITATION = re.compile(r"\[(\d+)\]")
+# Some models (gpt-oss on Groq) write 【1】 instead of [1]; each bracket is one character,
+# so translating per streamed fragment is safe.
+_FULL_WIDTH_BRACKETS = str.maketrans("【】", "[]")
 
 
 class _Followups(BaseModel):
@@ -192,6 +195,7 @@ class RagPipeline:
         )
         parts = []
         for text in redact_stream(fragments, allowed_contacts(chunks)):
+            text = text.translate(_FULL_WIDTH_BRACKETS)
             parts.append(text)
             yield TokenEvent(text)
         answer_text = "".join(parts).strip()

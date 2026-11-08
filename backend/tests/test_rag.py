@@ -311,6 +311,13 @@ class TestPipeline:
         )
         assert citation.snippet.startswith("Students need")
 
+    def test_full_width_citation_brackets_are_normalized(self, harness: Harness) -> None:
+        harness.add(ATTENDANCE, title="Exam Rules")
+        llm = FakeLLM(["You need 75% attendance 【1】."])
+        answer = harness.pipeline(llm).answer(RagRequest("What attendance is needed for exams?"))
+        assert answer.answer == "You need 75% attendance [1]."
+        assert [c.number for c in answer.citations] == [1]
+
     def test_unanswerable_question_skips_the_llm(self, harness: Harness) -> None:
         harness.add(ATTENDANCE)
         llm = FakeLLM()
