@@ -1,6 +1,8 @@
 # CampusMind
 
 [![Vercel](https://img.shields.io/badge/Vercel-Live%20Demo-black?logo=vercel)](https://campus-mind-delta.vercel.app/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL%2017-3ECF8E?logo=supabase)](https://supabase.com)
+[![pgvector](https://img.shields.io/badge/pgvector-Vector%20Storage-blue)](https://github.com/pgvector/pgvector)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
@@ -9,8 +11,9 @@
 
 A college assistant that answers from official documents with citations, and acts through agents that plan study schedules, set reminders and summarize notes.
 
-> **Live Deployment:**
+> **Live Deployments:**
 > * **Interactive Web Platform (Vercel):** [campus-mind-delta.vercel.app](https://campus-mind-delta.vercel.app/)
+> * **Cloud Database (Supabase):** PostgreSQL 17 with native pgvector extension for unified relational and vector storage
 
 ## Overview
 
@@ -115,7 +118,7 @@ graph TD
 | Backend        | Python 3.11, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic        |
 | AI             | LangGraph, sentence-transformers (bge-small-en-v1.5), rank-bm25 |
 | LLM            | Anthropic, Groq or Ollama, behind one `LLMClient` interface     |
-| Data           | PostgreSQL 16, Redis, ChromaDB or Qdrant                        |
+| Data           | PostgreSQL 17 (Supabase Cloud), Redis, pgvector / ChromaDB / Qdrant |
 | Jobs           | Celery worker and beat                                          |
 | Frontend       | React 18, TypeScript, Vite, Tailwind, React Query, Zustand      |
 | Testing        | Pytest, Vitest, Testing Library                                 |
