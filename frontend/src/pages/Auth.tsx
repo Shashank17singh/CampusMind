@@ -12,7 +12,9 @@ function AuthCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <main className="flex min-h-dvh items-center justify-center p-4">
       <div className="panel w-full max-w-sm p-8">
-        <p className="mb-8 font-display text-lg font-medium tracking-tight">CampusMind</p>
+        <Link to="/chat" className="mb-8 block font-display text-lg font-medium tracking-tight hover:opacity-80">
+          CampusMind
+        </Link>
         <h1 className="page-title mb-6">{title}</h1>
         {children}
       </div>

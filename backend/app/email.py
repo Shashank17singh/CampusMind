@@ -29,7 +29,6 @@ class SmtpEmailSender:
     """Sends through an SMTP server over STARTTLS."""
 
     def __init__(self, host: str, port: int, username: str, password: str, sender: str) -> None:
-        """Keep the connection details."""
         self._host = host
         self._port = port
         self._username = username
@@ -37,14 +36,12 @@ class SmtpEmailSender:
         self._sender = sender
 
     def _message_id(self, key: str | None) -> str:
-        """Build the Message-ID header, derived from the key when there is one."""
         domain = parseaddr(self._sender)[1].rpartition("@")[2] or "campusmind.local"
         if key is None:
             return make_msgid(domain=domain)
         return f"<{hashlib.sha256(key.encode()).hexdigest()[:32]}@{domain}>"
 
     def send(self, to: str, subject: str, body: str, message_id: str | None = None) -> None:
-        """Open a connection and send."""
         message = EmailMessage()
         message["Message-ID"] = self._message_id(message_id)
         message["From"] = self._sender
@@ -62,7 +59,6 @@ class LoggingEmailSender:
     """Logs instead of sending, for development when SMTP is not configured."""
 
     def send(self, to: str, subject: str, body: str, message_id: str | None = None) -> None:
-        """Record that a message would have been sent."""
         log.info("email_not_sent_smtp_unconfigured", to=to, subject=subject, chars=len(body))
 
 

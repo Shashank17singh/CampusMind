@@ -36,10 +36,11 @@ _FOLLOW_UP = re.compile(
     r"|^\s*(what|how)\s+about\b|^\s*and\b|\bone\b",
     re.IGNORECASE,
 )
-_CITATION = re.compile(r"\[(?:source\s*|स्रोत\s*)?(\d+)\]", re.IGNORECASE)
+_CITATION = re.compile(r"\[(?:source\s*|स्रोत\s*)?([0-9\u0966-\u096F]+)\]", re.IGNORECASE)
 # Some models (gpt-oss on Groq) write 【1】 instead of [1]; each bracket is one character,
 # so translating per streamed fragment is safe.
 _FULL_WIDTH_BRACKETS = str.maketrans("【】", "[]")
+_DEVA_TO_ASCII = str.maketrans("०१२३४५६७८९", "0123456789")
 
 
 class _Followups(BaseModel):
@@ -127,7 +128,7 @@ class RagPipeline:
         citations = []
         seen: set[int] = set()
         for marker in _CITATION.findall(answer):
-            number = int(marker)
+            number = int(marker.translate(_DEVA_TO_ASCII))
             if number in seen or not 1 <= number <= len(chunks):
                 continue
             seen.add(number)

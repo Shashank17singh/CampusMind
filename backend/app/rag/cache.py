@@ -30,7 +30,6 @@ class AnswerCache:
     """Caches finished answers. Redis failures are logged and treated as a cache miss."""
 
     def __init__(self, client: redis.Redis, ttl_seconds: int = 3600) -> None:
-        """Keep the client and expiry time."""
         self._client = client
         self._ttl = ttl_seconds
 

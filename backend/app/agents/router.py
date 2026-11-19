@@ -14,15 +14,15 @@ log = get_logger(__name__)
 CONFIDENCE_THRESHOLD = 0.6
 MAX_INTENTS = 4
 
-ROUTER_SYSTEM = """You route messages for a college assistant. Reply with JSON only:
+ROUTER_SYSTEM = """You route messages for a college assistant. The message may be in English, Hindi, or Hinglish. Reply with JSON only:
 {"intents": ["..."], "confidence": 0.0}
 
 intents lists what the user wants, in the order to do it. Usually there is one.
-- qa: a question about college rules, syllabus, subjects, courses, circulars, notices, fees or exams. Asking for a syllabus or list of subjects is ALWAYS qa, never study_plan.
+- qa: a question about college rules, syllabus, subjects, courses, circulars, notices, fees, dates, or exams in any language (English, Hindi, or Hinglish). Asking for a syllabus or list of subjects is ALWAYS qa, never study_plan.
 - study_plan: make or change a study schedule or revision timetable for exams. Only use this when the user explicitly asks to schedule/plan their study time.
 - reminder: set, list or change a reminder or deadline
 - summarize: summarise a document or notes, or make flashcards or exam notes
-- smalltalk: greetings, thanks, or questions about the assistant itself
+- smalltalk: greetings, thanks, or questions about the assistant itself in English or Hindi
 - out_of_scope: anything unrelated to college, such as weather, sport or general coding
 
 confidence is how sure you are, from 0 to 1. Use under 0.6 if the message is unclear.
@@ -43,39 +43,59 @@ Examples:
 
 _KEYWORDS: dict[Intent, re.Pattern[str]] = {
     "reminder": re.compile(
-        r"\bremind(er|ers)?\b|\bdeadlines?\b|\bnotify me\b|\bdon'?t let me forget\b", re.I
+        r"\bremind(er|ers)?\b|\bdeadlines?\b|\bnotify me\b|\bdon'?t let me forget\b"
+        r"|याद दिला|रिमाइंडर|डेडलाइन|अलर्ट",
+        re.I,
     ),
     "study_plan": re.compile(
         r"\b(study|revision|exam)\s+(plan|schedule|timetable)\b"
         r"|\b(make|create|build|prepare)\b[^.?!]{0,30}\bplan\b"
-        r"|\bre-?plan\b|\bplan\s+(my|to|for)\b",
+        r"|\bre-?plan\b|\bplan\s+(my|to|for)\b"
+        r"|स्टडी प्लान|पढ़ाई की योजना|टाइमटेबल बना|रिवीजन प्लान",
         re.I,
     ),
     "summarize": re.compile(
         r"\bsummar(y|ies|ise|ize|ised|ized)\b|\btl;?dr\b|\bflash\s?cards?\b"
-        r"|\bexam notes\b|\bkey points\b",
+        r"|\bexam notes\b|\bkey points\b"
+        r"|समरी|सारांश|संक्षेप|नोट्स बना|फ्लैशकार्ड",
         re.I,
     ),
     "out_of_scope": re.compile(
         r"\b(weather|movie|film|cricket|football|recipe|joke|poem|song|stock price|bitcoin)\b"
         r"|\bwrite (me )?(a |an )?(code|program|script|essay|story)\b"
-        r"|\bprime minister\b|\bpresident of\b",
+        r"|\bprime minister\b|\bpresident of\b"
+        r"|मौसम|क्रिकेट|फिल्म|गाना|शायरी|कविता|प्रधानमंत्री|राष्ट्रपति",
         re.I,
     ),
 }
 _SMALLTALK = re.compile(
-    r"^\s*(hi|hii+|hello|hey|thanks|thank you|thx|ok|okay|bye|goodbye|good (morning|evening|night)"
-    r"|how are you|who are you|what can you do)\b"
-    r"[\s!.?,]*(there|a lot|so much|that helped)?[\s!.?]*$",
+    r"^\s*(?:"
+    r"(?:hi|hii+|hello|hey|thanks|thank you|thx|ok|okay|bye|goodbye|good (?:morning|evening|night)"
+    r"|how are you|who are you|what can you do|namaste|pranam|shukriya|dhanyawad)\b"
+    r"|नमस्ते|प्रणाम|हेलो|हाय|धन्यवाद|शुक्रिया|थैंक यू|अलविदा|राम राम"
+    r")"
+    r"[\s!.?,]*(?:there|a lot|so much|that helped|ji|jee)?[\s!.?]*$",
     re.I,
 )
 _COLLEGE_WORDS = re.compile(
     r"\b(exam|exams|examination|attendance|syllabus|fee|fees|circular|notice|semester|credit"
     r"|credits|hostel|library|regulation|regulations|scholarship|grade|grades|cgpa|sgpa|course"
-    r"|courses|lab|department|faculty|admission|hall ticket|assignment|timetable|dean|placement)\b",
+    r"|courses|lab|department|faculty|admission|hall ticket|admit card|assignment|timetable|dean|placement"
+    r"|datesheet|date-sheet|back paper|holiday|holidays|college)\b"
+    r"|(परीक्षा|परीक्षाएं|इम्तिहान|सेमेस्टर|शुल्क|फीस|उपस्थिति|हाजिरी|पाठ्यक्रम|सिलेबस|विषय|नोटिस"
+    r"|परिपत्र|सूचना|नियम|विनियम|प्रवेश|दाखिला|छात्रावास|हॉस्टल|पुस्तकालय|लाइब्रेरी|छात्रवृत्ति"
+    r"|स्कॉलरशिप|अंक|रिजल्ट|परिणाम|ग्रेड|विभाग|प्रयोगशाला|शिक्षक|प्राध्यापक|प्रवेश पत्र|एडमिट कार्ड"
+    r"|समय सारणी|टाइम टेबल|असाइनमेंट|प्लेसमेंट|छुट्टी|अवकाश|कॉलेज)",
     re.I,
 )
-_QUESTION = re.compile(r"\?\s*$|^\s*(what|when|where|who|why|how|which|is|are|can|do|does)\b", re.I)
+_QUESTION = re.compile(
+    r"[\?؟।]\s*$"
+    r"|^\s*(what|when|where|who|why|how|which|is|are|can|do|does|will|tell"
+    r"|kya|kab|kaha|kahan|kaise|kaun|kitna|kitne|kitni|batao|bataiye|dikhaye)\b"
+    r"|^\s*(क्या|कब|कहाँ|कहा|कैसे|कौन|कितना|कितने|कितनी|बताओ|बताइए|दिखाइए|दिखाओ|बताएं|दीजिए)"
+    r"|(कब होगी|कब है|क्या है|कितनी है|कितना है|जानकारी|बताओ|बताइए|कैलेंडर)",
+    re.I,
+)
 
 
 class RouterDecision(BaseModel):

@@ -2,7 +2,7 @@
 
 import uuid
 from collections.abc import Sequence
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from enum import StrEnum
 
 from app.vectorstore.base import ScoredChunk, SearchFilters, VectorStore
@@ -54,6 +54,7 @@ class RetrievalResult:
 
     chunks: list[ScoredChunk]
     similarities: dict[uuid.UUID, float]
+    bm25_matches: set[uuid.UUID] = field(default_factory=set)
 
 
 class HybridRetriever:
@@ -84,7 +85,8 @@ class HybridRetriever:
     ) -> RetrievalResult:
         """Return the top `k` chunks for a query."""
         if mode is SearchMode.BM25:
-            return RetrievalResult(self._bm25.search(query, k, filters), {})
+            hits = self._bm25.search(query, k, filters)
+            return RetrievalResult(hits, {}, {chunk.chunk_id for chunk in hits})
 
         vector_hits = self._store.search(self._embedder.embed_query(query), CANDIDATES, filters)
         similarities = {chunk.chunk_id: chunk.score for chunk in vector_hits}
@@ -92,6 +94,7 @@ class HybridRetriever:
             return RetrievalResult(vector_hits[:k], similarities)
 
         keyword_hits = self._bm25.search(query, CANDIDATES, filters)
+        bm25_matches = {chunk.chunk_id for chunk in keyword_hits}
         by_id = {chunk.chunk_id: chunk for chunk in [*keyword_hits, *vector_hits]}
         merged = rrf_merge(
             [
@@ -106,6 +109,6 @@ class HybridRetriever:
             if self._reranker is None:
                 raise ValueError("hybrid_rerank needs a re-ranker")
             return RetrievalResult(
-                self._reranker.rerank(query, fused[:CANDIDATES], k), similarities
+                self._reranker.rerank(query, fused[:CANDIDATES], k), similarities, bm25_matches
             )
-        return RetrievalResult(fused[:k], similarities)
+        return RetrievalResult(fused[:k], similarities, bm25_matches)

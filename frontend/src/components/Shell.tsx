@@ -131,6 +131,17 @@ export function Shell() {
       <main id="main" className="mx-auto w-full max-w-content flex-1 px-4 py-8">
         <Outlet />
       </main>
+      <footer className="mt-auto border-t border-rule bg-paper-2 py-6 text-sm text-muted">
+        <div className="mx-auto flex max-w-content flex-col items-center justify-between gap-4 px-4 sm:flex-row">
+          <p suppressHydrationWarning>© {new Date().getFullYear()} CampusMind. Developed by Shashank Singh.</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <a href="https://github.com/Shashank17singh/CampusMind" target="_blank" rel="noopener noreferrer" className="hover:text-ink">GitHub</a>
+            <a href="https://shashank17singh.github.io" target="_blank" rel="noopener noreferrer" className="hover:text-ink">Portfolio</a>
+            <a href="mailto:shashanksingh1709@gmail.com" className="hover:text-ink">Email</a>
+            <a href="tel:+917905851722" className="hover:text-ink">+91 79058 51722</a>
+          </div>
+        </div>
+      </footer>
       <Toasts />
     </div>
   );

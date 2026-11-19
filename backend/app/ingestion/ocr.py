@@ -86,10 +86,12 @@ class TesseractOcr:
 
     def image_to_text(self, image: Image.Image) -> str:
         """Return the text in `image`, with table rows kept on one line."""
+        extra_config = f'--tessdata-dir "{self._tessdata_dir}"' if self._tessdata_dir else ""
         try:
             data = pytesseract.image_to_data(
                 image,
                 lang=self._language,
+                config=extra_config,
                 output_type=pytesseract.Output.DICT,
             )
         except pytesseract.TesseractError:
@@ -98,6 +100,7 @@ class TesseractOcr:
                 data = pytesseract.image_to_data(
                     image,
                     lang="eng",
+                    config=extra_config,
                     output_type=pytesseract.Output.DICT,
                 )
             except Exception as exc:

@@ -41,7 +41,6 @@ class RedisNotificationBus:
     """Reads the Redis pub/sub channel that the scheduler publishes to."""
 
     def __init__(self, url: str) -> None:
-        """Keep the Redis URL."""
         self._url = url
 
     async def subscribe(self, user_id: uuid.UUID) -> AsyncIterator[dict[str, Any]]:

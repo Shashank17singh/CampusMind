@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import { api, refreshAccessToken } from "./api/client";
 import type { User } from "./api/types";
@@ -24,6 +24,9 @@ const RemindersPage = lazy(() =>
 );
 const SummarizerPage = lazy(() =>
   import("./pages/Summarizer").then((m) => ({ default: m.SummarizerPage })),
+);
+const NotFoundPage = lazy(() =>
+  import("./pages/NotFound").then((m) => ({ default: m.NotFoundPage })),
 );
 
 /** Restore the session from the refresh cookie when the app loads. */
@@ -68,7 +71,7 @@ export function App() {
             </Route>
           </Route>
         </Route>
-        <Route path="*" element={<Navigate to="/chat" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
   );
