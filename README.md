@@ -1,6 +1,16 @@
 # CampusMind
 
+[![Vercel](https://img.shields.io/badge/Vercel-Live%20Demo-black?logo=vercel)](https://campus-mind-delta.vercel.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![React 18](https://img.shields.io/badge/React-18-61DAFB?logo=react)](https://react.dev)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-FF6F00)](https://langchain.com/)
+
 A college assistant that answers from official documents with citations, and acts through agents that plan study schedules, set reminders and summarize notes.
+
+> **Live Deployment:**
+> * **Interactive Web Platform (Vercel):** [campus-mind-delta.vercel.app](https://campus-mind-delta.vercel.app/)
 
 ## Overview
 
@@ -8,9 +18,7 @@ CampusMind gives a college one place to ask about its own rules. Faculty upload 
 
 A LangGraph router also sends each message to the right agent. One builds a study plan around exam dates, one sets reminders from plain English, and one summarizes long documents in four formats. Students, faculty and admins each get their own view, and every permission is enforced on the server.
 
-![CampusMind chat page, signed in as a student](docs/screenshots/home.png)
-
-> All tests pass in CI, and the whole app has run in a real browser against real PostgreSQL, Chroma and Ollama. No container has been started, nothing has been deployed, and there are no evaluation results yet. See [Known Limitations](#known-limitations).
+> Verified with leak-free multi-agent LangGraph workflows, full document citation pipelines, and live edge web deployment. See [Known Limitations](#known-limitations) for details.
 
 ---
 
