@@ -1,8 +1,8 @@
 """Tesseract OCR."""
 
+import statistics
 from dataclasses import dataclass
 from pathlib import Path
-import statistics
 
 import pytesseract
 from PIL import Image
@@ -81,6 +81,7 @@ class TesseractOcr:
         self._tessdata_dir = tessdata_dir
         if self._tessdata_dir:
             import os
+
             os.environ["TESSDATA_PREFIX"] = str(self._tessdata_dir)
 
     def image_to_text(self, image: Image.Image) -> str:

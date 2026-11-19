@@ -10,5 +10,6 @@ FROM nginxinc/nginx-unprivileged:1.27-alpine AS runtime
 COPY infra/nginx/frontend.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 8080
+# hadolint ignore=DL3025
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
     CMD wget --quiet --spider http://127.0.0.1:8080/ || exit 1

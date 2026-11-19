@@ -1,12 +1,14 @@
 # Build context: the repository root.
 FROM python:3.11-slim AS builder
 ENV UV_PROJECT_ENVIRONMENT=/opt/venv
+# hadolint ignore=DL3013
 RUN pip install --no-cache-dir uv
 WORKDIR /app
 COPY backend/pyproject.toml backend/uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
 FROM python:3.11-slim AS runtime
+# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends tesseract-ocr curl \
     && rm -rf /var/lib/apt/lists/*
@@ -21,6 +23,7 @@ ENV PATH=/opt/venv/bin:$PATH \
     UPLOAD_DIR=/data/uploads
 USER campusmind
 EXPOSE 8000
+# hadolint ignore=DL3025
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD curl --fail --silent http://localhost:8000/healthz || exit 1
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips=*"]

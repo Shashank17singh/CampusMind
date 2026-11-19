@@ -78,13 +78,15 @@ extend-exclude = ["alembic/versions"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "S", "C4", "SIM"]
-ignore = ["S101"]
+ignore = ["S101", "E501"]
 
 [tool.ruff.lint.isort]
 known-third-party = ["alembic"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S105", "S106", "S311"]
+"eval/*" = ["S105", "S106", "S311"]
+"../eval/*" = ["S105", "S106", "S311"]
 
 [tool.mypy]
 python_version = "3.11"

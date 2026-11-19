@@ -23,10 +23,10 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from dataset import load_testset  # noqa: E402
-from metrics import paired_bootstrap  # noqa: E402
-from report import write_report  # noqa: E402
-from retrieval_bench import reciprocal_rank, score_runs  # noqa: E402
+from dataset import load_testset
+from metrics import paired_bootstrap
+from report import write_report
+from retrieval_bench import reciprocal_rank, score_runs
 
 BGE_SMALL = "BAAI/bge-small-en-v1.5"
 MINILM = "sentence-transformers/all-MiniLM-L6-v2"
@@ -119,7 +119,12 @@ def score_config(retriever: Any, questions: list[Any], mode: str, k: int = 5) ->
     runs = []
     for item in questions:
         hits = retriever.retrieve(item.question, k=k, mode=SearchMode(mode)).chunks
-        runs.append(([str(chunk.document_id) for chunk in hits], set(item.relevant_document_ids)))
+        runs.append(
+            (
+                [str(chunk.document_id) for chunk in hits],
+                set(item.relevant_document_ids),
+            )
+        )
     scores = score_runs(runs)
     return {
         "precision": scores.precision,
@@ -147,7 +152,10 @@ def run_grid(grid: list[Config], questions: list[Any], work_dir: Path) -> list[d
             current = key
         scores = score_config(retriever, answerable, config.mode)
         rows.append({"experiment": config.experiment, "name": config.name, **scores})
-        print(f"{config.experiment}/{config.name}: {scores['recall']:.3f} recall", flush=True)
+        print(
+            f"{config.experiment}/{config.name}: {scores['recall']:.3f} recall",
+            flush=True,
+        )
     return rows
 
 

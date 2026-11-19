@@ -12,7 +12,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 
-import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.pyplot as plt
 
 METRICS = ("precision", "recall", "mrr")
 LABELS = {"precision": "Precision@5", "recall": "Recall@5", "mrr": "MRR"}
@@ -105,7 +105,10 @@ def bar_chart(group: list[dict[str, Any]], title: str, path: Path, synthetic: bo
 
 
 def write_report(
-    rows: list[dict[str, Any]], output: Path, synthetic: bool = False, questions: int = 0
+    rows: list[dict[str, Any]],
+    output: Path,
+    synthetic: bool = False,
+    questions: int = 0,
 ) -> None:
     """Write the CSV, tables and charts."""
     output.mkdir(parents=True, exist_ok=True)

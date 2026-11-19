@@ -97,7 +97,12 @@ def write_results(results: dict[str, Scores], output: Path, k: int) -> None:
         writer.writerow(["mode", f"precision@{k}", f"recall@{k}", "mrr"])
         for mode, scores in results.items():
             writer.writerow(
-                [mode, f"{scores.precision:.4f}", f"{scores.recall:.4f}", f"{scores.mrr:.4f}"]
+                [
+                    mode,
+                    f"{scores.precision:.4f}",
+                    f"{scores.recall:.4f}",
+                    f"{scores.mrr:.4f}",
+                ]
             )
 
     print(f"| Mode | Precision@{k} | Recall@{k} | MRR |")

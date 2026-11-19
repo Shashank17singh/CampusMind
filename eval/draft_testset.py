@@ -22,7 +22,7 @@ from pydantic import BaseModel, Field
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from dataset import Category, LabelledQuestion, save_testset, summarize  # noqa: E402
+from dataset import Category, LabelledQuestion, save_testset, summarize
 
 DRAFT_SYSTEM = """You write test questions for a college document assistant. From the document,
 write questions a student might really ask, each with the answer the document gives. Use only
@@ -84,7 +84,10 @@ def draft_for_document(
     prompt = f"Write {limit} questions.\n\n<document title={title!r}>\n{text[:6000]}\n</document>"
     try:
         reply, _ = llm.complete_json(
-            [ChatMessage("user", prompt)], DraftReply, system=DRAFT_SYSTEM, max_tokens=1200
+            [ChatMessage("user", prompt)],
+            DraftReply,
+            system=DRAFT_SYSTEM,
+            max_tokens=1200,
         )
     except LLMError as exc:
         print(f"Skipped {title}: {exc}", file=sys.stderr)

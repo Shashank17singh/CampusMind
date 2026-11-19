@@ -81,13 +81,13 @@ class TestReadiness:
 
 class TestSampleDocuments:
     def test_there_are_twenty(self) -> None:
-        assert len(SAMPLES) == 20
+        assert len(SAMPLES) == 21
 
     def test_every_sample_says_it_is_invented(self) -> None:
         assert all(BANNER in sample.text for sample in SAMPLES)
 
     def test_filenames_are_unique(self) -> None:
-        assert len({sample.filename for sample in SAMPLES}) == 20
+        assert len({sample.filename for sample in SAMPLES}) == 21
 
     def test_every_answer_is_in_its_own_document(self) -> None:
         for sample in SAMPLES:

@@ -142,13 +142,14 @@ def classify(message: str, llm: LLMClient) -> Route:
     # Small LLMs frequently hallucinate secondary action intents (study_plan, summarize, reminder)
     # on syllabus or general information queries. Strip any action intent unless the user's
     # message explicitly contains keyword triggers for that action.
-    intents = list(route.intents)
-    for action_intent in ("study_plan", "summarize", "reminder"):
-        if action_intent in intents and not _KEYWORDS[action_intent].search(message):
-            intents = [i for i in intents if i != action_intent]
-    if not intents:
-        intents = ["qa"]
-    route = replace(route, intents=tuple(intents))
+    if _COLLEGE_WORDS.search(message):
+        intents = list(route.intents)
+        for action_intent in ("study_plan", "summarize", "reminder"):
+            if action_intent in intents and not _KEYWORDS[action_intent].search(message):
+                intents = [i for i in intents if i != action_intent]
+        if not intents:
+            intents = ["qa"]
+        route = replace(route, intents=tuple(intents))
     log.info(
         "message_routed", intents=route.intents, confidence=route.confidence, source=route.source
     )

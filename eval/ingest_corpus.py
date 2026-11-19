@@ -40,7 +40,10 @@ def ingest(manifest_path: Path) -> int:
         for entry in manifest["documents"]:
             path = folder / entry["file"]
             if not path.exists():
-                print(f"MISSING   {entry['file']}: run fetch_corpus.py first", file=sys.stderr)
+                print(
+                    f"MISSING   {entry['file']}: run fetch_corpus.py first",
+                    file=sys.stderr,
+                )
                 failed += 1
                 continue
             result = create_document(

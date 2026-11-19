@@ -58,7 +58,7 @@ def paired_bootstrap(
     if not baseline:
         return (0.0, 0.0, 0.0)
     differences = [b - a for a, b in zip(baseline, candidate, strict=True)]
-    generator = random.Random(seed)  # noqa: S311
+    generator = random.Random(seed)
     count = len(differences)
     means = sorted(sum(generator.choices(differences, k=count)) / count for _ in range(samples))
     return (sum(differences) / count, percentile(means, 2.5), percentile(means, 97.5))

@@ -361,7 +361,10 @@ class TestGroq:
 
 class TestGroqSettings:
     def test_groq_defaults_to_gpt_oss_120b(self) -> None:
-        assert Settings(llm_provider="groq").resolved_llm_model == "openai/gpt-oss-120b"
+        assert (
+            Settings(llm_provider="groq", _env_file=None).resolved_llm_model
+            == "openai/gpt-oss-120b"
+        )
 
     def test_production_needs_a_groq_key(self) -> None:
         secure = {"environment": "production", "secret_key": "s" * 40, "cookie_secure": True}
