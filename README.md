@@ -102,7 +102,7 @@ graph TD
 
 ---
 
-## Tech Stack
+## Technology Stack
 
 | Component      | Technology                                                      |
 | -------------- | --------------------------------------------------------------- |
