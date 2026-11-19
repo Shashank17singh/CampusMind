@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     ocr_min_chars: int = 50
     ocr_dpi: int = 300
     tesseract_cmd: str = ""
+    ocr_language: str = "hin+eng"
     header_footer_threshold: float = 0.6
     near_duplicate_threshold: float = 0.7
 
@@ -54,8 +55,8 @@ class Settings(BaseSettings):
     conversation_retention_days: int = 365
 
     rag_top_k: int = 6
-    rag_similarity_threshold: float = 0.45
-    rag_min_results: int = 3
+    rag_similarity_threshold: float = 0.20
+    rag_min_results: int = 1
     rag_context_tokens: int = 6000
     rag_cache_ttl_seconds: int = 3600
     rag_followups_enabled: bool = True

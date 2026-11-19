@@ -2,7 +2,9 @@ import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 import { useAuth } from "../stores/auth";
 
-export const API_BASE = "/api/v1";
+export const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)
+  ? `${import.meta.env.VITE_API_URL}/api/v1`
+  : "/api/v1";
 
 export const api = axios.create({ baseURL: API_BASE, withCredentials: true });
 

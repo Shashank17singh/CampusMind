@@ -23,7 +23,9 @@ from app.logging import get_logger
 log = get_logger(__name__)
 
 HEADING_PATTERN = re.compile(
-    r"^(unit|chapter|module|section|part|annexure|appendix)\s+([0-9]+|[ivxlc]+)\b",
+    r"^(unit|chapter|module|section|part|annexure|appendix|"
+    r"अध्याय|इकाई|खंड|भाग|परिशिष्ट|अधिसूचना|परिपत्र|नियम|विनियम)"
+    r"\s+([0-9]+|[ivxlc]+|[०-९]+|[क-ह])\b",
     re.IGNORECASE,
 )
 HEADING_SIZE_RATIO = 1.15

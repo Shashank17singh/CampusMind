@@ -37,7 +37,11 @@ class OllamaClient(LLMClient):
             "model": self._model,
             "messages": chat,
             "stream": stream,
-            "options": {"num_predict": max_tokens},
+            "options": {
+                "num_predict": max_tokens,
+                "temperature": 0.1,
+                "repeat_penalty": 1.15,
+            },
         }
 
     def complete(
@@ -72,7 +76,7 @@ class OllamaClient(LLMClient):
         messages: list[ChatMessage],
         *,
         system: str = "",
-        max_tokens: int = 2048,
+        max_tokens: int = 512,
         result: StreamResult | None = None,
     ) -> Iterator[str]:
         """Yield text fragments from Ollama's newline-delimited JSON stream."""

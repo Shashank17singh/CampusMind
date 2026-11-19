@@ -23,7 +23,7 @@ def build_deps() -> PipelineDeps:
     return PipelineDeps(
         session_factory=get_session_factory(),
         storage=LocalStorage(settings.upload_dir),
-        ocr=TesseractOcr(settings.tesseract_cmd),
+        ocr=TesseractOcr(settings.tesseract_cmd, language=settings.ocr_language),
         llm=get_llm(),
         indexer=VectorIndexer(get_vector_store(), get_embedder()),
         settings=settings,

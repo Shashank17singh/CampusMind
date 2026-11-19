@@ -130,7 +130,10 @@ _lock = threading.Lock()
 def _load_embedder() -> SentenceTransformerEmbedder:
     """Load the configured model."""
     settings = get_settings()
-    return SentenceTransformerEmbedder(settings.embedding_model, settings.embedding_device)
+    prefix = QUERY_PREFIX if "bge" in settings.embedding_model.lower() else ""
+    return SentenceTransformerEmbedder(
+        settings.embedding_model, settings.embedding_device, query_prefix=prefix
+    )
 
 
 def get_embedder() -> SentenceTransformerEmbedder:

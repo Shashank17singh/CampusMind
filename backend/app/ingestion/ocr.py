@@ -1,7 +1,8 @@
 """Tesseract OCR."""
 
-import statistics
 from dataclasses import dataclass
+from pathlib import Path
+import statistics
 
 import pytesseract
 from PIL import Image
@@ -10,6 +11,7 @@ from app.ingestion.errors import OcrUnavailableError
 
 ROW_TOLERANCE = 0.6
 PARAGRAPH_GAP = 3.0
+_DEFAULT_WIN_TESSERACT = Path("C:/Program Files/Tesseract-OCR/tesseract.exe")
 
 
 @dataclass(frozen=True)
@@ -59,18 +61,46 @@ def join_rows(words: list[Word]) -> str:
 class TesseractOcr:
     """OCR through the pytesseract wrapper. Needs the Tesseract binary on the machine."""
 
-    def __init__(self, command: str = "", language: str = "eng") -> None:
-        """Set the binary path if given. Otherwise Tesseract is found through PATH."""
+    def __init__(
+        self,
+        command: str = "",
+        language: str = "hin+eng",
+        tessdata_dir: str = "",
+    ) -> None:
+        """Set the binary path if given. Otherwise Tesseract is found through PATH or defaults."""
+        if not command and _DEFAULT_WIN_TESSERACT.exists():
+            command = str(_DEFAULT_WIN_TESSERACT)
         if command:
             pytesseract.pytesseract.tesseract_cmd = command
         self._language = language
+
+        if not tessdata_dir:
+            local_tessdata = Path(__file__).resolve().parents[2] / "data" / "tessdata"
+            if local_tessdata.exists():
+                tessdata_dir = str(local_tessdata)
+        self._tessdata_dir = tessdata_dir
+        if self._tessdata_dir:
+            import os
+            os.environ["TESSDATA_PREFIX"] = str(self._tessdata_dir)
 
     def image_to_text(self, image: Image.Image) -> str:
         """Return the text in `image`, with table rows kept on one line."""
         try:
             data = pytesseract.image_to_data(
-                image, lang=self._language, output_type=pytesseract.Output.DICT
+                image,
+                lang=self._language,
+                output_type=pytesseract.Output.DICT,
             )
+        except pytesseract.TesseractError:
+            # Fallback to English if combined language packs are not both available
+            try:
+                data = pytesseract.image_to_data(
+                    image,
+                    lang="eng",
+                    output_type=pytesseract.Output.DICT,
+                )
+            except Exception as exc:
+                raise OcrUnavailableError("Tesseract OCR failed to process the image.") from exc
         except pytesseract.TesseractNotFoundError as exc:
             raise OcrUnavailableError(
                 "This file needs OCR, but Tesseract is not installed on the server."

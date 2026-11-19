@@ -28,7 +28,7 @@ log = get_logger(__name__)
 
 HISTORY_MESSAGES = 6
 SNIPPET_CHARS = 280
-HIGH_CONFIDENCE_SIMILARITY = 0.7
+HIGH_CONFIDENCE_SIMILARITY = 0.38
 
 _FOLLOW_UP = re.compile(
     r"\b(it|its|that|this|those|these|they|them|there|he|she)\b"
@@ -36,7 +36,7 @@ _FOLLOW_UP = re.compile(
     r"|^\s*(what|how)\s+about\b|^\s*and\b|\bone\b",
     re.IGNORECASE,
 )
-_CITATION = re.compile(r"\[(\d+)\]")
+_CITATION = re.compile(r"\[(?:source\s*|स्रोत\s*)?(\d+)\]", re.IGNORECASE)
 # Some models (gpt-oss on Groq) write 【1】 instead of [1]; each bracket is one character,
 # so translating per streamed fragment is safe.
 _FULL_WIDTH_BRACKETS = str.maketrans("【】", "[]")
@@ -139,6 +139,19 @@ class RagPipeline:
                     title=chunk.title,
                     page=chunk.page_number,
                     snippet=chunk.text[:SNIPPET_CHARS],
+                )
+            )
+        if not citations and answer.strip() and NOT_FOUND.lower() not in answer.lower() and chunks:
+            # Fallback: if the small LLM answered from the retrieved context but omitted [n] brackets,
+            # attach the top retrieved chunk as citation so the user sees the source document.
+            top_chunk = chunks[0]
+            citations.append(
+                Citation(
+                    number=1,
+                    document_id=top_chunk.document_id,
+                    title=top_chunk.title,
+                    page=top_chunk.page_number,
+                    snippet=top_chunk.text[:SNIPPET_CHARS],
                 )
             )
         return citations

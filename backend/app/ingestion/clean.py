@@ -4,6 +4,7 @@ import re
 import unicodedata
 from collections import Counter
 
+from app.ingestion.indic_fonts import is_krutidev, krutidev_to_unicode
 from app.ingestion.types import Block
 
 # NFKC would also fix ligatures, but it rewrites x² as x2 and so corrupts formulas.
@@ -25,8 +26,6 @@ _CHARACTER_MAP = str.maketrans(
         " ": " ",
         "­": "",
         "​": "",
-        "‌": "",
-        "‍": "",
         "﻿": "",
     }
 )
@@ -37,7 +36,9 @@ _PAGE_NUMBER_LINE = re.compile(
     r"|[|•·:–—-]\s*page\s+\d+\W*$",  # CSE Department | Page 3
     re.IGNORECASE,
 )
-_LIST_ITEM = re.compile(r"^\s*(?:[-*•]|\d+[.)]|[a-z][.)])\s")
+_LIST_ITEM = re.compile(
+    r"^\s*(?:[-*•]|\d+[.)]|[०-९]+[.)]|[a-zA-Z][.)]|[क-ह][.)]|\([a-zA-Z0-9०-९क-ह]+\))\s"
+)
 _MIN_PAGES_FOR_REPEAT_CHECK = 3
 
 
@@ -116,7 +117,9 @@ def unwrap_lines(text: str) -> str:
 
 
 def clean_text(text: str) -> str:
-    """Apply all text-level cleaning."""
+    """Apply all text-level cleaning, including legacy Indic font conversion."""
+    if is_krutidev(text):
+        text = krutidev_to_unicode(text)
     text = fix_hyphenation(normalize_unicode(text))
     text = re.sub(r"[ \t]+", " ", text)
     return unwrap_lines(text).strip()

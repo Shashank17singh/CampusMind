@@ -12,7 +12,7 @@ from app.logging import get_logger
 
 log = get_logger(__name__)
 
-_SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+")
+_SENTENCE_BREAK = re.compile(r"(?<=[.!?।॥])\s+")
 _SEPARATORS: tuple[str | re.Pattern[str], ...] = ("\n\n", "\n", _SENTENCE_BREAK, " ")
 _PARAGRAPH_JOIN = "\n\n"
 

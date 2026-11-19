@@ -20,12 +20,40 @@ from app.vectorstore.base import ScoredChunk, SearchFilters
 
 log = get_logger(__name__)
 
-_TOKEN = re.compile(r"[a-z0-9]+")
+_TOKEN = re.compile(r"[a-zA-Z0-9\u0900-\u0D7F]+")
+
+_EXPANSIONS: dict[str, list[str]] = {
+    "cse": ["computer", "science", "engineering"],
+    "ai": ["artificial", "intelligence"],
+    "ml": ["machine", "learning"],
+    "it": ["information", "technology"],
+    "ece": ["electronics", "communication"],
+    "ee": ["electrical"],
+    "me": ["mechanical"],
+    "mech": ["mechanical"],
+    "ce": ["civil"],
+    "sem": ["semester"],
+    "sems": ["semester"],
+    "btech": ["b", "tech"],
+    "1st": ["first", "1", "i"],
+    "2nd": ["second", "2", "ii"],
+    "3rd": ["third", "3", "iii"],
+    "4th": ["fourth", "4", "iv"],
+    "5th": ["fifth", "5", "v"],
+    "6th": ["sixth", "6", "vi"],
+    "7th": ["seventh", "7", "vii"],
+    "8th": ["eighth", "8", "viii"],
+}
 
 
 def tokenize(text: str) -> list[str]:
-    """Lowercase and split on anything that is not a letter or digit."""
-    return _TOKEN.findall(text.lower())
+    """Lowercase and split on anything that is not a letter or digit, expanding common abbreviations."""
+    raw_tokens = _TOKEN.findall(text.lower())
+    result = list(raw_tokens)
+    for token in raw_tokens:
+        if token in _EXPANSIONS:
+            result.extend(_EXPANSIONS[token])
+    return result
 
 
 @dataclass(frozen=True)
