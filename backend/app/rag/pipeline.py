@@ -36,6 +36,11 @@ _FOLLOW_UP = re.compile(
     r"|^\s*(what|how)\s+about\b|^\s*and\b|\bone\b",
     re.IGNORECASE,
 )
+_EXPLICIT_YEAR_OR_SEM = re.compile(
+    r"\b(1st|2nd|3rd|4th|5th|6th|7th|8th|first|second|third|fourth|fifth|sixth|seventh|eighth|final)\s*(year|yr|sem|semester)\b"
+    r"|\bsemester\s*([1-8])\b|\bsem\s*([1-8])\b",
+    re.IGNORECASE,
+)
 _CITATION = re.compile(r"\[(?:source\s*|स्रोत\s*)?([0-9\u0966-\u096F]+)\]", re.IGNORECASE)
 # Some models (gpt-oss on Groq) write 【1】 instead of [1]; each bracket is one character,
 # so translating per streamed fragment is safe.
@@ -106,21 +111,27 @@ class RagPipeline:
         )
 
     def retrieve(self, question: str, filters: SearchFilters) -> _Retrieved:
-        """Search with the user's filters, then widen if too few good results came back."""
+        """Search with the user's filters, then widen if too few good results came back or widened has a better match."""
         top_k = self._settings.rag_top_k
         found = self._summarize(self._retriever.retrieve(question, k=top_k, filters=filters))
-        if found.relevant_count >= self._settings.rag_min_results:
-            return found
         if filters == SearchFilters():
             return found
 
         widened = self._summarize(self._retriever.retrieve(question, k=top_k))
-        log.info(
-            "retrieval_filters_dropped",
-            filtered=found.relevant_count,
-            unfiltered=widened.relevant_count,
-        )
-        return widened if widened.relevant_count > found.relevant_count else found
+        if (
+            found.relevant_count < self._settings.rag_min_results
+            or widened.best_similarity >= found.best_similarity + 0.05
+            or widened.relevant_count > found.relevant_count
+        ):
+            log.info(
+                "retrieval_filters_dropped",
+                filtered=found.relevant_count,
+                filtered_best=found.best_similarity,
+                unfiltered=widened.relevant_count,
+                unfiltered_best=widened.best_similarity,
+            )
+            return widened
+        return found
 
     @staticmethod
     def _citations(answer: str, chunks: list[ScoredChunk]) -> list[Citation]:
@@ -187,7 +198,7 @@ class RagPipeline:
     def stream(self, request: RagRequest) -> Iterator[TokenEvent | FinalEvent]:
         """Yield answer tokens, then one FinalEvent."""
         standalone = self.rewrite(request.question, request.history)
-        filters = _filters_for(request.profile, self._settings)
+        filters = _filters_for(request.profile, self._settings, standalone)
 
         cached = self._cache.get(standalone, filters)
         if cached is not None:
@@ -251,9 +262,12 @@ class RagPipeline:
         return final
 
 
-def _filters_for(profile: UserProfile, settings: Settings) -> SearchFilters:
-    """Build search filters from a user's profile."""
+def _filters_for(profile: UserProfile, settings: Settings, question: str = "") -> SearchFilters:
+    """Build search filters from a user's profile, relaxing semester if explicitly requested."""
     shared = settings.shared_department_map.get(profile.department or "", ())
+    semester = profile.semester
+    if question and _EXPLICIT_YEAR_OR_SEM.search(question):
+        semester = None
     return SearchFilters(
-        department=profile.department, semester=profile.semester, shared_departments=shared
+        department=profile.department, semester=semester, shared_departments=shared
     )
