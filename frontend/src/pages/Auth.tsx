@@ -61,6 +61,7 @@ export function LoginPage() {
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [socialNotice, setSocialNotice] = useState<string | null>(null);
   const [params] = useSearchParams();
   const googleError = params.get("error");
 
@@ -113,11 +114,35 @@ export function LoginPage() {
           {login.isPending ? "Logging in" : "Log in"}
         </Button>
       </form>
-      {providers.data?.google && (
-        <a href={`${API_BASE}/auth/google/start`} className={buttonClasses("secondary", "mt-3 w-full")}>
-          Continue with Google
-        </a>
-      )}
+      <div className="mt-3 space-y-2">
+        {providers.data?.google ? (
+          <a href={`${API_BASE}/auth/google/start`} className={buttonClasses("secondary", "w-full")}>
+            Continue with Google
+          </a>
+        ) : (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setSocialNotice("GitHub sign-in is not available yet. Please log in with your college email.")}
+              className={buttonClasses("secondary", "flex-1")}
+            >
+              GitHub
+            </button>
+            <button
+              type="button"
+              onClick={() => setSocialNotice("Google sign-in is not available yet. Please log in with your college email.")}
+              className={buttonClasses("secondary", "flex-1")}
+            >
+              Google
+            </button>
+          </div>
+        )}
+        {socialNotice && (
+          <p className="rounded border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-center text-xs text-amber-500">
+            {socialNotice}
+          </p>
+        )}
+      </div>
       {roster && <p className="mt-4 text-sm">{ROSTER_HELP}</p>}
       <div className="mt-4 flex justify-between text-sm">
         {!roster && (
@@ -137,6 +162,7 @@ export function RegisterPage() {
   const providers = useProviders();
   const [form, setForm] = useState({ full_name: "", email: "", password: "", department: "" });
   const [semester, setSemester] = useState("");
+  const [socialNotice, setSocialNotice] = useState<string | null>(null);
 
   const register = useMutation({
     mutationFn: () =>
@@ -215,6 +241,29 @@ export function RegisterPage() {
           Create account
         </Button>
       </form>
+      <div className="mt-3 space-y-2">
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setSocialNotice("GitHub registration is not available yet. Please use your college email.")}
+            className={buttonClasses("secondary", "flex-1")}
+          >
+            GitHub
+          </button>
+          <button
+            type="button"
+            onClick={() => setSocialNotice("Google registration is not available yet. Please use your college email.")}
+            className={buttonClasses("secondary", "flex-1")}
+          >
+            Google
+          </button>
+        </div>
+        {socialNotice && (
+          <p className="rounded border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-center text-xs text-amber-500">
+            {socialNotice}
+          </p>
+        )}
+      </div>
       <p className="mt-4 text-sm">
         <Link to="/login" className="underline">
           Back to log in
