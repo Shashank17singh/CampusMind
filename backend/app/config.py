@@ -74,9 +74,8 @@ class Settings(BaseSettings):
     # has imported can get in, from any address, for colleges that give students no email.
     registration_mode: Literal["domain", "roster"] = "domain"
     allowed_email_domain: str = "college.edu"
-    # Departments that also see another department's documents, as "CSE-AI=CSE, CSE-AI=IT".
-    # Sharing goes one way: CSE students do not see CSE-AI documents.
-    shared_departments: str = ""
+    # Departments that also see another department's documents, as "CSE-AI=CSE, CSE=CSE-AI".
+    shared_departments: str = "CSE=CSE-AI,CSE-AI=CSE"
     google_client_id: str = ""
     google_client_secret: str = ""
     google_redirect_uri: str = ""

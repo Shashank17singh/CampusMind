@@ -186,6 +186,7 @@ class TestHistoryDetection:
             "And the fee?",
             "Is that mandatory?",
             "why?",
+            "i said cse ai branch not ai subject syllabus",
         ],
     )
     def test_follow_ups(self, question: str) -> None:

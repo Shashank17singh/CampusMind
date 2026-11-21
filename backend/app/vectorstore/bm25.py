@@ -24,7 +24,9 @@ _TOKEN = re.compile(r"[a-zA-Z0-9\u0900-\u0963\u0966-\u0D7F]+")
 
 _EXPANSIONS: dict[str, list[str]] = {
     "cse": ["computer", "science", "engineering"],
-    "ai": ["artificial", "intelligence"],
+    "ai": ["artificial", "intelligence", "cse-ai", "cseai"],
+    "cseai": ["cse", "ai", "artificial", "intelligence", "computer", "science", "branch"],
+    "cse-ai": ["cse", "ai", "artificial", "intelligence", "computer", "science", "branch"],
     "ml": ["machine", "learning"],
     "it": ["information", "technology"],
     "ece": ["electronics", "communication"],

@@ -33,7 +33,10 @@ HIGH_CONFIDENCE_SIMILARITY = 0.38
 _FOLLOW_UP = re.compile(
     r"\b(it|its|that|this|those|these|they|them|there|he|she)\b"
     r"|\bthe\s+(first|second|third|last|former|latter|other|same)\b"
-    r"|^\s*(what|how)\s+about\b|^\s*and\b|\bone\b",
+    r"|^\s*(what|how)\s+about\b|^\s*and\b|\bone\b"
+    r"|\b(i\s+said|i\s+meant|i\s+mean|meaning|instead\s+of|rather\s+than|not\s+the|not\s+that|actually)\b"
+    r"|^\s*(no|nope|not)\b"
+    r"|\b(branch|specialization|subject|stream|course)\b",
     re.IGNORECASE,
 )
 _EXPLICIT_YEAR_OR_SEM = re.compile(
