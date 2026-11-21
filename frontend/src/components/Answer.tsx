@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
@@ -26,7 +27,7 @@ export function AnswerText({ text, citations, onOpenCitation }: AnswerTextProps)
     <div className="prose-answer">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeKatex]}
+        rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{
           a({ href, children }) {
             if (href?.startsWith(CITE_PREFIX)) {
@@ -48,6 +49,13 @@ export function AnswerText({ text, citations, onOpenCitation }: AnswerTextProps)
               <a href={href} target="_blank" rel="noreferrer" className="underline">
                 {children}
               </a>
+            );
+          },
+          table({ children }) {
+            return (
+              <div className="table-scroll-container">
+                <table>{children}</table>
+              </div>
             );
           },
         }}
