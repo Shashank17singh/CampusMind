@@ -6,11 +6,13 @@ Tools for measuring CampusMind, and for producing the tables and charts in the r
 
 ## The corpus
 
-[corpus/lucknow.json](corpus/lucknow.json) lists 34 public English documents from the University of Lucknow, centred on B.Tech. at the Faculty of Engineering and Technology:
+[corpus/lucknow.json](corpus/lucknow.json) lists official public documents from the University of Lucknow across all university faculties (Arts, Science, Commerce, Law, Education, Fine Arts, and Engineering & Technology), including 60+ academic departments and central administrative bodies:
 
-- B.Tech. ordinances (2018, 2023 and the 2026 revision), the undergraduate ordinance and university policies
-- Syllabi for every year of CSE (AI), and for CSE, ECE, ME, EE and Civil
-- Admission notices, the 2026-27 admission brochure and student guides
+- University-wide ordinances, academic statutes, examination controller guidelines, and grading policies
+- Undergraduate and postgraduate programme directories (BA, B.Sc, B.Com, B.Tech, LL.B, B.Ed, BVA, MA, M.Sc, M.Com, LL.M, MBA, MCA, Ph.D)
+- Departmental faculty rosters, professor directories, research thrust areas, and course outlines
+- Central campus services (Tagore Central Library, Proctorial Board, Central Hostels, Placement Cell)
+- Admission notices, the admission brochure and student guides
 
 The PDFs are not in the repository. `fetch_corpus.py` downloads them and checks each one's SHA-256, so a document the university has since replaced is reported instead of silently changing the questions' answers.
 

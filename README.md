@@ -1,16 +1,25 @@
 # CampusMind
 
-A college assistant that answers from official documents with citations, and acts through agents that plan study schedules, set reminders and summarize notes.
+An enterprise multi-agent AI assistant and RAG platform for universities and higher-education institutions, deployed for the **University of Lucknow (UoL)** across all 7 faculties, 60+ academic departments, and central administrative bodies. Answers questions from official university ordinances, syllabi, guidelines, and circulars with verifiable citations, and orchestrates specialized LangGraph agents for study planning, reminders, and note summarization.
 
 > **Live Deployments:**
 > * **Interactive Web Platform (Vercel):** [campusmind-uol.vercel.app](https://campusmind-uol.vercel.app/)
-> * **Cloud Database (Supabase):** PostgreSQL 17 with native pgvector extension for unified relational and vector storage
+> * **AI Backend & Inference Engine (Hugging Face ZeroGPU):** [shashank17singh-campusmind.hf.space](https://shashank17singh-campusmind.hf.space)
+> * **Cloud Database (Supabase):** PostgreSQL 17 with unified relational metadata and vector embeddings
+> * **Automated Synchronization:** Weekly cloud cron (GitHub Actions) syncing official university circulars, academic ordinances, and departmental rosters from [lkouniv.ac.in](https://www.lkouniv.ac.in/) and [udrc.lkouniv.ac.in](http://udrc.lkouniv.ac.in/)
 
 ## Overview
 
-CampusMind gives a college one place to ask about its own rules. Faculty upload circulars, syllabi and notices, and students get answers drawn only from those documents, with numbered sources they can open. If the documents do not support an answer, it says so.
+CampusMind provides a unified, university-wide conversational intelligence layer for students, faculty, and administration across all degree programs and disciplines:
+* **All 7 University Faculties:** Faculty of Arts, Science, Commerce, Law, Education, Fine Arts, and Engineering & Technology.
+* **60+ Academic Departments:** Complete department directories, Head of Department contacts, faculty member rosters (professors, associate/assistant professors, emails, specializations), research labs, and course offerings.
+* **All Degree Levels:** Undergraduate, Postgraduate, Professional, and Doctoral programmes (BA, B.Sc, B.Com, B.Tech, LL.B, B.Ed, BVA, MA, M.Sc, M.Com, LL.M, M.Ed, MVA, MBA, MCA, Ph.D).
+* **Central Student Services & Campus Life:** Proctorial Board regulations, anti-ragging guidelines, Central Hostel allocation rules, Tagore Central Library policies, and the Central Placement & Career Counselling Cell.
+* **Examinations & Statutes:** Controller of Examination guidelines, grading scales, back-paper regulations, academic ordinances, and semester schedules.
 
-A LangGraph router also sends each message to the right agent. One builds a study plan around exam dates, one sets reminders from plain English, and one summarizes long documents in four formats. Students, faculty and admins each get their own view, and every permission is enforced on the server.
+Faculty and administrators upload circulars, syllabi, and official notices, and students receive answers drawn strictly from official documents, accompanied by clickable numbered citations. If the official documents do not contain the answer, the anti-hallucination guardrail explicitly refuses rather than guessing.
+
+A LangGraph router dynamically routes queries to specialized agents: study plan synthesis around examination timetables, plain-English reminder scheduling, and multi-format document summarization. Role-based access control guarantees strict server-side permission enforcement for students, faculty, and administrators.
 
 > Verified with leak-free multi-agent LangGraph workflows, full document citation pipelines, and live edge web deployment. See [Known Limitations](#known-limitations) for details.
 

@@ -87,6 +87,8 @@ known-third-party = ["alembic"]
 "tests/*" = ["S105", "S106", "S311"]
 "eval/*" = ["S105", "S106", "S311"]
 "../eval/*" = ["S105", "S106", "S311"]
+"scripts/*" = ["S105", "S106", "S310", "S311", "T201"]
+"../scripts/*" = ["S105", "S106", "S310", "S311", "T201"]
 
 [tool.mypy]
 python_version = "3.11"

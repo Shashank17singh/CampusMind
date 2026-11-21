@@ -10,6 +10,7 @@ htmlcov/
 node_modules/
 dist/
 coverage/
+data/
 backend/data/
 backend/.pgdata/
 chroma_data/

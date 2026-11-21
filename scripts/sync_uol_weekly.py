@@ -10,10 +10,9 @@ import hashlib
 import os
 import re
 import sys
-import time
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Add backend directory to path
@@ -28,6 +27,7 @@ if not os.environ.get("DATABASE_URL"):
     env_file = BACKEND_DIR / ".env"
     if env_file.exists():
         from dotenv import load_dotenv
+
         load_dotenv(env_file)
 
 if not os.environ.get("DATABASE_URL"):
@@ -208,9 +208,11 @@ def clean_html(html: str) -> str:
 
 def fetch_url(url: str) -> str | None:
     """Fetch URL with timeout and error handling."""
-    req = urllib.request.Request(url, headers=HEADERS)
+    if not url.startswith(("http://", "https://")):
+        return None
+    req = urllib.request.Request(url, headers=HEADERS)  # noqa: S310
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
+        with urllib.request.urlopen(req, timeout=15) as resp:  # noqa: S310
             return resp.read().decode("utf-8", errors="ignore")
     except Exception as exc:
         print(f"  [WARN] Failed to fetch {url}: {exc}")
@@ -220,7 +222,7 @@ def fetch_url(url: str) -> str | None:
 def sync_documents():
     """Main weekly document sync routine."""
     print("=" * 60)
-    print(f"CampusMind Weekly UoL Document Sync - {datetime.now(timezone.utc).isoformat()}")
+    print(f"CampusMind Weekly UoL Document Sync - {datetime.now(UTC).isoformat()}")
     print("=" * 60)
 
     try:
@@ -246,12 +248,13 @@ def sync_documents():
 
             cleaned = clean_html(html)
             if len(cleaned) < 150:
-                print(f"  [SKIP] Page content too short ({len(cleaned)} chars), possible scrape block.")
+                print(
+                    f"  [SKIP] Page content too short ({len(cleaned)} chars), possible scrape block."
+                )
                 continue
 
             banner = (
-                f"University of Lucknow (UoL) Official Documentation\n"
-                f"Source: {target['url']}\n"
+                f"University of Lucknow (UoL) Official Documentation\nSource: {target['url']}\n"
             )
             full_content = f"{target['title']}\n\n{banner}\n\n{cleaned}"
             content_bytes = full_content.encode("utf-8")
@@ -265,7 +268,9 @@ def sync_documents():
                 continue
 
             # Ingest new or modified version
-            print(f"  [UPDATE] Detected new or changed content ({len(full_content)} chars). Ingesting...")
+            print(
+                f"  [UPDATE] Detected new or changed content ({len(full_content)} chars). Ingesting..."
+            )
             res = create_document(
                 session,
                 deps.storage,
@@ -281,12 +286,14 @@ def sync_documents():
             if not res.duplicate:
                 ok = run_ingestion(deps, res.document.id)
                 if ok:
-                    print(f"  [SUCCESS] Successfully indexed {target['title']} (Doc ID: {res.document.id})")
+                    print(
+                        f"  [SUCCESS] Successfully indexed {target['title']} (Doc ID: {res.document.id})"
+                    )
                     updated_count += 1
                 else:
                     print(f"  [ERROR] Ingestion pipeline failed for {res.document.id}")
             else:
-                print(f"  [UNCHANGED] Hash match on storage. Skipped.")
+                print("  [UNCHANGED] Hash match on storage. Skipped.")
                 unchanged_count += 1
 
     print("\n" + "=" * 60)
@@ -298,11 +305,20 @@ def sync_documents():
         sync_url = f"{BACKEND_URL.rstrip('/')}/api/v1/sync"
         print(f"\nTriggering vector store synchronization at: {sync_url}")
         try:
-            req = urllib.request.Request(sync_url)
-            with urllib.request.urlopen(req, timeout=30) as r:
+            req = urllib.request.Request(sync_url)  # noqa: S310
+            with urllib.request.urlopen(req, timeout=30) as r:  # noqa: S310
                 print(f"Vector sync response: {r.status} {r.read().decode()}")
         except Exception as se:
             print(f"Vector sync trigger notice: {se}")
+
+    # Run recursive department and circular notice expansion
+    try:
+        from crawl_uol_departments import run_department_expansion
+
+        print("\n[Weekly Sync] Launching recursive 60+ department & notice board expansion...")
+        run_department_expansion()
+    except Exception as de:
+        print(f"[Weekly Sync] Department expansion notice: {de}")
 
 
 if __name__ == "__main__":

@@ -300,9 +300,17 @@ def _stream_turn(
                 yield format_sse("token", {"text": item})
     except Exception as exc:
         import traceback
+
         tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
         print(f"[_stream_turn ERROR] {tb}", flush=True)
-        yield format_sse("error", {"code": "stream_error", "message": f"{type(exc).__name__}: {exc}", "trace_id": str(trace_id)})
+        yield format_sse(
+            "error",
+            {
+                "code": "stream_error",
+                "message": f"{type(exc).__name__}: {exc}",
+                "trace_id": str(trace_id),
+            },
+        )
     finally:
         if not finished:
             latency = int((time.perf_counter() - started) * 1000)
@@ -327,7 +335,9 @@ def send_message(
     try:
         conversation = _owned(db, conversation_id, user)
         is_first = conversation.title is None and not db.scalar(
-            select(func.count()).select_from(Message).where(Message.conversation_id == conversation.id)
+            select(func.count())
+            .select_from(Message)
+            .where(Message.conversation_id == conversation.id)
         )
         service.add_user_message(db, conversation, body.content)
         history = service.recent_history(db, conversation.id)
@@ -346,9 +356,12 @@ def send_message(
         )
     except Exception as exc:
         import traceback
+
         tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
         print(f"[send_message ERROR] {tb}", flush=True)
-        raise HTTPException(status_code=500, detail=f"send_message error: {type(exc).__name__}: {exc}\n{tb}")
+        raise HTTPException(
+            status_code=500, detail=f"send_message error: {type(exc).__name__}: {exc}\n{tb}"
+        ) from exc
 
 
 @router.post("/messages/{message_id}/feedback", response_model=FeedbackOut)
