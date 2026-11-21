@@ -264,12 +264,7 @@ def _stream_turn(
     history: list[ChatMessage],
     message_id: uuid.UUID,
 ) -> Iterator[str]:
-    """Run one turn as Server-Sent Events, and store the answer however it ends.
-
-    If the client disconnects, which is how the stop button works, this generator is
-    closed partway through, and `finally` stores the text produced up to that point. No
-    database connection is held during the slow LLM calls.
-    """
+    """Run one turn as Server-Sent Events, and store the answer however it ends."""
     trace_id = uuid.uuid4()
     started = time.perf_counter()
     parts: list[str] = []
@@ -303,6 +298,11 @@ def _stream_turn(
             else:
                 parts.append(item)
                 yield format_sse("token", {"text": item})
+    except Exception as exc:
+        import traceback
+        tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+        print(f"[_stream_turn ERROR] {tb}", flush=True)
+        yield format_sse("error", {"code": "stream_error", "message": f"{type(exc).__name__}: {exc}", "trace_id": str(trace_id)})
     finally:
         if not finished:
             latency = int((time.perf_counter() - started) * 1000)
@@ -324,22 +324,31 @@ def send_message(
     runner: Annotated[AgentRunner, Depends(get_agent_runner)],
 ) -> StreamingResponse:
     """Send a message, streaming the assistant's reply."""
-    conversation = _owned(db, conversation_id, user)
-    is_first = conversation.title is None and not db.scalar(
-        select(func.count()).select_from(Message).where(Message.conversation_id == conversation.id)
-    )
-    service.add_user_message(db, conversation, body.content)
-    history = service.recent_history(db, conversation.id)
-    db.commit()
-    if is_first:
-        auto_title.delay(str(conversation.id), body.content)
+    try:
+        conversation = _owned(db, conversation_id, user)
+        is_first = conversation.title is None and not db.scalar(
+            select(func.count()).select_from(Message).where(Message.conversation_id == conversation.id)
+        )
+        service.add_user_message(db, conversation, body.content)
+        history = service.recent_history(db, conversation.id)
+        db.commit()
+        if is_first:
+            try:
+                auto_title.delay(str(conversation.id), body.content)
+            except Exception as _te:
+                log.warning("auto_title_failed", error=str(_te))
 
-    context = UserContext(user.id, user.role, user.department, user.semester, user.timezone)
-    return StreamingResponse(
-        _stream_turn(runner, conversation.id, context, history, uuid.uuid4()),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-    )
+        context = UserContext(user.id, user.role, user.department, user.semester, user.timezone)
+        return StreamingResponse(
+            _stream_turn(runner, conversation.id, context, history, uuid.uuid4()),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        )
+    except Exception as exc:
+        import traceback
+        tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+        print(f"[send_message ERROR] {tb}", flush=True)
+        raise HTTPException(status_code=500, detail=f"send_message error: {type(exc).__name__}: {exc}\n{tb}")
 
 
 @router.post("/messages/{message_id}/feedback", response_model=FeedbackOut)
