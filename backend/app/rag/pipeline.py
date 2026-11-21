@@ -111,27 +111,21 @@ class RagPipeline:
         )
 
     def retrieve(self, question: str, filters: SearchFilters) -> _Retrieved:
-        """Search with the user's filters, then widen if too few good results came back or widened has a better match."""
+        """Search with the user's filters, then widen if too few good results came back."""
         top_k = self._settings.rag_top_k
         found = self._summarize(self._retriever.retrieve(question, k=top_k, filters=filters))
+        if found.relevant_count >= self._settings.rag_min_results:
+            return found
         if filters == SearchFilters():
             return found
 
         widened = self._summarize(self._retriever.retrieve(question, k=top_k))
-        if (
-            found.relevant_count < self._settings.rag_min_results
-            or widened.best_similarity >= found.best_similarity + 0.05
-            or widened.relevant_count > found.relevant_count
-        ):
-            log.info(
-                "retrieval_filters_dropped",
-                filtered=found.relevant_count,
-                filtered_best=found.best_similarity,
-                unfiltered=widened.relevant_count,
-                unfiltered_best=widened.best_similarity,
-            )
-            return widened
-        return found
+        log.info(
+            "retrieval_filters_dropped",
+            filtered=found.relevant_count,
+            unfiltered=widened.relevant_count,
+        )
+        return widened if widened.relevant_count > found.relevant_count else found
 
     @staticmethod
     def _citations(answer: str, chunks: list[ScoredChunk]) -> list[Citation]:

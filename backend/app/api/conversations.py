@@ -354,6 +354,8 @@ def send_message(
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
+    except HTTPException:
+        raise
     except Exception as exc:
         import traceback
 
