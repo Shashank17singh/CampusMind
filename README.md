@@ -3,7 +3,7 @@
 A college assistant that answers from official documents with citations, and acts through agents that plan study schedules, set reminders and summarize notes.
 
 > **Live Deployments:**
-> * **Interactive Web Platform (Vercel):** [campus-mind-delta.vercel.app](https://campus-mind-delta.vercel.app/)
+> * **Interactive Web Platform (Vercel):** [campusmind-uol.vercel.app](https://campusmind-uol.vercel.app/)
 > * **Cloud Database (Supabase):** PostgreSQL 17 with native pgvector extension for unified relational and vector storage
 
 ## Overview
