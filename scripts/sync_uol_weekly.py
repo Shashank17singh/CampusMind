@@ -44,27 +44,92 @@ BACKEND_URL = os.environ.get("BACKEND_URL", "https://shashank17singh-campusmind.
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) CampusMindBot/1.0"}
 
 TARGET_PAGES = [
+    # 1. Central Programmes & Admissions (All University Faculties)
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/undergraduate-programmes",
+        "title": "University of Lucknow - Undergraduate Programmes & Admission Guidelines (BA, BSc, BCom, BTech, LLB, BVA)",
+        "doc_type": "regulation",
+        "department": None,
+        "filename": "uol_undergraduate_programmes.txt",
+    },
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/postgraduate-programmes",
+        "title": "University of Lucknow - Postgraduate Programmes & Admission Guidelines (MA, MSc, MCom, LLM, MEd, MBA, MCA)",
+        "doc_type": "regulation",
+        "department": None,
+        "filename": "uol_postgraduate_programmes.txt",
+    },
+    {
+        "url": "https://www.lkouniv.ac.in/article/en/course",
+        "title": "University of Lucknow - Academic Departments and Course Directory",
+        "doc_type": "circular",
+        "department": None,
+        "filename": "uol_all_departments_courses.txt",
+    },
+    # 2. Faculty of Arts & Humanities (BA, MA, Languages, Social Sciences)
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/faculty-of-arts",
+        "title": "University of Lucknow - Faculty of Arts (Humanities, Languages & Social Sciences)",
+        "doc_type": "circular",
+        "department": "Arts",
+        "filename": "uol_faculty_of_arts.txt",
+    },
+    # 3. Faculty of Science (BSc, MSc, Physics, Chemistry, Math, Life Sciences, Computing)
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/faculty-of-science",
+        "title": "University of Lucknow - Faculty of Science (Sciences & Computing)",
+        "doc_type": "circular",
+        "department": "Science",
+        "filename": "uol_faculty_of_science.txt",
+    },
+    # 4. Faculty of Commerce & Business Studies (BCom, MCom, Business)
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/faculty-of-commerce",
+        "title": "University of Lucknow - Faculty of Commerce (B.Com, M.Com, Business Studies & Finance)",
+        "doc_type": "circular",
+        "department": "Commerce",
+        "filename": "uol_faculty_of_commerce.txt",
+    },
+    # 5. Faculty of Law (LLB, LLM, 5-Year Integrated Law)
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/faculty-of-law",
+        "title": "University of Lucknow - Faculty of Law (LL.B., LL.M. & Integrated Law)",
+        "doc_type": "circular",
+        "department": "Law",
+        "filename": "uol_faculty_of_law.txt",
+    },
+    # 6. Faculty of Education (BEd, MEd)
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/faculty-of-education",
+        "title": "University of Lucknow - Faculty of Education (B.Ed., M.Ed., Teacher Training)",
+        "doc_type": "circular",
+        "department": "Education",
+        "filename": "uol_faculty_of_education.txt",
+    },
+    # 7. Faculty of Fine Arts (BVA, MVA, Visual Arts)
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/faculty-of-fine-arts",
+        "title": "University of Lucknow - Faculty of Fine Arts (BVA, MVA, Applied & Visual Arts)",
+        "doc_type": "circular",
+        "department": "Fine Arts",
+        "filename": "uol_faculty_of_fine_arts.txt",
+    },
+    # 8. Faculty of Engineering & Technology (FoET)
     {
         "url": "https://www.lkouniv.ac.in/en/page/engineering-programmes",
         "title": "University of Lucknow - Engineering Programmes & Fee Structure (FoET)",
         "doc_type": "regulation",
-        "department": "CSE",
+        "department": "Engineering",
         "filename": "uol_engineering_programmes_fees.txt",
     },
     {
         "url": "https://www.lkouniv.ac.in/en/page/faculty-of-engineering-pages",
         "title": "University of Lucknow - Faculty of Engineering & Technology Overview",
         "doc_type": "circular",
-        "department": "CSE",
+        "department": "Engineering",
         "filename": "uol_foet_overview.txt",
     },
-    {
-        "url": "https://www.lkouniv.ac.in/en/page/university-at-a-glance",
-        "title": "University of Lucknow - Campus Overview & Administration",
-        "doc_type": "notice",
-        "department": None,
-        "filename": "uol_campus_at_a_glance.txt",
-    },
+    # 9. Examination & Controller of Examination (University-Wide)
     {
         "url": "https://www.lkouniv.ac.in/en/page/controller-of-examination",
         "title": "University of Lucknow - Examination Guidelines & Controller of Examination",
@@ -74,10 +139,18 @@ TARGET_PAGES = [
     },
     {
         "url": "https://www.lkouniv.ac.in/article/en/time-table",
-        "title": "University of Lucknow - Examination Time Tables & Schedules",
+        "title": "University of Lucknow - Examination Time Tables & Schedules (All Faculties)",
         "doc_type": "circular",
         "department": None,
         "filename": "uol_examination_time_tables.txt",
+    },
+    # 10. Central Campus Facilities, Policies & Student Welfare
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/tagore-library",
+        "title": "University of Lucknow - Tagore Central Library (Timings, Membership & Rules)",
+        "doc_type": "regulation",
+        "department": None,
+        "filename": "uol_tagore_library_rules.txt",
     },
     {
         "url": "https://www.lkouniv.ac.in/article/en/hostel-details",
@@ -87,11 +160,32 @@ TARGET_PAGES = [
         "filename": "uol_hostel_rules_guidelines.txt",
     },
     {
+        "url": "https://www.lkouniv.ac.in/en/page/placement-cell",
+        "title": "University of Lucknow - Central Placement and Career Counselling Cell",
+        "doc_type": "notice",
+        "department": None,
+        "filename": "uol_placement_cell.txt",
+    },
+    {
+        "url": "https://www.lkouniv.ac.in/article/en/proctorial",
+        "title": "University of Lucknow - Proctorial Board, Student Conduct & Anti-Ragging Guidelines",
+        "doc_type": "regulation",
+        "department": None,
+        "filename": "uol_proctorial_anti_ragging.txt",
+    },
+    {
         "url": "https://www.lkouniv.ac.in/article/en/policies",
         "title": "University of Lucknow - Academic Policies and Guidelines",
         "doc_type": "regulation",
         "department": None,
         "filename": "uol_academic_policies.txt",
+    },
+    {
+        "url": "https://www.lkouniv.ac.in/en/page/university-at-a-glance",
+        "title": "University of Lucknow - Campus Overview & Administration",
+        "doc_type": "notice",
+        "department": None,
+        "filename": "uol_campus_at_a_glance.txt",
     },
 ]
 
