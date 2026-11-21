@@ -21,8 +21,14 @@ export function useNotifications(): void {
     let stopped = false;
 
     const connect = () => {
-      const scheme = window.location.protocol === "https:" ? "wss" : "ws";
-      socket = new WebSocket(`${scheme}://${window.location.host}${API_BASE}/ws/notifications`);
+      let wsUrl: string;
+      if (API_BASE.startsWith("http")) {
+        wsUrl = `${API_BASE.replace(/^http/, "ws")}/ws/notifications`;
+      } else {
+        const scheme = window.location.protocol === "https:" ? "wss" : "ws";
+        wsUrl = `${scheme}://${window.location.host}${API_BASE}/ws/notifications`;
+      }
+      socket = new WebSocket(wsUrl);
       socket.onopen = () => socket?.send(JSON.stringify({ type: "auth", token }));
       socket.onmessage = (event) => {
         const message = JSON.parse(event.data as string) as {
