@@ -4,9 +4,7 @@ import { useAuth } from "../stores/auth";
 
 export const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)
   ? `${import.meta.env.VITE_API_URL}/api/v1`
-  : (import.meta.env.PROD
-      ? "https://shashank17singh-campusmind.hf.space/api/v1"
-      : "/api/v1");
+  : "/api/v1";
 
 export const api = axios.create({ baseURL: API_BASE, withCredentials: true });
 

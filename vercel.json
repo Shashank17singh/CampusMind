@@ -2,6 +2,29 @@
   "buildCommand": "node scripts/build-vercel.mjs",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/v1/:path*",
+      "destination": "https://shashank17singh-campusmind.hf.space/api/v1/:path*"
+    },
+    {
+      "source": "/healthz",
+      "destination": "https://shashank17singh-campusmind.hf.space/healthz"
+    },
+    {
+      "source": "/readyz",
+      "destination": "https://shashank17singh-campusmind.hf.space/readyz"
+    },
+    {
+      "source": "/docs",
+      "destination": "https://shashank17singh-campusmind.hf.space/docs"
+    },
+    {
+      "source": "/openapi.json",
+      "destination": "https://shashank17singh-campusmind.hf.space/openapi.json"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
