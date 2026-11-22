@@ -137,7 +137,7 @@ export function Shell() {
           <div className="flex flex-wrap items-center gap-4">
             <a href="https://github.com/Shashank17singh/CampusMind" target="_blank" rel="noopener noreferrer" className="hover:text-ink">GitHub</a>
             <a href="https://shashank17singh.github.io" target="_blank" rel="noopener noreferrer" className="hover:text-ink">Portfolio</a>
-            <a href="mailto:shashanksingh1709@gmail.com" className="hover:text-ink">Email</a>
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=shashanksingh1709@gmail.com" target="_blank" rel="noopener noreferrer" className="hover:text-ink">Email</a>
             <a href="tel:+917905851722" className="hover:text-ink">+91 79058 51722</a>
           </div>
         </div>
