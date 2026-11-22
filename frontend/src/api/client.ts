@@ -10,16 +10,31 @@ export const api = axios.create({ baseURL: API_BASE, withCredentials: true });
 
 let refreshing: Promise<string> | null = null;
 
+const refreshChannel =
+  typeof window !== "undefined" && "BroadcastChannel" in window
+    ? new BroadcastChannel("campusmind_token_refresh")
+    : null;
+
+if (refreshChannel) {
+  refreshChannel.onmessage = (event: MessageEvent<{ type: string; token?: string }>) => {
+    if (event.data?.type === "REFRESH_SUCCESS" && event.data.token) {
+      useAuth.getState().setToken(event.data.token);
+    }
+  };
+}
+
 /**
  * Get a new access token. Refresh tokens are single use and reuse signs the user out, so
- * every caller waiting at the same moment must share one request.
+ * every caller waiting at the same moment must share one request across calls and tabs.
  */
 export function refreshAccessToken(): Promise<string> {
   refreshing ??= axios
     .post<{ access_token: string }>(`${API_BASE}/auth/refresh`, null, { withCredentials: true })
     .then((response) => {
-      useAuth.getState().setToken(response.data.access_token);
-      return response.data.access_token;
+      const token = response.data.access_token;
+      useAuth.getState().setToken(token);
+      refreshChannel?.postMessage({ type: "REFRESH_SUCCESS", token });
+      return token;
     })
     .finally(() => {
       refreshing = null;
