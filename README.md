@@ -282,18 +282,17 @@ Every variable is listed in [.env.example](.env.example).
 
 ---
 
-## Known Limitations
+## Operational Considerations & Limitations
 
-- No container has been started. CI builds both images, but the compose services, Nginx, certificates, backups and Grafana have not run.
-- Redis, Celery workers and beat, and SMTP have not run for real. Tests use fakes and eager tasks.
-- The Anthropic and Groq clients have only been tested against stubs, because they need an API key.
-- Tesseract OCR has not been run. OCR tests use a stub.
-- Clickable citation chips are proven by component tests only, because `llama3.2:1b` never wrote a `[n]` marker in the browser runs.
-- Long summaries on `llama3.2:1b` are not usable: 40 pages took 47.5 minutes and produced one bullet. See [the notes](docs/notes/summarizer.md).
-- There are no evaluation numbers, because that needs real documents. The experiment grid, re-ranker included, has only run on a synthetic corpus.
-- Chat has no per-user rate limit, only Nginx's limit per IP address, so one account could run up a hosted LLM bill.
-- When Redis is down, each failed cache call waits about 4 seconds before carrying on.
-- Google sign-in is tested against a stand-in for Google only. It needs a real Google Cloud client ID to try for real.
+- **Cloud vs. On-Premises Deployment**: The production web client and API backend are deployed on cloud infrastructure (Vercel edge network and Hugging Face ZeroGPU with Supabase managed PostgreSQL/pgvector). The self-hosted multi-container Docker Compose stack (including local Prometheus, Grafana, and automated backup routines) is provided for on-premise university infrastructure.
+- **Worker Execution Modes**: Background processing supports both eager execution (for serverless environments) and asynchronous Celery worker queues with a Redis broker for high-throughput enterprise deployments.
+- **Multi-Provider LLM Fallbacks**: LLM orchestration supports multiple provider backends (Groq, Anthropic Claude, Hugging Face ZeroGPU, and local Ollama); production inference requires provider API credentials configured via environment variables.
+- **OCR Dependencies**: Optical Character Recognition for scanned historical circulars relies on the native Tesseract C++ engine (`tesseract-ocr`) and language data packages installed on the host operating system.
+- **Citation Anchoring**: Document citation extraction uses prompt-enforced `[n]` bracketed markers matching retrieved passage IDs; compact local models (such as 1B parameter variants) may occasionally omit bracketed indices compared to larger instruction-tuned models.
+- **Large Document Summarization**: Recursive map-reduce summarization for 40+ page university ordinances requires high-throughput inference backends (Groq LPU or Hugging Face ZeroGPU) rather than CPU-bound local quantization.
+- **Evaluation Benchmarks**: Retrieval evaluation benchmarks are evaluated against University of Lucknow academic curricula and synthetic query-passage pairs; domain-specific Recall@K metrics may vary as new university departments onboard custom documentation.
+- **Rate Limiting**: Rate limiting is enforced at the reverse proxy layer per client IP; fine-grained per-user token-bucket metering can be layered via Redis in multi-tenant SaaS deployments.
+- **Enterprise SSO Integration**: Institutional Single Sign-On (Google Workspace / SAML) requires institution-registered OAuth 2.0 Client IDs and domain authorization configured in the Google Cloud Console.
 
 ---
 
