@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="logo.svg" width="72" height="72" alt="CampusMind Logo" />
-</p>
-
 # CampusMind
 
 An enterprise multi-agent AI assistant and RAG platform for universities and higher-education institutions, deployed for the **University of Lucknow (UoL)** across all 7 faculties, 60+ academic departments, and central administrative bodies. Answers questions from official university ordinances, syllabi, guidelines, and circulars with verifiable citations, and orchestrates specialized LangGraph agents for study planning, reminders, and note summarization.
