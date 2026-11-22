@@ -2,6 +2,12 @@ __pycache__/
 *.pyc
 .venv/
 .env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
