@@ -7,6 +7,11 @@ An enterprise multi-agent AI assistant and RAG platform for universities and hig
 > * **AI Backend & Inference Engine (Hugging Face ZeroGPU):** [shashank17singh-campusmind.hf.space](https://shashank17singh-campusmind.hf.space)
 > * **Cloud Database (Supabase):** PostgreSQL 17 with unified relational metadata and vector embeddings
 > * **Automated Synchronization:** Weekly cloud cron (GitHub Actions) syncing official university circulars, academic ordinances, and departmental rosters from [lkouniv.ac.in](https://www.lkouniv.ac.in/) and [udrc.lkouniv.ac.in](http://udrc.lkouniv.ac.in/)
+>
+> **Demo Accounts:**
+> * **Student Role:** `student@college.edu` | `DemoPassword123!` (CSE Department, Semester 3)
+> * **Faculty Role:** `faculty@college.edu` | `DemoPassword123!` (CSE Department Faculty)
+> * **Admin Role:** `admin@college.edu` | `DemoPassword123!` (Institutional Administrator)
 
 ## Overview
 
