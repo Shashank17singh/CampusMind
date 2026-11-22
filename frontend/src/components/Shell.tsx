@@ -75,8 +75,15 @@ export function Shell() {
       </a>
       <header className="sticky top-0 z-sticky border-b border-rule bg-paper">
         <div className="mx-auto flex h-16 max-w-content items-center gap-6 px-4">
-          <NavLink to="/chat" className="font-display text-lg font-medium tracking-tight">
-            CampusMind
+          <NavLink to="/chat" className="inline-flex items-center gap-2.5 font-display text-lg font-medium tracking-tight">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#0f172a] shadow-sm ring-1 ring-sky-500/25" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 7L6.5 11.5L16 16L25.5 11.5L16 7Z" fill="#38bdf8"/>
+                <path d="M10 13.5V19C10 21.2 12.5 23 16 23C19.5 23 22 21.2 22 19V13.5L16 16.2L10 13.5Z" fill="#0284c7"/>
+                <path d="M25.5 12.5V18" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </span>
+            <span>CampusMind</span>
           </NavLink>
           <nav aria-label="Main" className="hidden gap-1 rounded-full bg-paper-2 p-1 md:flex">
             {links.map((link) => (
