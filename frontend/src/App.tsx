@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import { api, refreshAccessToken } from "./api/client";
 import type { User } from "./api/types";
@@ -52,6 +52,7 @@ export function App() {
       }
     >
       <Routes>
+        <Route path="/" element={<Navigate to="/chat" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
@@ -59,6 +60,7 @@ export function App() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route element={<RequireAuth />}>
           <Route element={<Shell />}>
+            <Route index element={<Navigate to="/chat" replace />} />
             <Route path="/chat/:conversationId?" element={<ChatPage />} />
             <Route path="/planner" element={<PlannerPage />} />
             <Route path="/reminders" element={<RemindersPage />} />

@@ -114,6 +114,18 @@ export function LoginPage() {
           {login.isPending ? "Logging in" : "Log in"}
         </Button>
       </form>
+      <div className="mt-2">
+        <button
+          type="button"
+          onClick={() => {
+            setEmail("student@college.edu");
+            setPassword("DemoPassword123!");
+          }}
+          className={buttonClasses("ghost", "w-full text-xs text-muted hover:text-ink border border-dashed border-rule")}
+        >
+          Use demo credentials (student@college.edu)
+        </button>
+      </div>
       <div className="mt-3 space-y-2">
         {providers.data?.google ? (
           <a href={`${API_BASE}/auth/google/start`} className={buttonClasses("secondary", "w-full")}>
