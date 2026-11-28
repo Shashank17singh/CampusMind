@@ -34,7 +34,7 @@ jobs:
           BACKEND_URL: https://shashank17singh-campusmind.hf.space
           EMBEDDING_DEVICE: cpu
           LLM_PROVIDER: groq
-          SECRET_KEY: REMOVED
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
           ENVIRONMENT: production
           CELERY_EAGER: "True"
         run: |

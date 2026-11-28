@@ -36,7 +36,6 @@ if not os.environ.get("DATABASE_URL"):
 
 os.environ.setdefault("EMBEDDING_DEVICE", "cpu")
 os.environ.setdefault("LLM_PROVIDER", "groq")
-os.environ.setdefault("SECRET_KEY", "REMOVED")
 os.environ.setdefault("ENVIRONMENT", "production")
 os.environ.setdefault("COOKIE_SECURE", "true")
 os.environ.setdefault("CELERY_EAGER", "True")
